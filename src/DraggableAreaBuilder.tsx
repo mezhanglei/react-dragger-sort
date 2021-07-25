@@ -80,6 +80,8 @@ const buildDraggableArea: DraggableAreaBuilder = (areaProps) => {
                             break;
                         }
                     }
+                } else {
+                    cacheCoverChildRef.current = undefined;
                 }
             });
             return cacheCoverChildRef.current;
@@ -166,9 +168,7 @@ const buildDraggableArea: DraggableAreaBuilder = (areaProps) => {
 
         // 拖拽外部元素不在当前区域内的事件
         const noAddEvent: listenEventFunc = (tag, e) => {
-            if (tag?.dragType === DragTypes.dragEnd) {
-                setCoverChild(undefined)
-            }
+            setCoverChild(undefined)
         }
 
         const onResizeStart: DraggerItemHandler = (e, tag) => {
