@@ -10,7 +10,7 @@ import {
 } from "./utils/types";
 import classNames from "classnames";
 import { DraggerItemHandler } from "./dragger-item";
-import { getOffsetWH, getPositionInPage, getRectInParent, isOverLay } from "./utils/dom";
+import { getOffsetWH, getInsidePosition, isOverLay } from "./utils/dom";
 import { throttle } from "./utils/common";
 
 export const DraggerContext = React.createContext<DraggerContextInterface | null>(null);
@@ -60,20 +60,20 @@ const buildDraggableArea: DraggableAreaBuilder = (areaProps) => {
         const moveTrigger = (tag: TagInterface): ChildTypes | undefined => {
             throttleFn(() => {
                 // 判断是不是区域内 
-                const parent = document?.body || document?.documentElement;
-                const areaRect = getRectInParent(parentRef.current, parent);
+                const parent = document?.body;
+                const areaRect = getInsidePosition(parentRef.current, parent);
                 const x = tag?.x || 0;
                 const y = tag?.y || 0;
                 if (areaRect && x > areaRect?.left && x < areaRect?.right && y > areaRect?.top && y < areaRect?.bottom) {
                     for (let i = 0; i < initChildrenRef?.current?.length; i++) {
                         const child = initChildrenRef?.current[i];
-                        const position = getPositionInPage(child?.node);
+                        const position = getInsidePosition(child?.node);
                         const offsetWH = getOffsetWH(child?.node);
                         const item = {
                             width: offsetWH?.width || 0,
                             height: offsetWH?.height || 0,
-                            x: position?.x || 0,
-                            y: position?.y || 0
+                            x: position?.left || 0,
+                            y: position?.top || 0
                         }
                         if (isOverLay(tag, item) && child.node !== tag?.node) {
                             cacheCoverChildRef.current = child;
@@ -92,13 +92,13 @@ const buildDraggableArea: DraggableAreaBuilder = (areaProps) => {
             throttleFn(() => {
                 for (let i = 0; i < initChildrenRef?.current?.length; i++) {
                     const child = initChildrenRef?.current[i];
-                    const position = getPositionInPage(child?.node);
+                    const position = getInsidePosition(child?.node);
                     const offsetWH = getOffsetWH(child?.node);
                     const item = {
                         width: offsetWH?.width || 0,
                         height: offsetWH?.height || 0,
-                        x: position?.x || 0,
-                        y: position?.y || 0
+                        x: position?.left || 0,
+                        y: position?.top || 0
                     }
                     if (isOverLay(tag, item)) {
                         cacheCrossCoverChildRef.current = child;

@@ -1,6 +1,15 @@
 import { CSSProperties } from "react";
 import { isDom } from "./type";
 
+/**
+ * 返回元素的视窗内的位置
+ * @param el 
+ * @returns 
+ */
+ export function getRect(el: HTMLElement) {
+    return el.getBoundingClientRect()
+}
+
 export interface PositionType {
     width: number;
     height: number;
@@ -37,12 +46,11 @@ export const insertAfter = (newElement: HTMLElement, targetElement: HTMLElement)
     }
 }
 
-// 返回元素或事件对象的可视位置
-export interface SizeInterface {
+// 返回元素或事件对象的视口位置
+export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
     x: number;
     y: number;
-}
-export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | SizeInterface {
+} {
     let pos = null;
     if ("clientX" in el) {
         pos = {
@@ -57,24 +65,30 @@ export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | S
             };
         }
     } else if (isDom(el)) {
-        pos = {
-            x: el.getBoundingClientRect().left,
-            y: el.getBoundingClientRect().top
-        };
+        if ([document.documentElement, document.body].includes(el)) {
+            pos = {
+                x: 0,
+                y: 0
+            }
+        } else {
+            pos = {
+                x: getRect(el)?.left,
+                y: getRect(el).top
+            };
+        }
     }
     return pos;
 }
 
 // 获取页面或元素的宽高 = 可视宽高 + 滚动条 + 边框
-export interface OffsetInterface {
+export function getOffsetWH(el: HTMLElement): undefined | {
     width: number;
     height: number;
-}
-export function getOffsetWH(el: HTMLElement = (document.body || document.documentElement)): undefined | OffsetInterface {
+} {
     if (!isDom(el)) {
         return;
     }
-    if (el === document.body || el === document.documentElement) {
+    if ([document.documentElement, document.body].includes(el)) {
         const width = window.innerWidth;
         const height = window.innerHeight;
         return { width, height };
@@ -85,75 +99,28 @@ export function getOffsetWH(el: HTMLElement = (document.body || document.documen
     }
 };
 
-/**
- * 获取元素或事件对象的相对于页面的真实位置 = 滚动 + 可视位置
- * @param el 元素或事件对象
- */
- export function getPositionInPage(el: MouseEvent | TouchEvent | HTMLElement): null | SizeInterface {
-    const clientXY = getClientXY(el);
-    const parentXY = getClientXY(document.body || document.documentElement);
-    let pos = null;
-    if (clientXY && parentXY) {
-        pos = {
-            x: clientXY.x - parentXY?.x,
-            y: clientXY.y - parentXY?.y
-        }
-    }
-    return pos;
-};
-
-
-/**
- * 返回元素或事件对象相对于父元素的真实位置
- * @param el 元素或事件对象
- * @param parent 父元素
- */
-export function getPositionInParent(el: MouseEvent | TouchEvent | HTMLElement, parent: HTMLElement): null | SizeInterface {
-    let pos = null;
-    if ("clientX" in el) {
-        pos = {
-            x: el?.clientX - parent.getBoundingClientRect().left,
-            y: el?.clientY - parent.getBoundingClientRect().top
-        };
-    } else if ("touches" in el) {
-        if (el?.touches[0]) {
-            pos = {
-                x: el?.touches[0]?.clientX - parent.getBoundingClientRect().left,
-                y: el?.touches[0]?.clientY - parent.getBoundingClientRect().top
-            };
-        }
-    } else if (isDom(el)) {
-        pos = {
-            x: el.getBoundingClientRect().left - parent.getBoundingClientRect().left,
-            y: el.getBoundingClientRect().top - parent.getBoundingClientRect().top
-        };
-    }
-
-    return pos;
-}
-
-/**
- * 返回元素相对于父元素的位置信息
- * @param el 元素或事件对象
- * @param parent 父元素
- */
- export interface RectInParent {
+// 目标在父元素内的四条边位置信息
+export function getInsidePosition(el: HTMLElement, parent: HTMLElement = document.body || document.documentElement): null | {
     left: number;
     top: number;
     right: number;
     bottom: number;
-}
-export function getRectInParent(el: HTMLElement, parent: HTMLElement): null | RectInParent {
+} {
     let pos = null;
     if (isDom(el)) {
-        pos = {
-            left: el.getBoundingClientRect().left - parent.getBoundingClientRect().left,
-            top: el.getBoundingClientRect().top - parent.getBoundingClientRect().top,
-            right: el.getBoundingClientRect().right - parent.getBoundingClientRect().left,
-            bottom: el.getBoundingClientRect().bottom - parent.getBoundingClientRect().top
-        };
-    }
+        const nodeW = getOffsetWH(el)?.width || 0;
+        const nodeH = getOffsetWH(el)?.height || 0;
 
+        const top = getRect(el).top - getRect(parent).top;
+        const left = getRect(el).left - getRect(parent).left;
+
+        return {
+            left,
+            top,
+            right: left + nodeW,
+            bottom: top + nodeH
+        }
+    }
     return pos;
 }
 
