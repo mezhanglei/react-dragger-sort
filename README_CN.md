@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-0.0.4-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-0.0.5-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -31,29 +31,23 @@ yarn add react-dragger-sort
 ### 同区域内的拖拽排序示例
 ```javascript
 import { DraggableAreaGroup, DraggerItem, DragMoveHandle, arrayMove } from "react-dragger-sort";
-import produce from "immer";
 
 export const Example = () => {
 
-   const [state, setState] = useState({ arr: [1, 2, 3, 4, 5, 6, 7] })
+  const [arr, setArr] = useState([1, 2, 3, 4, 5, 6, 7]);
 
    const onDragMoveEnd: DragMoveHandle = (tag, coverChild) => {
         if (tag && coverChild) {
-            setState(state => {
-                const preIndex = state?.arr?.findIndex((item) => item === tag?.id);
-                const nextIndex = state?.arr?.findIndex((item) => item === coverChild?.id)
-                const newArr = arrayMove(state?.arr, preIndex, nextIndex);
-                return {
-                    ...state,
-                    arr: newArr
-                }
-            });
+            const preIndex = arr?.findIndex((item) => item === tag?.id);
+            const nextIndex = arr?.findIndex((item) => item === coverChild?.id)
+            const newArr = arrayMove(arr, preIndex, nextIndex);
+            setArr(newArr);
         }
     }
 
-    return (<DraggableArea dataSource={state?.arr} className="flex-box" onDragMoveEnd={onDragMoveEnd}>
+    return (<DraggableArea dataSource={arr1} className="flex-box" onDragMoveEnd={onDragMoveEnd}>
         {
-            state?.arr?.map((item, index) => {
+            arr?.map((item, index) => {
                 return (
                     <DraggerItem resizeAxis='auto' className="drag-a" key={item} id={item}>
                         <div>
@@ -69,7 +63,6 @@ export const Example = () => {
 ### 不同区域跨区域的拖拽排序示例
 ```javascript
 import { DraggableAreaGroup, DraggerItem, DragMoveHandle, arrayMove } from "react-dragger-sort";
-import produce from "immer";
 
 const DraggableAreaGroups = new DraggableAreaGroup();
 const DraggableArea1 = DraggableAreaGroups.create()
@@ -77,66 +70,55 @@ const DraggableArea2 = DraggableAreaGroups.create()
 
 export const Example = () => {
 
-   const [state, setState] = useState({ arr1: [1, 2, 3, 4, 5, 6, 7], arr2: [8, 9, 10, 11, 12, 13, 14] })
+   const [arr1, setArr1] = useState([1, 2, 3, 4, 5, 6, 7]);
+   const [arr2, setArr2] = useState([8, 9, 10, 11, 12, 13, 14]);
 
     const onDragMoveEnd1: DragMoveHandle = (tag, coverChild) => {
         if (tag && coverChild) {
-            setState(state => {
-                const preIndex = state?.arr1?.findIndex((item) => item === tag?.id);
-                const nextIndex = state?.arr1?.findIndex((item) => item === coverChild?.id)
-                const newArr = arrayMove(state?.arr1, preIndex, nextIndex);
-                return {
-                    ...state,
-                    arr1: newArr
-                }
-            });
+            const preIndex = arr1?.findIndex((item) => item === tag?.id);
+            const nextIndex = arr1?.findIndex((item) => item === coverChild?.id)
+            const newArr = arrayMove(arr1, preIndex, nextIndex);
+            setArr1(newArr);
         }
     }
 
     const onDragMoveEnd2: DragMoveHandle = (tag, coverChild, e) => {
-
+        if (tag && coverChild) {
+            const preIndex = arr2?.findIndex((item) => item === tag?.id);
+            const nextIndex = arr2?.findIndex((item) => item === coverChild?.id)
+            const newArr = arrayMove(arr2, preIndex, nextIndex);
+            setArr2(newArr);
+        }
     }
 
     const onMoveOutChange = (data) => {
         if (data) {
-            setState(state => {
-                const newArr = produce(state?.arr1, draft => {
-                    const index = draft?.findIndex((item) => item === data?.moveTag?.id)
-                    draft?.splice(index, 1)
-                });
-                return {
-                    ...state,
-                    arr1: newArr
-                }
-            })
+            const newArr1 = [...arr1];
+            const index = arr1?.findIndex((item) => item === data?.moveTag?.id)
+            newArr1?.splice(index, 1)
+            setArr1(newArr1);
         }
     }
 
     const onMoveInChange = (data) => {
         if (data) {
-            setState(state => {
-                const newArr = produce(state?.arr2, draft => {
-                    const index = state?.arr1?.findIndex((item) => item === data?.moveTag?.id);
-                    const nextIndex = draft?.findIndex((item) => item === data?.coverChild?.id);
-                    draft?.splice(nextIndex, 0, state?.arr1?.[index]);
-                });
-                return {
-                    ...state,
-                    arr2: newArr
-                }
-            })
+            const newArr2 = [...arr2];
+            const index = arr1?.findIndex((item) => item === data?.moveTag?.id);
+            const nextIndex = newArr2?.findIndex((item) => item === data?.coverChild?.id);
+            newArr2?.splice(nextIndex, 0, arr1?.[index]);
+            setArr2(newArr2);
         }
     }
 
     return (
         <>
-            <DraggableArea1 dataSource={state?.arr1} onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
+            <DraggableArea1 dataSource={arr1} onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
                 {
-                    state?.arr1?.map((item, index) => {
+                    arr1?.map((item, index) => {
                         return (
                             <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} resizeAxis='auto' key={item} id={item}>
                                 <div>
-                                    DraggerItem{item}
+                                    大小拖放{item}
                                 </div>
                             </DraggerItem>
                         )
@@ -144,13 +126,13 @@ export const Example = () => {
                 }
             </DraggableArea1>
             <div style={{ marginTop: '10px' }}>
-                <DraggableArea2 dataSource={state?.arr2} onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
+                <DraggableArea2 dataSource={arr2} onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
                     {
-                        state?.arr2?.map((item, index) => {
+                        arr2?.map((item, index) => {
                             return (
                                 <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
                                     <div>
-                                        DraggerItem{item}
+                                        大小拖放{item}
                                     </div>
                                 </DraggerItem>
                             )
@@ -168,7 +150,6 @@ export const Example = () => {
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | dataSource                      | `any[]`            | -                                                  | 渲染数据源                                                                                  |
-| mounted                      | `(dataSource: any[]) => void`            | -                                                  | 数据更改后渲染的函数                                                                                  |
 | onDragMove                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | 容器内拖拽时触发的函数                                                                                  |
 | onDragMoveEnd                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | 容器内拖拽结束时触发的函数                                                                                  |
 | onMoveOutChange                      | `(triggerInfo: TriggerInfo) => void`            | -                                                  | 跨容器拖出子元素到另外一个容器触发的函数，用来跨区域拖拽                                                                                  |
@@ -179,7 +160,7 @@ export const Example = () => {
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | dragAxis                      | `x / y / both / none`            | `both`                                                  | 拖拽轴向                                                                                  |
 | resizeAxis                      | `auto / x / y / angle / none`            | `none`                                                  | 拖拽缩放位置                                                                                  |
-| dragNode                      | `string / HTMLElement`            | -                                                  | 拖拽句柄                                                                                  |
+| handle                      | `string / HTMLElement`            | -                                                  | 拖拽句柄                                                                                  |
 | id                      | `string / number`            | -                                                  | 当前确定的唯一身份                                                                                  |
 | onDragStart                   | `function`                        | -                                                  | 拖拽开始事件                                                                                           |
 | onDrag                        | `function`                        | -                                                  | 拖拽进行事件                      |
