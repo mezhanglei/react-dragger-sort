@@ -45,7 +45,7 @@ export const Example = () => {
         }
     }
 
-    return (<DraggableArea dataSource={arr1} className="flex-box" onDragMoveEnd={onDragMoveEnd}>
+    return (<DraggableArea className="flex-box" onDragMoveEnd={onDragMoveEnd}>
         {
             arr?.map((item, index) => {
                 return (
@@ -112,7 +112,7 @@ export const Example = () => {
 
     return (
         <>
-            <DraggableArea1 dataSource={arr1} onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
+            <DraggableArea1 onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
                 {
                     arr1?.map((item, index) => {
                         return (
@@ -126,7 +126,7 @@ export const Example = () => {
                 }
             </DraggableArea1>
             <div style={{ marginTop: '10px' }}>
-                <DraggableArea2 dataSource={arr2} onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
+                <DraggableArea2 onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
                     {
                         arr2?.map((item, index) => {
                             return (
@@ -149,7 +149,6 @@ export const Example = () => {
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| dataSource                      | `any[]`            | -                                                  | data source                                                                                  |
 | onDragMove                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | when draggring in `DraggableArea`                                                                                  |
 | onDragMoveEnd                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | when drag end in `DraggableArea`                                                                                  |
 | onMoveOutChange                      | `(triggerInfo: TriggerInfo) => void`            | -                                                  | A function triggered by dragging a child element across a container to another container, used to drag across regions                                                                                  |

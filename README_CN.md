@@ -45,7 +45,7 @@ export const Example = () => {
         }
     }
 
-    return (<DraggableArea dataSource={arr1} className="flex-box" onDragMoveEnd={onDragMoveEnd}>
+    return (<DraggableArea className="flex-box" onDragMoveEnd={onDragMoveEnd}>
         {
             arr?.map((item, index) => {
                 return (
@@ -112,7 +112,7 @@ export const Example = () => {
 
     return (
         <>
-            <DraggableArea1 dataSource={arr1} onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
+            <DraggableArea1 onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
                 {
                     arr1?.map((item, index) => {
                         return (
@@ -126,7 +126,7 @@ export const Example = () => {
                 }
             </DraggableArea1>
             <div style={{ marginTop: '10px' }}>
-                <DraggableArea2 dataSource={arr2} onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
+                <DraggableArea2 onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
                     {
                         arr2?.map((item, index) => {
                             return (
@@ -149,7 +149,6 @@ export const Example = () => {
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| dataSource                      | `any[]`            | -                                                  | 渲染数据源                                                                                  |
 | onDragMove                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | 容器内拖拽时触发的函数                                                                                  |
 | onDragMoveEnd                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | 容器内拖拽结束时触发的函数                                                                                  |
 | onMoveOutChange                      | `(triggerInfo: TriggerInfo) => void`            | -                                                  | 跨容器拖出子元素到另外一个容器触发的函数，用来跨区域拖拽                                                                                  |
