@@ -6,20 +6,19 @@ English | [中文说明](./README_CN.md)
 
 # Introduction?
 
-A component that provides a drag container and drag capability, wrapping the area where the target element is located and the target element, can get the position of the current drag element and the position of the element of the target element being covered by the methods provided by the component, changing the `state` data and thus the position of the element.
+A component that provides a drag container and drag capability and no affect for `style`, wrapping the area where the target element is located and the target element, can get the position of the current drag element and the position of the element of the target element being covered by the methods provided by the component, changing the `state` data and thus the position of the element.
 
 # featrues
 
 - [x] The `DraggableArea` component creates the drag and drop area and the `DraggerItem` component gives the child element the ability to drag and drop without changing the original style of the element
 - [x] The `DraggableAreaGroup` class component makes it possible to create multiple `DraggableArea`, and drag and drop between different areas, making cross-area dragging simple.
 - [x] The drag and drop sort implementation results in a complete dependency on the external `state` data source.
-- [x] The `onDragMove` event is provided and can be relied upon to animate custom dom operations for specific scenes, no automatic sorting animation is provided at this time.
+- [x] The `onDragMove` event is provided and can be relied upon to animate custom dom operations for specific scenes
 
 # Matters
 
 1. The child element cannot be an inline element because transform does not work on inline elements!
-2. For the reason of maximum freedom of design, it is temporarily impossible to achieve automatic sorting animation during dragging and dropping, if there is a relevant algorithm please provide it (support for lists, tree lists and other layout structures)
-3. The `DraggerItem` component must be given a unique `id`
+2. The `DraggerItem` component must be given a unique `id`
 
 ### install
 ```
