@@ -1,8 +1,9 @@
 {
   "name": "react-dragger-sort",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "drag sort component",
   "main": "lib/bundle.js",
+  "types": "./lib/index.d.ts",
   "repository": "https://github.com/mezhanglei",
   "files": [
     "lib",
@@ -10,6 +11,7 @@
     "README_CN.md"
   ],
   "scripts": {
+    "build-typings": "tsc -d --emitDeclarationOnly --target esnext --removeComments false --allowJs false --declarationDir ./lib",
     "build": "cross-env NODE_ENV=production webpack --progress --config ./webpack/webpack.prod.js",
     "stats": "cross-env NODE_ENV=production webpack --progress --config ./webpack/webpack.prod.js --json > stats.json",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config ./webpack/webpack.dev.js --open",
