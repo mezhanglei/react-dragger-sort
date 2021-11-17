@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-0.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-0.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -48,7 +48,7 @@ export const Example = () => {
         {
             arr?.map((item, index) => {
                 return (
-                    <DraggerItem resizeAxis='auto' className="drag-a" key={item} id={item}>
+                    <DraggerItem className="drag-a" key={item} id={item}>
                         <div>
                             DraggerItem{item}
                         </div>
@@ -115,7 +115,7 @@ export const Example = () => {
                 {
                     arr1?.map((item, index) => {
                         return (
-                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} resizeAxis='auto' key={item} id={item}>
+                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
                                 <div>
                                     大小拖放{item}
                                 </div>
@@ -156,8 +156,8 @@ export const Example = () => {
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| dragAxis                      | `x / y / both / none`            | `both`                                                  | drag axis                                                                                  |
-| resizeAxis                      | `auto / x / y / angle / none`            | `none`                                                  | drag scaling position                                                                                  |
+| dragAxis                      | `['x', 'y']`            | -                                                  | drag axis                                                                                  |
+| resizeAxis                      | `['e', 'w', 's', 'n', 'ne', 'nw', 'se', 'sw']`            | `[]`                                                  | drag scaling position                                                                                  |
 | handle                      | `string / HTMLElement`            | -                                                  | Drag handles                                                                                  |
 | id                      | `string / number`            | -                                                  | Currently identified as unique                                                                                  |
 | onDragStart                   | `function`                        | -                                                  | drag start                                                                                           |

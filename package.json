@@ -1,6 +1,6 @@
 {
   "name": "react-dragger-sort",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "drag sort component",
   "main": "lib/bundle.js",
   "types": "./lib/index.d.ts",

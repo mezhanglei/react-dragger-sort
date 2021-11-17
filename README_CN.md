@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-0.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-0.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -48,7 +48,7 @@ export const Example = () => {
         {
             arr?.map((item, index) => {
                 return (
-                    <DraggerItem resizeAxis='auto' className="drag-a" key={item} id={item}>
+                    <DraggerItem className="drag-a" key={item} id={item}>
                         <div>
                             DraggerItem{item}
                         </div>
@@ -115,7 +115,7 @@ export const Example = () => {
                 {
                     arr1?.map((item, index) => {
                         return (
-                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} resizeAxis='auto' key={item} id={item}>
+                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
                                 <div>
                                     大小拖放{item}
                                 </div>
@@ -156,8 +156,8 @@ export const Example = () => {
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| dragAxis                      | `x / y / both / none`            | `both`                                                  | 拖拽轴向                                                                                  |
-| resizeAxis                      | `auto / x / y / angle / none`            | `none`                                                  | 拖拽缩放位置                                                                                  |
+| dragAxis                      | `['x', 'y']`            | -                                                  | 拖拽轴向                                                                                  |
+| resizeAxis                      | `['e', 'w', 's', 'n', 'ne', 'nw', 'se', 'sw']`            | `[]`                                                  | 拖拽缩放方位                                                                                  |
 | handle                      | `string / HTMLElement`            | -                                                  | 拖拽句柄                                                                                  |
 | id                      | `string / number`            | -                                                  | 当前确定的唯一身份                                                                                  |
 | onDragStart                   | `function`                        | -                                                  | 拖拽开始事件                                                                                           |

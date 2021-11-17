@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState, CSSProperties, useImperativeHandle, useContext } from 'react';
-import ResizeZoom, { EventHandler as ResizeEventHandler, ResizeAxis } from "./react-resize-zoom";
-import Draggable, { DragHandler as DragEventHandler, DragAxis } from "./react-free-draggable";
+import ResizeZoom, { DirectionCode, EventHandler as ResizeEventHandler } from "./react-resize-zoom";
+import Draggable, { DragHandler as DragEventHandler, DragAxisCode } from "./react-free-draggable";
 import { ChildrenType, ChildTypes, DraggerContextInterface, DragTypes } from "./utils/types";
 import classNames from "classnames";
 import { getInsidePosition, getOffsetWH } from "./utils/dom";
 import { DraggerContext } from './DraggableAreaBuilder';
-import ReactDOM from 'react-dom';
 
 export type EventType = MouseEvent | TouchEvent;
 export type DraggerItemHandler<E = EventType, T = DraggerItemEvent> = (e: E, data: T) => void | boolean;
@@ -30,8 +29,8 @@ export interface DraggerProps extends DraggerContextInterface {
     onResizeStart?: DraggerItemHandler;
     onResizing?: DraggerItemHandler;
     onResizeEnd?: DraggerItemHandler;
-    dragAxis?: `${DragAxis}`; // 拖拽位置
-    resizeAxis?: `${ResizeAxis}`; // 拖拽大小
+    dragAxis?: string[]; // 拖拽位置
+    resizeAxis?: string[]; // 拖拽大小
     handle?: string | HTMLElement;
     id: string | number;
 }
@@ -43,8 +42,8 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
         children,
         className,
         style,
-        dragAxis = DragAxis.both,
-        resizeAxis = ResizeAxis.NONE,
+        dragAxis = DragAxisCode,
+        resizeAxis = [],
         handle,
         id
     } = props;
@@ -79,12 +78,13 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
 
     // 可以拖拽
     const canDrag = () => {
-        return !([DragAxis.none] as string[])?.includes(dragAxis)
+        return DragAxisCode?.some((axis) => dragAxis?.includes(axis))
     }
 
     // 可以调整尺寸
     const canResize = () => {
-        return !([ResizeAxis.NONE] as string[])?.includes(resizeAxis)
+        const canUse = DirectionCode?.some((dir) => resizeAxis?.includes(dir));
+        return canUse;
     }
 
     const onDragStart: DragEventHandler = (e, data) => {
