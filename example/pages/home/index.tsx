@@ -54,7 +54,7 @@ const Home: React.FC<any> = (props) => {
                 {
                     arr1?.map((item, index) => {
                         return (
-                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
+                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} resizeAxis={['w','e']} key={item} id={item}>
                                 <div>
                                     大小拖放{item}
                                 </div>
