@@ -47,7 +47,7 @@ const buildDraggableArea: DraggableAreaBuilder = (areaProps) => {
         }
 
         componentWillUnmount() {
-            unsubscribe(this.parent);
+            unsubscribe && unsubscribe(this.parent);
         }
 
         // 同区域内拖拽返回覆盖目标
@@ -56,7 +56,7 @@ const buildDraggableArea: DraggableAreaBuilder = (areaProps) => {
             this.throttleFn(() => {
                 // 判断是不是区域内 
                 const parent = document?.body;
-                const areaRect = getInsidePosition(this.parent, parent);
+                const areaRect = this.parent && getInsidePosition(this.parent, parent);
                 const x = tag?.x || 0;
                 const y = tag?.y || 0;
                 if (areaRect && x > areaRect?.left && x < areaRect?.right && y > areaRect?.top && y < areaRect?.bottom) {

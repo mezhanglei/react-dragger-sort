@@ -9,7 +9,7 @@
     return function (...args: any[]) {
         if (!timer) {
             timer = setTimeout(function () {
-                fn.apply(this, args);
+                fn?.(...args);
                 timer = null;
             }, time);
         }
