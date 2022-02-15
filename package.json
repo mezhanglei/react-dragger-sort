@@ -1,6 +1,6 @@
 {
   "name": "react-dragger-sort",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "drag sort component",
   "main": "lib/bundle.js",
   "types": "./lib/index.d.ts",
@@ -91,7 +91,7 @@
     "@types/react-router-dom": "^5.1.7",
     "antd": "^4.4.2",
     "classnames": "^2.2.6",
-    "immer": "^9.0.5",
+    "fast-copy": "^2.1.1",
     "object-fit-images": "^3.2.4",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
