@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-0.1.5-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-0.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -10,10 +10,10 @@
 
 # features
 
-- [x] 通过`DraggableArea`组件创建拖拽区域，`DraggerItem`组件赋予子元素拖拽能力，不改变元素的原有样式
-- [x] 通过`DraggableAreaGroup`类组件可以创建多个`DraggableArea`组件，不同的区域之间也可以进行拖拽，实现跨区域拖拽很简单。
-- [x] 拖拽排序实现结果完全依赖外部的`state`数据源。
-- [x] 提供了`onDragMove`事件，可以依赖这个事件来对特定场景进行定制的dom操作动画.
+- 通过`DraggableArea`组件创建拖拽区域，`DraggerItem`组件赋予子元素拖拽能力，不改变元素的原有样式
+- 通过`DraggableAreaGroup`类组件可以创建多个`DraggableArea`组件，不同的区域之间也可以进行拖拽，实现跨区域拖拽很简单。
+- 拖拽排序实现结果完全依赖外部的`state`数据源。
+- 提供了`onDragMove`事件，可以依赖这个事件来对特定场景进行定制的dom操作动画.
 
 # 注意事项
 
@@ -157,15 +157,11 @@ export const Example = () => {
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | dragAxis                      | `['x', 'y']`            | -                                                  | 拖拽轴向                                                                                  |
-| resizeAxis                      | `['e', 'w', 's', 'n', 'ne', 'nw', 'se', 'sw']`            | `[]`                                                  | 拖拽缩放方位                                                                                  |
 | handle                      | `string / HTMLElement`            | -                                                  | 拖拽句柄                                                                                  |
 | id                      | `string / number`            | -                                                  | 当前确定的唯一身份                                                                                  |
 | onDragStart                   | `function`                        | -                                                  | 拖拽开始事件                                                                                           |
 | onDrag                        | `function`                        | -                                                  | 拖拽进行事件                      |
 | onDragEnd                    | `function`                        | -                                                  | 拖拽结束事件                                                                                  |
-| onResizeStart                 | `function`                        | -                                                  | 拖拽缩放开始事件,renturn `false` 可以阻止该事件;                                                                                          |
-| onResizing                | `function`                        | -                                                  | 拖拽缩放进行事件,renturn `false` 可以阻止该事件;                      |
-| onResizeEnd                   | `function`                        | -                                                  | 拖拽缩放结束事件,renturn `false` 可以阻止该事件;                                                                                  |
 
 
 

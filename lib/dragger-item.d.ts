@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { ChildrenType, DraggerContextInterface, DragTypes } from "./utils/types";
+import { ChildrenType, DragTypes } from "./utils/types";
 export declare type EventType = MouseEvent | TouchEvent;
 export declare type DraggerItemHandler<E = EventType, T = DraggerItemEvent> = (e: E, data: T) => void | boolean;
 export interface DraggerItemEvent {
@@ -13,18 +13,14 @@ export interface DraggerItemEvent {
     dragType?: DragTypes;
     id: string | number;
 }
-export interface DraggerProps extends DraggerContextInterface {
+export interface DraggerProps {
     children: ChildrenType;
     className?: string;
     style?: CSSProperties;
     onDragStart?: DraggerItemHandler;
     onDrag?: DraggerItemHandler;
     onDragEnd?: DraggerItemHandler;
-    onResizeStart?: DraggerItemHandler;
-    onResizing?: DraggerItemHandler;
-    onResizeEnd?: DraggerItemHandler;
     dragAxis?: string[];
-    resizeAxis?: string[];
     handle?: string | HTMLElement;
     id: string | number;
 }

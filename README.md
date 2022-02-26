@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-0.1.5-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-0.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -10,10 +10,10 @@ A component that provides a drag container and drag capability and no affect for
 
 # featrues
 
-- [x] The `DraggableArea` component creates the drag and drop area and the `DraggerItem` component gives the child element the ability to drag and drop without changing the original style of the element
-- [x] The `DraggableAreaGroup` class component makes it possible to create multiple `DraggableArea`, and drag and drop between different areas, making cross-area dragging simple.
-- [x] The drag and drop sort implementation results in a complete dependency on the external `state` data source.
-- [x] The `onDragMove` event is provided and can be relied upon to animate custom dom operations for specific scenes
+- The `DraggableArea` component creates the drag and drop area and the `DraggerItem` component gives the child element the ability to drag and drop without changing the original style of the element
+- The `DraggableAreaGroup` class component makes it possible to create multiple `DraggableArea`, and drag and drop between different areas, making cross-area dragging simple.
+- The drag and drop sort implementation results in a complete dependency on the external `state` data source.
+- The `onDragMove` event is provided and can be relied upon to animate custom dom operations for specific scenes
 
 # Matters
 
@@ -157,15 +157,8 @@ export const Example = () => {
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | dragAxis                      | `['x', 'y']`            | -                                                  | drag axis                                                                                  |
-| resizeAxis                      | `['e', 'w', 's', 'n', 'ne', 'nw', 'se', 'sw']`            | `[]`                                                  | drag scaling position                                                                                  |
 | handle                      | `string / HTMLElement`            | -                                                  | Drag handles                                                                                  |
 | id                      | `string / number`            | -                                                  | Currently identified as unique                                                                                  |
 | onDragStart                   | `function`                        | -                                                  | drag start                                                                                           |
 | onDrag                        | `function`                        | -                                                  | draging                      |
 | onDragEnd                    | `function`                        | -                                                  | drag end                                                                                  |
-| onResizeStart                 | `function`                        | -                                                  | Drag scaling the start event,renturn `false` can stop it;                                                                                         |
-| onResizing                | `function`                        | -                                                  | Drag scaling events, renturn `false` can stop it;                      |
-| onResizeEnd                   | `function`                        | -                                                  | Drag scaling end the event,renturn `false` can stop it;                                                                                  |
-
-
-
