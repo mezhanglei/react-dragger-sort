@@ -1,18 +1,20 @@
 import { CSSProperties } from "react";
-/**
- * 返回元素的视窗内的位置
- * @param el
- * @returns
- */
-export declare function getRect(el: HTMLElement): DOMRect;
-export interface PositionType {
-    width: number;
-    height: number;
-    x: number;
-    y: number;
+export interface BoundingRect {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
 }
-export declare const isOverLay: (tag: PositionType, item: PositionType) => boolean;
+export declare const isOverLay: (move: BoundingRect, other: BoundingRect) => boolean;
+export declare function getDistance(move: BoundingRect, other: BoundingRect): number;
+export declare const getDirection: (move: BoundingRect, other: BoundingRect) => string[];
 export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => void;
+/**
+* 返回元素的视窗内的位置
+* @param el
+* @returns
+*/
+export declare function getRect(el: HTMLElement): DOMRect;
 export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
     x: number;
     y: number;

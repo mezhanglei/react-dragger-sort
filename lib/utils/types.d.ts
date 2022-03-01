@@ -7,49 +7,56 @@ export declare enum DragTypes {
     draging = "draging",
     dragEnd = "dragEnd"
 }
-export interface ChildTypes {
+export interface DraggerItemType {
     node: HTMLElement;
     id: string | number;
 }
-export interface TagInterface extends DraggerItemEvent {
+export interface MoveChild extends DraggerItemEvent {
     area?: HTMLElement;
 }
-export declare type DragMoveHandle = (tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void | boolean;
+export declare enum CollisionDirection {
+    Top = "top",
+    Bottom = "bottom",
+    Left = "left",
+    Right = "right"
+}
+export interface DragParams {
+    e: EventType;
+    target: MoveChild;
+    area?: HTMLElement;
+    collision?: DraggerItemType;
+}
+export declare type DragMoveHandle = (params: DragParams) => void | boolean;
 export declare type listenEvent = {
-    listener: (tag: TagInterface, e: EventType) => void | boolean;
+    listener: (moveChild: MoveChild, e: EventType) => void | boolean;
     area: HTMLElement | null;
 };
-export declare type TriggerFuncHandle<T = TagInterface, E = EventType> = (tag: T, e: E) => boolean;
+export declare type TriggerFuncHandle<T = MoveChild, E = EventType> = (moveChild: T, e: E) => boolean;
 export declare type ListenFuncHandle = (area: HTMLElement, addEvent: listenEvent['listener']) => void;
 export declare type DraggableAreaBuilder = (props?: {
     triggerFunc: TriggerFuncHandle;
     subscribe: ListenFuncHandle;
     unsubscribe: (area?: HTMLElement | null) => void;
-    draggerItems: ChildTypes[];
+    draggerItems: DraggerItemType[];
 }) => any;
 export interface DraggerContextInterface {
     onDragStart?: DraggerItemHandler;
     onDrag?: DraggerItemHandler;
     onDragEnd?: DraggerItemHandler;
-    coverChild?: ChildTypes;
-    draggerItems?: ChildTypes[];
-    zIndexRange?: [number, number];
-}
-export interface TriggerInfo {
-    area?: HTMLElement;
-    coverChild?: ChildTypes;
-    moveTag: TagInterface;
+    collision?: DraggerItemType;
+    draggerItems?: DraggerItemType[];
 }
 export interface DraggableAreaProps {
     className?: string;
     style?: CSSProperties;
     children: any;
     dataSource: any;
+    onDragMoveStart?: DragMoveHandle;
     onDragMove?: DragMoveHandle;
     onDragMoveEnd?: DragMoveHandle;
-    onMoveOutChange?: (triggerInfo: TriggerInfo) => void | boolean;
-    onMoveInChange?: (triggerInfo: TriggerInfo) => void | boolean;
+    onMoveOutChange?: DragMoveHandle;
+    onMoveInChange?: DragMoveHandle;
 }
 export interface DraggableAreaState {
-    coverChild?: ChildTypes;
+    collision?: DraggerItemType;
 }

@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-0.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-0.3.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -13,7 +13,6 @@ A component that provides a drag container and drag capability and no affect for
 - The `DraggableArea` component creates the drag and drop area and the `DraggerItem` component gives the child element the ability to drag and drop without changing the original style of the element
 - The `DraggableAreaGroup` class component makes it possible to create multiple `DraggableArea`, and drag and drop between different areas, making cross-area dragging simple.
 - The drag and drop sort implementation results in a complete dependency on the external `state` data source.
-- The `onDragMove` event is provided and can be relied upon to animate custom dom operations for specific scenes
 
 # Matters
 
@@ -35,14 +34,14 @@ export const Example = () => {
 
    const [arr, setArr] = useState([1, 2, 3, 4, 5, 6, 7]);
 
-   const onDragMoveEnd: DragMoveHandle = (tag, coverChild) => {
-        if (tag && coverChild) {
-            const preIndex = arr?.findIndex((item) => item === tag?.id);
-            const nextIndex = arr?.findIndex((item) => item === coverChild?.id)
-            const newArr = arrayMove(arr, preIndex, nextIndex);
-            setArr(newArr);
-        }
-    }
+   const onDragMoveEnd1: DragMoveHandle = ({ target, collision }) => {
+      if (target && collision) {
+        const preIndex = arr?.findIndex((item) => item === target?.id);
+        const nextIndex = arr?.findIndex((item) => item === collision?.id)
+        const newArr = arrayMove(arr, preIndex, nextIndex);
+        setArr(newArr);
+      }
+    };
 
     return (<DraggableArea className="flex-box" onDragMoveEnd={onDragMoveEnd}>
         {
@@ -72,72 +71,91 @@ export const Example = () => {
    const [arr1, setArr1] = useState([1, 2, 3, 4, 5, 6, 7]);
    const [arr2, setArr2] = useState([8, 9, 10, 11, 12, 13, 14]);
 
-    const onDragMoveEnd1: DragMoveHandle = (tag, coverChild) => {
-        if (tag && coverChild) {
-            const preIndex = arr1?.findIndex((item) => item === tag?.id);
-            const nextIndex = arr1?.findIndex((item) => item === coverChild?.id)
-            const newArr = arrayMove(arr1, preIndex, nextIndex);
-            setArr1(newArr);
-        }
-    }
+   const onDragMoveEnd1: DragMoveHandle = ({ target, collision }) => {
+      if (target && collision) {
+        const preIndex = arr1?.findIndex((item) => item === target?.id);
+        const nextIndex = arr1?.findIndex((item) => item === collision?.id)
+        const newArr = arrayMove(arr1, preIndex, nextIndex);
+        setArr1(newArr);
+      }
+    };
 
-    const onDragMoveEnd2: DragMoveHandle = (tag, coverChild, e) => {
-        if (tag && coverChild) {
-            const preIndex = arr2?.findIndex((item) => item === tag?.id);
-            const nextIndex = arr2?.findIndex((item) => item === coverChild?.id)
-            const newArr = arrayMove(arr2, preIndex, nextIndex);
-            setArr2(newArr);
-        }
-    }
+    const onDragMoveEnd2: DragMoveHandle = ({ target, collision }) => {
+       if (target && collision) {
+         const preIndex = arr2?.findIndex((item) => item === target?.id);
+         const nextIndex = arr2?.findIndex((item) => item === collision?.id)
+         const newArr = arrayMove(arr2, preIndex, nextIndex);
+         setArr2(newArr);
+       }
+    };
 
-    const onMoveOutChange = (data) => {
-        if (data) {
-            const newArr1 = [...arr1];
-            const index = arr1?.findIndex((item) => item === data?.moveTag?.id)
-            newArr1?.splice(index, 1)
-            setArr1(newArr1);
-        }
-    }
+    const onMoveOutChange1 = (data) => {
+       if (data) {
+         const newArr1 = [...arr1];
+         const index = arr1?.findIndex((item) => item === data?.target?.id);
+         newArr1?.splice(index, 1)
+         setArr1(newArr1);
+       }
+    };
 
-    const onMoveInChange = (data) => {
-        if (data) {
-            const newArr2 = [...arr2];
-            const index = arr1?.findIndex((item) => item === data?.moveTag?.id);
-            const nextIndex = newArr2?.findIndex((item) => item === data?.coverChild?.id);
-            newArr2?.splice(nextIndex, 0, arr1?.[index]);
-            setArr2(newArr2);
-        }
-    }
+    const onMoveInChange1 = (data) => {
+       if (data) {
+         const newArr1 = [...arr1];
+         const preIndex = arr2?.findIndex((item) => item === data?.target?.id);
+         const nextIndex = newArr1?.findIndex((item) => item === data?.collision?.id);
+         newArr1?.splice(nextIndex + 1, 0, arr2?.[preIndex]);
+         setArr1(newArr1);
+       }
+    };
+
+    const onMoveInChange2 = (data) => {
+       if (data) {
+         const newArr2 = [...arr2];
+         const index = arr1?.findIndex((item) => item === data?.target?.id);
+         const nextIndex = newArr2?.findIndex((item) => item === data?.collision?.id);
+         newArr2?.splice(nextIndex + 1, 0, arr1?.[index]);
+         setArr2(newArr2);
+       }
+    };
+
+    const onMoveOutChange2 = (data) => {
+       if (data) {
+         const newArr2 = [...arr2];
+         const index = arr2?.findIndex((item) => item === data?.target?.id);
+         newArr2?.splice(index, 1)
+         setArr2(newArr2);
+       }
+    };
 
     return (
         <>
-            <DraggableArea1 onMoveOutChange={onMoveOutChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
-                {
-                    arr1?.map((item, index) => {
-                        return (
-                            <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
-                                <div>
-                                    大小拖放{item}
-                                </div>
-                            </DraggerItem>
-                        )
-                    })
-                }
+            <DraggableArea1 onMoveInChange={onMoveInChange1} onMoveOutChange={onMoveOutChange1} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
+               {
+                 arr1?.map((item, index) => {
+                   return (
+                     <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
+                       <div>
+                         大小拖放{item}
+                       </div>
+                     </DraggerItem>
+                   )
+                 })
+               }
             </DraggableArea1>
             <div style={{ marginTop: '10px' }}>
-                <DraggableArea2 onMoveInChange={onMoveInChange} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd2}>
-                    {
-                        arr2?.map((item, index) => {
-                            return (
-                                <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
-                                    <div>
-                                        大小拖放{item}
-                                    </div>
-                                </DraggerItem>
-                            )
-                        })
-                    }
-                </DraggableArea2>
+              <DraggableArea2 onMoveInChange={onMoveInChange2} onMoveOutChange={onMoveOutChange2} style={{ display: 'flex', flexWrap: 'wrap', background: 'green', width: '200px' }} onDragMoveEnd=      {onDragMoveEnd2}>
+                {
+                  arr2?.map((item, index) => {
+                    return (
+                      <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
+                        <div>
+                          大小拖放{item}
+                        </div>
+                      </DraggerItem>
+                    )
+                  })
+                }
+              </DraggableArea2>
             </div>
         </>
     );
@@ -148,10 +166,11 @@ export const Example = () => {
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| onDragMove                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | when draggring in `DraggableArea`                                                                                  |
-| onDragMoveEnd                      | `(tag: TagInterface, coverChild?: ChildTypes, e?: EventType) => void`            | -                                                  | when drag end in `DraggableArea`                                                                                  |
-| onMoveOutChange                      | `(triggerInfo: TriggerInfo) => void`            | -                                                  | A function triggered by dragging a child element across a container to another container, used to drag across regions                                                                                  |
-| onMoveInChange                      | `(triggerInfo: TriggerInfo) => void`            | -                                                  | Cross-container drag-and-drop function triggered by another container into the current container, used for cross-region drag-and-drop                                                                                  |
+| onDragMoveStart                      | `({e,area,target, collision}) => void`            | -                                                  | when drag start in `DraggableArea`                                                                                  |
+| onDragMove                      | `({e,area,target, collision}) => void`            | -                                                  | when draggring in `DraggableArea`                                                                                  |
+| onDragMoveEnd                      | `({e,area,target, collision}) => void`            | -                                                  | when drag end in `DraggableArea`                                                                                  |
+| onMoveOutChange                      | `({e,area,target, collision}) => void`            | -                                                  | A function triggered by dragging a child element across a container to another container, used to drag across regions                                                                                  |
+| onMoveInChange                      | `({e,area,target, collision}) => void`            | -                                                  | Cross-container drag-and-drop function triggered by another container into the current container, used for cross-region drag-and-drop                                                                                  |
 ## DraggerItem Component Attributes
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |

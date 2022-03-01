@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, CSSProperties, useImperativeHandle, useContext } from 'react';
 import Draggable, { DragHandler as DragEventHandler, DragAxisCode } from "react-free-draggable";
-import { ChildrenType, ChildTypes, DragTypes } from "./utils/types";
+import { ChildrenType, DragTypes, DraggerItemType } from "./utils/types";
 import classNames from "classnames";
 import { getOffsetWH } from "./utils/dom";
 import { DraggerContext } from './DraggableAreaBuilder';
@@ -18,6 +18,7 @@ export interface DraggerItemEvent {
   dragType?: DragTypes;
   id: string | number;
 }
+
 export interface DraggerProps {
   children: ChildrenType;
   className?: string;
@@ -43,12 +44,10 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
   } = props;
 
   const [dragType, setDragType] = useState<DragTypes>();
-  const context = useContext(DraggerContext)
-
-  const { zIndexRange, coverChild, draggerItems } = context;
-
+  const context = useContext(DraggerContext);
+  const { draggerItems, collision } = context;
   const nodeRef = useRef<any>();
-  const [node, setNode] = useState<any>();
+  const lastZIndexRef = useRef<string>('');
 
   useImperativeHandle(ref, () => ({
     node: nodeRef?.current
@@ -56,22 +55,19 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
 
   useEffect(() => {
     const node = nodeRef.current;
-    setNode(node);
     draggerItems?.push({ node, id });
   }, []);
 
-  const isOver = (coverChild?: ChildTypes) => {
-    if (coverChild?.node === node) {
-      return true;
-    } else {
-      return false;
-    }
+  const isOver = (collision?: DraggerItemType, child?: HTMLElement) => {
+    if (collision && collision?.node === child) {
+      return true
+    };
   }
 
   // 可以拖拽
   const canDrag = () => {
-    return DragAxisCode?.some((axis) => dragAxis?.includes(axis))
-  }
+    return DragAxisCode?.some((axis) => dragAxis?.includes(axis));
+  };
 
   const onDragStart: DragEventHandler = (e, data) => {
     if (!data || !canDrag()) return false;
@@ -79,6 +75,7 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
     const node = data?.node;
     const offsetWH = getOffsetWH(node);
     if (!offsetWH) return false;
+    lastZIndexRef.current = data?.node?.style?.zIndex;
     return context?.onDragStart && context?.onDragStart(e, {
       width: offsetWH?.width,
       height: offsetWH?.height,
@@ -90,7 +87,7 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
       dragType: DragTypes.dragStart,
       id
     });
-  }
+  };
 
   const onDrag: DragEventHandler = (e, data) => {
     if (!data || !canDrag()) return false;
@@ -98,6 +95,9 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
     setDragType(DragTypes.draging);
     const offsetWH = getOffsetWH(node);
     if (!offsetWH) return false;
+    if (data.node?.style?.zIndex !== '999') {
+      data.node.style.zIndex = '999';
+    }
     return context?.onDrag && context?.onDrag(e, {
       width: offsetWH?.width,
       height: offsetWH?.height,
@@ -109,7 +109,7 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
       dragType: DragTypes.draging,
       id
     });
-  }
+  };
 
   const onDragStop: DragEventHandler = (e, data) => {
     if (!data || !canDrag()) return false;
@@ -117,6 +117,7 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
     const node = data?.node;
     const offsetWH = getOffsetWH(node);
     if (!offsetWH) return false;
+    data.node.style.zIndex = lastZIndexRef.current;
     return context?.onDragEnd && context?.onDragEnd(e, {
       width: offsetWH?.width,
       height: offsetWH?.height,
@@ -128,7 +129,7 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
       dragType: DragTypes.dragEnd,
       id
     });
-  }
+  };
 
   const cls = classNames((children?.props?.className || ''), className);
 
@@ -143,14 +144,13 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
       onDragStop={onDragStop}
       handle={handle}
       fixed
-      zIndexRange={zIndexRange}
     >
       {
         React.cloneElement(React.Children.only(children), {
           style: {
             ...children.props.style,
             ...style,
-            opacity: isOver(coverChild) ? '0.8' : (style?.opacity || children?.props?.style?.opacity),
+            opacity: isOver(collision, nodeRef.current) ? '0.8' : children?.props?.style?.opacity,
             transition: dragType ? '' : 'all .2s ease-out'
           }
         })
@@ -160,6 +160,5 @@ const DraggerItem = React.forwardRef<any, DraggerProps>((props, ref) => {
 
   return NormalItem;
 });
-
 
 export default DraggerItem;
