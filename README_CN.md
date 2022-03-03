@@ -80,7 +80,7 @@ export const Example = () => {
   };
 
     return (
-      <DndContextProvider onDragStart={onDragStart} onDrag={onDragMove} onDragEnd={onDragEnd}>
+      <DndContextProvider onDragEnd={onDragEnd}>
         <DndArea collect={arr1} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }}>
           {
             arr1?.map((item, index) => {
