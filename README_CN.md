@@ -14,9 +14,9 @@
 
 # features
 组件包括三个部分：`DndContextProvider`组件, `DndArea`组件和`DndArea.Item`组件。
-- 1. `DndContextProvider`组件：提供三个拖拽的回调函数，用来修改拖拽后的状态, 根据拖拽回调函数参数中的`source`(拖拽源)和`target`(放置目标)来判断是否是同一区域内的拖拽。
-- 2. `DndArea`组件：提供可拖放的区域，拖拽行为在里面进行。支持不同的`DndArea`之间相互跨域拖拽
-- 3. `DndArea.Item`组件：包裹需要拖拽的元素，使其可被拖放。注意此组件必须赋予唯一`id`;
+- `DndContextProvider`组件：提供三个拖拽的回调函数，用来修改拖拽后的状态, 根据拖拽回调函数参数中的`source`(拖拽源)和`target`(放置目标)来判断是否是同一区域内的拖拽。
+- `DndArea`组件：提供可拖放的区域，拖拽行为在里面进行。支持不同的`DndArea`之间相互跨域拖拽
+- `DndArea.Item`组件：包裹需要拖拽的元素，使其可被拖放。注意此组件必须赋予唯一`id`;
 
 ### 快速安装
 ```

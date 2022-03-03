@@ -14,9 +14,9 @@ The architecture design has been redesigned to better support various scenarios 
 
 # features
 The component consists of three parts: the `DndContextProvider` component, the `DndArea` component and the `DndArea.Item` component.
-- 1. `DndContextProvider` component: provides three callback functions to modify the state after dragging and dropping. Determine if the drag is within the same area based on the `source` (source of the drag) and `target` (target of the placement) in the drag callback function parameters.
-- 2. `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`
-- 3. `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given a unique `id`;
+- `DndContextProvider` component: provides three callback functions to modify the state after dragging and dropping. Determine if the drag is within the same area based on the `source` (source of the drag) and `target` (target of the placement) in the drag callback function parameters.
+- `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`
+- `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given a unique `id`;
 
 ### install
 ```
