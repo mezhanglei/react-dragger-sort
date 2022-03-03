@@ -2,22 +2,21 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-0.3.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-1.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
 提供拖拽容器和拖拽能力的组件，包裹目标元素所在区域和目标元素而不影响元素的样式布局，可以通过组件提供的方法获取当前拖拽元素的位置和被覆盖的目标元素元素位置，改变`state`数据从而改变元素位置。
 
+# 更新
+
+为了更好的支持拖拽中的各种场景，架构设计进行了重新设计，新设计更简单的实现拖拽功能，请使用旧版本的及时更新到`1.0.0`版本。
+
 # features
-
-- 通过`DraggableArea`组件创建拖拽区域，`DraggerItem`组件赋予子元素拖拽能力，不改变元素的原有样式
-- 通过`DraggableAreaGroup`类组件可以创建多个`DraggableArea`组件，不同的区域之间也可以进行拖拽，实现跨区域拖拽很简单。
-- 拖拽排序实现结果完全依赖外部的`state`数据源。
-
-# 注意事项
-
-1. 子元素不能为行内(inline)类型元素,因为transform对行内元素无效!
-2. `DraggerItem`组件必须赋予唯一`id`;
+组件包括三个部分：`DndContextProvider`组件, `DndArea`组件和`DndArea.Item`组件。
+- 1. `DndContextProvider`组件：提供三个拖拽的回调函数，用来修改拖拽后的状态, 根据拖拽回调函数参数中的`source`(拖拽源)和`target`(放置目标)来判断是否是同一区域内的拖拽。
+- 2. `DndArea`组件：提供可拖放的区域，拖拽行为在里面进行。支持不同的`DndArea`之间相互跨域拖拽
+- 3. `DndArea.Item`组件：包裹需要拖拽的元素，使其可被拖放。注意此组件必须赋予唯一`id`;
 
 ### 快速安装
 ```
@@ -26,164 +25,109 @@ npm install --save react-dragger-sort
 yarn add react-dragger-sort
 ```
 
-### 同区域内的拖拽排序示例
+### demo
 ```javascript
-import { DraggableAreaGroup, DraggerItem, DragMoveHandle, arrayMove } from "react-dragger-sort";
+import DndArea, { DndContextProvider, arrayMove, isObjectEqual, DragMoveHandle } from "react-dragger-sort";
 
 export const Example = () => {
 
-  const [arr, setArr] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [arr1, setArr1] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [arr2, setArr2] = useState([8, 9, 10, 11, 12, 13, 14]);
 
-   const onDragMoveEnd1: DragMoveHandle = ({ target, collision }) => {
-      if (target && collision) {
-        const preIndex = arr?.findIndex((item) => item === target?.id);
-        const nextIndex = arr?.findIndex((item) => item === collision?.id)
-        const newArr = arrayMove(arr, preIndex, nextIndex);
-        setArr(newArr);
-      }
-    };
-
-    return (<DraggableArea className="flex-box" onDragMoveEnd={onDragMoveEnd}>
-        {
-            arr?.map((item, index) => {
-                return (
-                    <DraggerItem className="drag-a" key={item} id={item}>
-                        <div>
-                            DraggerItem{item}
-                        </div>
-                    </DraggerItem>
-                )
-            })
+  const onDragEnd: DragMoveHandle = (params) => {
+    const { source, target } = params;
+    if (!source.area || !target.area) return;
+    const sourceItem = source.item;
+    const targetItem = target.item;
+    const list = [{ data: arr1, setData: setArr1 }, { data: arr2, setData: setArr2 }];
+    // Drag and drop within the same area
+    if (source.area === target.area) {
+      list?.map((listItem) => {
+        const { data, setData } = listItem;
+        if (isObjectEqual(data, source.collect)) {
+          const preIndex = data?.findIndex((item) => item === sourceItem.id);
+          const nextIndex = targetItem ? data?.findIndex((item) => item === targetItem?.id) : data.length;
+          if (preIndex >= 0 && nextIndex >= 0) {
+            const newArr = arrayMove(data, preIndex, nextIndex);
+            setData(newArr);
+          }
         }
-    </DraggableArea>)
-}
-```
-### 不同区域跨区域的拖拽排序示例
-```javascript
-import { DraggableAreaGroup, DraggerItem, DragMoveHandle, arrayMove } from "react-dragger-sort";
-
-const DraggableAreaGroups = new DraggableAreaGroup();
-const DraggableArea1 = DraggableAreaGroups.create()
-const DraggableArea2 = DraggableAreaGroups.create()
-
-export const Example = () => {
-
-   const [arr1, setArr1] = useState([1, 2, 3, 4, 5, 6, 7]);
-   const [arr2, setArr2] = useState([8, 9, 10, 11, 12, 13, 14]);
-
-   const onDragMoveEnd1: DragMoveHandle = ({ target, collision }) => {
-      if (target && collision) {
-        const preIndex = arr1?.findIndex((item) => item === target?.id);
-        const nextIndex = arr1?.findIndex((item) => item === collision?.id)
-        const newArr = arrayMove(arr1, preIndex, nextIndex);
-        setArr1(newArr);
-      }
-    };
-
-    const onDragMoveEnd2: DragMoveHandle = ({ target, collision }) => {
-       if (target && collision) {
-         const preIndex = arr2?.findIndex((item) => item === target?.id);
-         const nextIndex = arr2?.findIndex((item) => item === collision?.id)
-         const newArr = arrayMove(arr2, preIndex, nextIndex);
-         setArr2(newArr);
-       }
-    };
-
-    const onMoveOutChange1 = (data) => {
-       if (data) {
-         const newArr1 = [...arr1];
-         const index = arr1?.findIndex((item) => item === data?.target?.id);
-         newArr1?.splice(index, 1)
-         setArr1(newArr1);
-       }
-    };
-
-    const onMoveInChange1 = (data) => {
-       if (data) {
-         const newArr1 = [...arr1];
-         const preIndex = arr2?.findIndex((item) => item === data?.target?.id);
-         const nextIndex = newArr1?.findIndex((item) => item === data?.collision?.id);
-         newArr1?.splice(nextIndex + 1, 0, arr2?.[preIndex]);
-         setArr1(newArr1);
-       }
-    };
-
-    const onMoveInChange2 = (data) => {
-       if (data) {
-         const newArr2 = [...arr2];
-         const index = arr1?.findIndex((item) => item === data?.target?.id);
-         const nextIndex = newArr2?.findIndex((item) => item === data?.collision?.id);
-         newArr2?.splice(nextIndex + 1, 0, arr1?.[index]);
-         setArr2(newArr2);
-       }
-    };
-
-    const onMoveOutChange2 = (data) => {
-       if (data) {
-         const newArr2 = [...arr2];
-         const index = arr2?.findIndex((item) => item === data?.target?.id);
-         newArr2?.splice(index, 1)
-         setArr2(newArr2);
-       }
-    };
+      });
+      // Drag and drop within the diffrent area
+    } else {
+      list?.map((listItem) => {
+        const { data, setData } = listItem;
+        // remove
+        if (isObjectEqual(data, source.collect)) {
+          const cloneData = [...data];
+          const index = data?.findIndex((item) => item === sourceItem?.id);
+          cloneData?.splice(index, 1);
+          setData(cloneData);
+        }
+        // add
+        if (isObjectEqual(data, target.collect)) {
+          const cloneData = [...data];
+          const sourceData = source.collect as any[];
+          const sourceIndex = sourceData?.findIndex((item) => item === sourceItem?.id);
+          const nextIndex = targetItem ? data?.findIndex((item) => item === targetItem?.id) : data?.length;
+          if (sourceIndex >= 0 && nextIndex >= 0) {
+            cloneData?.splice(nextIndex + 1, 0, sourceData?.[sourceIndex]);
+            setData(cloneData);
+          }
+        }
+      });
+    }
+  };
 
     return (
-        <>
-            <DraggableArea1 onMoveInChange={onMoveInChange1} onMoveOutChange={onMoveOutChange1} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }} onDragMoveEnd={onDragMoveEnd1}>
-               {
-                 arr1?.map((item, index) => {
-                   return (
-                     <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
-                       <div>
-                         大小拖放{item}
-                       </div>
-                     </DraggerItem>
-                   )
-                 })
-               }
-            </DraggableArea1>
-            <div style={{ marginTop: '10px' }}>
-              <DraggableArea2 onMoveInChange={onMoveInChange2} onMoveOutChange={onMoveOutChange2} style={{ display: 'flex', flexWrap: 'wrap', background: 'green', width: '200px' }} onDragMoveEnd=      {onDragMoveEnd2}>
-                {
-                  arr2?.map((item, index) => {
-                    return (
-                      <DraggerItem style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
-                        <div>
-                          大小拖放{item}
-                        </div>
-                      </DraggerItem>
-                    )
-                  })
-                }
-              </DraggableArea2>
-            </div>
-        </>
-    );
+      <DndContextProvider onDragStart={onDragStart} onDrag={onDragMove} onDragEnd={onDragEnd}>
+        <DndArea collect={arr1} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }}>
+          {
+            arr1?.map((item, index) => {
+              return (
+                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
+                  <div>
+                    {item}
+                  </div>
+                </DndArea.Item>
+              );
+            })
+          }
+        </DndArea>
+        <div style={{ marginTop: '10px' }}>
+          <DndArea collect={arr2} style={{ display: 'flex', flexWrap: 'wrap', background: 'green', width: '200px' }}>
+            {
+              arr2?.map((item, index) => {
+                return (
+                  <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
+                    <div>
+                      {item}
+                    </div>
+                  </DndArea.Item>
+                );
+              })
+            }
+          </DndArea>
+        </div>
+      </DndContextProvider>
+    )
 }
 ```
 
-## DraggableArea组件属性说明
+## DndContextProvider
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| onDragMoveStart                      | `({e,area,target, collision}) => void`            | -                                                  | 容器内拖拽开始时触发的函数                                                                                  |
-| onDragMove                      | `({e,area,target, collision}) => void`            | -                                                  | 容器内拖拽时触发的函数                                                                                  |
-| onDragMoveEnd                      | `({e,area,target, collision}) => void`            | -                                                  | 容器内拖拽结束时触发的函数                                                                                  |
-| onMoveOutChange                      | `({e,area,target, collision}) => void`            | -                                                  | 跨容器拖出子元素到另外一个容器触发的函数，用来跨区域拖拽                                                                                  |
-| onMoveInChange                      | `({e,area,target, collision}) => void`            | -                                                  | 跨容器别的容器拖拽进当前容器触发的函数，用来跨区域拖拽                                                                                  |
-## DraggerItem组件属性说明
+| onDragStart                      | `({e, source }) => void`            | -                                                  | 拖拽开始时触发的函数                                                                                  |
+| onDrag                      | `({e, source, target}) => void`            | -                                                  | 拖拽时触发的函数                                                                                  |
+| onDragEnd                      | `({e, source, target}) => void`            | -                                                  | 拖拽结束时触发的函数                                                                                  |
+
+## DndArea
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| dragAxis                      | `['x', 'y']`            | -                                                  | 拖拽轴向                                                                                  |
-| handle                      | `string / HTMLElement`            | -                                                  | 拖拽句柄                                                                                  |
-| id                      | `string / number`            | -                                                  | 当前确定的唯一身份                                                                                  |
-| onDragStart                   | `function`                        | -                                                  | 拖拽开始事件                                                                                           |
-| onDrag                        | `function`                        | -                                                  | 拖拽进行事件                      |
-| onDragEnd                    | `function`                        | -                                                  | 拖拽结束事件                                                                                  |
+| collect                      | `unknown`            | -                                                  | 拖传递给拖拽区域内部的参数                                                                                  |
 
+## DndArea.Item
 
-
-
-
-
+来自[react-free-draggable](https://github.com/mezhanglei/react-free-draggable)

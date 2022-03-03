@@ -1,8 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { ChildrenType, DragTypes } from "./utils/types";
 export declare type EventType = MouseEvent | TouchEvent;
-export declare type DraggerItemHandler<E = EventType, T = DraggerItemEvent> = (e: E, data: T) => void | boolean;
-export interface DraggerItemEvent {
+export declare type DndItemHandler<E = EventType, T = DndSourceItem> = (e: E, data: T) => void | boolean;
+export interface DndSourceItem {
     width: number;
     height: number;
     x: number;
@@ -13,16 +13,16 @@ export interface DraggerItemEvent {
     dragType?: DragTypes;
     id: string | number;
 }
-export interface DraggerProps {
+export interface DndProps {
     children: ChildrenType;
     className?: string;
     style?: CSSProperties;
-    onDragStart?: DraggerItemHandler;
-    onDrag?: DraggerItemHandler;
-    onDragEnd?: DraggerItemHandler;
+    onDragStart?: DndItemHandler;
+    onDrag?: DndItemHandler;
+    onDragEnd?: DndItemHandler;
     dragAxis?: string[];
     handle?: string | HTMLElement;
     id: string | number;
 }
-declare const DraggerItem: React.ForwardRefExoticComponent<DraggerProps & React.RefAttributes<any>>;
-export default DraggerItem;
+declare const DndItem: React.ForwardRefExoticComponent<DndProps & React.RefAttributes<any>>;
+export default DndItem;

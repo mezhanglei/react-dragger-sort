@@ -1,6 +1,7 @@
-import DraggableAreaGroup from './DraggableAreaGroup';
-import DraggerItem from './dragger-item';
 import { arrayMove } from './utils/array';
-declare const DraggableArea: any;
-export { DraggableArea, DraggableAreaGroup, arrayMove, DraggerItem };
+import { isObjectEqual } from './utils/object';
+import DndContextProvider from './dnd-provider';
+declare const DndArea: any;
+export default DndArea;
+export { DndContextProvider, arrayMove, isObjectEqual };
 export * from './utils/types';

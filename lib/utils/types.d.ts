@@ -1,5 +1,5 @@
 import { CSSProperties, JSXElementConstructor, ReactElement } from 'react';
-import { DraggerItemEvent, DraggerItemHandler } from "../dragger-item";
+import { DndSourceItem, DndItemHandler } from "../dnd-item";
 export declare type EventType = MouseEvent | TouchEvent;
 export declare type ChildrenType = ReactElement<any, string | JSXElementConstructor<any>>;
 export declare enum DragTypes {
@@ -7,56 +7,68 @@ export declare enum DragTypes {
     draging = "draging",
     dragEnd = "dragEnd"
 }
-export interface DraggerItemType {
+export interface DndTargetItemType {
     node: HTMLElement;
     id: string | number;
 }
-export interface MoveChild extends DraggerItemEvent {
-    area?: HTMLElement;
+export interface SubscribeTargetParams {
+    area: HTMLElement;
+    collect: unknown;
 }
-export declare enum CollisionDirection {
-    Top = "top",
-    Bottom = "bottom",
-    Left = "left",
-    Right = "right"
-}
-export interface DragParams {
+export interface SourceParams {
     e: EventType;
-    target: MoveChild;
-    area?: HTMLElement;
-    collision?: DraggerItemType;
+    source: {
+        area: HTMLElement;
+        item: DndSourceItem;
+        collect: unknown;
+    };
 }
-export declare type DragMoveHandle = (params: DragParams) => void | boolean;
+export interface ListenParams extends SourceParams {
+    target: SubscribeTargetParams;
+}
 export declare type listenEvent = {
-    listener: (moveChild: MoveChild, e: EventType) => void | boolean;
-    area: HTMLElement | null;
+    listener: (params: ListenParams) => SubscribeTargetParams | void;
+    target: SubscribeTargetParams;
 };
-export declare type TriggerFuncHandle<T = MoveChild, E = EventType> = (moveChild: T, e: E) => boolean;
-export declare type ListenFuncHandle = (area: HTMLElement, addEvent: listenEvent['listener']) => void;
-export declare type DraggableAreaBuilder = (props?: {
-    triggerFunc: TriggerFuncHandle;
-    subscribe: ListenFuncHandle;
-    unsubscribe: (area?: HTMLElement | null) => void;
-    draggerItems: DraggerItemType[];
-}) => any;
-export interface DraggerContextInterface {
-    onDragStart?: DraggerItemHandler;
-    onDrag?: DraggerItemHandler;
-    onDragEnd?: DraggerItemHandler;
-    collision?: DraggerItemType;
-    draggerItems?: DraggerItemType[];
-}
-export interface DraggableAreaProps {
+export declare type TriggerFuncHandle = (sourceParams: SourceParams) => SubscribeTargetParams | void;
+export declare type SubscribeHandle = (target: SubscribeTargetParams, addEvent: listenEvent['listener']) => void;
+export declare type DndAreaBuilder = () => any;
+export interface DndAreaProps {
     className?: string;
     style?: CSSProperties;
     children: any;
-    dataSource: any;
-    onDragMoveStart?: DragMoveHandle;
-    onDragMove?: DragMoveHandle;
-    onDragMoveEnd?: DragMoveHandle;
-    onMoveOutChange?: DragMoveHandle;
-    onMoveInChange?: DragMoveHandle;
+    collect: unknown;
 }
-export interface DraggableAreaState {
-    collision?: DraggerItemType;
+export interface DndAreaState {
+    targetItem?: DndTargetItemType;
+    prevCollect?: unknown;
+}
+export interface DndParams {
+    e: EventType;
+    target: {
+        area: HTMLElement;
+        item?: DndTargetItemType;
+        collect: unknown;
+    };
+    source: {
+        area: HTMLElement;
+        item: DndSourceItem;
+        collect: unknown;
+    };
+}
+export declare type DragMoveHandle = (params: DndParams) => void | boolean;
+export interface DndContextProps {
+    onDragStart?: DragMoveHandle;
+    onDrag?: DragMoveHandle;
+    onDragEnd?: DragMoveHandle;
+}
+export interface DndContextProviderProps extends DndContextProps {
+    children: any;
+}
+export interface DndAreaContextProps {
+    onDragStart?: DndItemHandler;
+    onDrag?: DndItemHandler;
+    onDragEnd?: DndItemHandler;
+    targetItem?: DndTargetItemType;
+    dndItems?: DndTargetItemType[];
 }
