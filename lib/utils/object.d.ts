@@ -1,1 +1,1 @@
-export declare function isObjectEqual(a: any, b: any): boolean;
+export declare function deepSet(obj: any, path: string | string[], value: any, arraySetPath?: Array<string>): any;

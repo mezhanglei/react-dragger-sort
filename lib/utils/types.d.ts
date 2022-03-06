@@ -1,5 +1,6 @@
 import { CSSProperties, JSXElementConstructor, ReactElement } from 'react';
 import { DndSourceItem, DndItemHandler } from "../dnd-item";
+import { DndStore } from '../dnd-store';
 export declare type EventType = MouseEvent | TouchEvent;
 export declare type ChildrenType = ReactElement<any, string | JSXElementConstructor<any>>;
 export declare enum DragTypes {
@@ -9,11 +10,14 @@ export declare enum DragTypes {
 }
 export interface DndTargetItemType {
     node: HTMLElement;
-    id: string | number;
+    index: number;
 }
 export interface SubscribeTargetParams {
     area: HTMLElement;
     collect: unknown;
+}
+export interface TargetParams extends SubscribeTargetParams {
+    item?: DndTargetItemType;
 }
 export interface SourceParams {
     e: EventType;
@@ -30,7 +34,7 @@ export declare type listenEvent = {
     listener: (params: ListenParams) => SubscribeTargetParams | void;
     target: SubscribeTargetParams;
 };
-export declare type TriggerFuncHandle = (sourceParams: SourceParams) => SubscribeTargetParams | void;
+export declare type NotifyEventHandle = (sourceParams: SourceParams) => SubscribeTargetParams | void;
 export declare type SubscribeHandle = (target: SubscribeTargetParams, addEvent: listenEvent['listener']) => void;
 export declare type DndAreaBuilder = () => any;
 export interface DndAreaProps {
@@ -39,36 +43,24 @@ export interface DndAreaProps {
     children: any;
     collect: unknown;
 }
-export interface DndAreaState {
-    targetItem?: DndTargetItemType;
-    prevCollect?: unknown;
-}
-export interface DndParams {
-    e: EventType;
-    target: {
-        area: HTMLElement;
-        item?: DndTargetItemType;
-        collect: unknown;
-    };
-    source: {
-        area: HTMLElement;
-        item: DndSourceItem;
-        collect: unknown;
-    };
+export interface DndParams extends SourceParams {
+    target: TargetParams;
 }
 export declare type DragMoveHandle = (params: DndParams) => void | boolean;
-export interface DndContextProps {
+export interface DndProviderProps {
+    children?: any;
     onDragStart?: DragMoveHandle;
     onDrag?: DragMoveHandle;
     onDragEnd?: DragMoveHandle;
+    onAreaDropping?: DragMoveHandle;
+    onAreaDropEnd?: DragMoveHandle;
 }
-export interface DndContextProviderProps extends DndContextProps {
-    children: any;
+export interface DndProviderContextProps extends DndProviderProps {
+    store: DndStore;
 }
 export interface DndAreaContextProps {
     onDragStart?: DndItemHandler;
     onDrag?: DndItemHandler;
     onDragEnd?: DndItemHandler;
     targetItem?: DndTargetItemType;
-    dndItems?: DndTargetItemType[];
 }

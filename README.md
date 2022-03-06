@@ -2,21 +2,21 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-1.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
-A component that provides a drag container and drag capability and no affect for `style`, wrapping the area where the target element is located and the target element, can get the position of the current drag element and the position of the element of the target element being covered by the methods provided by the component, changing the `state` data and thus the position of the element.
+A component that provides a drag container and drag capability and no affect for `style`, wrapping the area where the target element is located and the target element, Only drag and drop capability and callback functions are provided, the drag and drop results need to be implemented by yourself for specific data changes.
 
 # version update
 
-The architecture design has been redesigned to better support various scenarios in drag and drop. The new design is simpler to implement the drag and drop function, please update to `1.0.0` version in time with the old version.
+The architecture design has been redesigned to better support various scenarios in drag and drop. The new design is simpler to implement the drag and drop function, please update to `1.x` version in time with the old version.
 
 # features
 The component consists of three parts: the `DndContextProvider` component, the `DndArea` component and the `DndArea.Item` component.
 - `DndContextProvider` component: provides three callback functions to modify the state after dragging and dropping. Determine if the drag is within the same area based on the `source` (source of the drag) and `target` (target of the placement) in the drag callback function parameters.
-- `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`
-- `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given a unique `id`;
+- `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`, Different `DndArea` nesting is also supported
+- `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given `index`;
 
 ### install
 ```
@@ -27,65 +27,65 @@ yarn add react-dragger-sort
 
 ### demo
 ```javascript
-import DndArea, { DndContextProvider, arrayMove, isObjectEqual, DragMoveHandle } from "react-dragger-sort";
+import DndArea, { DndContextProvider, arrayMove, deepSet, DragMoveHandle } from "react-dragger-sort";
 
 export const Example = () => {
 
-  const [arr1, setArr1] = useState([1, 2, 3, 4, 5, 6, 7]);
-  const [arr2, setArr2] = useState([8, 9, 10, 11, 12, 13, 14]);
+  const [data, setData] = useState([
+    { list: [1, 2, 3, 4, 5, 6, 7], backgroundColor: 'blue' },
+    { list: [8, 9, 10, 11, 12, 13, 14], backgroundColor: 'green' }
+  ]);
 
   const onDragEnd: DragMoveHandle = (params) => {
     const { source, target } = params;
-    if (!source.area || !target.area) return;
     const sourceItem = source.item;
-    const targetItem = target.item;
-    const list = [{ data: arr1, setData: setArr1 }, { data: arr2, setData: setArr2 }];
-    // Drag and drop within the same area
-    if (source.area === target.area) {
-      list?.map((listItem) => {
-        const { data, setData } = listItem;
-        if (isObjectEqual(data, source.collect)) {
-          const preIndex = data?.findIndex((item) => item === sourceItem.id);
-          const nextIndex = targetItem ? data?.findIndex((item) => item === targetItem?.id) : data.length;
-          if (preIndex >= 0 && nextIndex >= 0) {
-            const newArr = arrayMove(data, preIndex, nextIndex);
-            setData(newArr);
-          }
-        }
-      });
-      // Drag and drop within the diffrent area
-    } else {
-      list?.map((listItem) => {
-        const { data, setData } = listItem;
-        // remove
-        if (isObjectEqual(data, source.collect)) {
-          const cloneData = [...data];
-          const index = data?.findIndex((item) => item === sourceItem?.id);
-          cloneData?.splice(index, 1);
-          setData(cloneData);
-        }
-        // add
-        if (isObjectEqual(data, target.collect)) {
-          const cloneData = [...data];
-          const sourceData = source.collect as any[];
-          const sourceIndex = sourceData?.findIndex((item) => item === sourceItem?.id);
-          const nextIndex = targetItem ? data?.findIndex((item) => item === targetItem?.id) : data?.length;
-          if (sourceIndex >= 0 && nextIndex >= 0) {
-            cloneData?.splice(nextIndex + 1, 0, sourceData?.[sourceIndex]);
-            setData(cloneData);
-          }
-        }
-      });
+    const targetItem = target?.item;
+    if (!source.area || !target?.area || !targetItem) return;
+    let sourceCollect = source?.collect as any;
+    let sourceData = sourceCollect?.list;
+    const sourceAreaPath = sourceCollect?.path;
+    const preIndex = sourceItem.index;
+    const nextIndex = targetItem?.index;
+    if (preIndex >= 0 && nextIndex >= 0) {
+      const newItem = arrayMove(sourceData, preIndex, nextIndex);
+      const newData = deepSet(data, `${sourceAreaPath}.list`, newItem);
+      setData(newData);
     }
   };
 
-    return (
-      <DndContextProvider onDragEnd={onDragEnd}>
-        <DndArea collect={arr1} style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px' }}>
+  const onAreaDropEnd: DragMoveHandle = (params) => {
+    const { source, target } = params;
+    const sourceItem = source.item;
+    const targetItem = target?.item;
+    if (!source.area || !target?.area) return;
+    let sourceCollect = source?.collect as any;
+    let sourceData = sourceCollect?.list;
+    let targetCollect = target?.collect as any;
+    let targetData = targetCollect?.list;
+    const sourceAreaPath = sourceCollect?.path;
+    const targetAreaPath = targetCollect?.path;
+
+    const sourceIndex = sourceItem.index;
+    const targetIndex = targetItem ? targetItem?.index : targetData?.length;
+    if (sourceIndex >= 0 && targetIndex >= 0) {
+      targetData?.splice(targetIndex + 1, 0, sourceData?.[sourceIndex]);
+      sourceData?.splice(sourceIndex, 1);
+      // remove
+      const tmp = deepSet(data, `${sourceAreaPath}.list`, sourceData);
+      // add
+      const newData = deepSet(tmp, `${targetAreaPath}.list`, targetData);
+      setData(newData);
+    }
+  }
+
+  const renderChildren = (list: any[]) => {
+    return list?.map((areaItem, areaIndex) => {
+      return (
+        <DndArea key={areaIndex} collect={{ path: `${areaIndex}`, list: areaItem?.list }} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
           {
-            arr1?.map((item, index) => {
+            areaItem?.list?.map((item, index) => {
               return (
-                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
+                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} index={index}>
                   <div>
                     {item}
                   </div>
@@ -94,21 +94,13 @@ export const Example = () => {
             })
           }
         </DndArea>
-        <div style={{ marginTop: '10px' }}>
-          <DndArea collect={arr2} style={{ display: 'flex', flexWrap: 'wrap', background: 'green', width: '200px' }}>
-            {
-              arr2?.map((item, index) => {
-                return (
-                  <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={item}>
-                    <div>
-                      {item}
-                    </div>
-                  </DndArea.Item>
-                );
-              })
-            }
-          </DndArea>
-        </div>
+      )
+    })
+  }
+
+    return (
+      <DndContextProvider onDragEnd={onDragEnd} onAreaDropEnd={onAreaDropEnd}>
+        {renderChildren(data)}
       </DndContextProvider>
     )
 }
@@ -118,9 +110,11 @@ export const Example = () => {
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| onDragStart                      | `({e, source }) => void`            | -                                                  | when drag start                                                                                  |
-| onDrag                      | `({e, source, target}) => void`            | -                                                  | when drag ging                                                                                  |
-| onDragEnd                      | `({e, source, target}) => void`            | -                                                  | when drag end                                                                                  |
+| onDragStart                      | `({e, source }) => void`            | -                                                  | when drag start in the same area                                                                                  |
+| onDrag                      | `({e, source, target}) => void`            | -                                                  | when drag ging in the same area                                                                                 |
+| onDragEnd                      | `({e, source, target}) => void`            | -                                                  | when drag end in the same area                                                                                 |
+| onAreaDropping                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region dropping                                                                                  |
+| onAreaDropEnd                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region drog end                                                                                  |
 
 ## DndArea
 
@@ -130,4 +124,5 @@ export const Example = () => {
 
 ## DndArea.Item
 
-from [react-free-draggable](https://github.com/mezhanglei/react-free-draggable)
+- base：from [react-free-draggable](https://github.com/mezhanglei/react-free-draggable)
+- `index`：required, the position serial number;

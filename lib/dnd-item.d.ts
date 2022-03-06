@@ -11,7 +11,7 @@ export interface DndSourceItem {
     translateY?: number;
     node: HTMLElement;
     dragType?: DragTypes;
-    id: string | number;
+    index: number;
 }
 export interface DndProps {
     children: ChildrenType;
@@ -21,8 +21,7 @@ export interface DndProps {
     onDrag?: DndItemHandler;
     onDragEnd?: DndItemHandler;
     dragAxis?: string[];
-    handle?: string | HTMLElement;
-    id: string | number;
+    index: number;
 }
 declare const DndItem: React.ForwardRefExoticComponent<DndProps & React.RefAttributes<any>>;
 export default DndItem;

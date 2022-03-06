@@ -1,7 +1,9 @@
+import DndArea from './dnd-area';
+import BuildDndProvider from './dnd-provider';
 import { arrayMove } from './utils/array';
-import { isObjectEqual } from './utils/object';
-import DndContextProvider from './dnd-provider';
-declare const DndArea: any;
+import { deepSet } from './utils/object';
+declare const DndContextProvider: (props: import("./utils/types").DndProviderProps) => JSX.Element;
 export default DndArea;
-export { DndContextProvider, arrayMove, isObjectEqual };
+export { BuildDndProvider, DndContextProvider, arrayMove, deepSet };
+export * from './dnd-store';
 export * from './utils/types';

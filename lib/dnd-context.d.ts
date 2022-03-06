@@ -1,3 +1,5 @@
 import React from 'react';
-import { DndContextProps } from './utils/types';
-export declare const DndContext: React.Context<DndContextProps>;
+import { DndProviderContextProps } from './utils/types';
+import { DndAreaContextProps } from './utils/types';
+export declare const DndAreaContext: React.Context<DndAreaContextProps>;
+export declare const DndProviderContext: React.Context<DndProviderContextProps>;

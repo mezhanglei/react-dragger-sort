@@ -89,40 +89,6 @@ export function getRect(el: HTMLElement) {
   return el.getBoundingClientRect()
 }
 
-// 返回元素或事件对象的视口位置
-export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
-  x: number;
-  y: number;
-} {
-  let pos = null;
-  if ("clientX" in el) {
-    pos = {
-      x: el.clientX,
-      y: el.clientY
-    };
-  } else if ("touches" in el) {
-    if (el?.touches[0]) {
-      pos = {
-        x: el.touches[0]?.clientX,
-        y: el.touches[0]?.clientY
-      };
-    }
-  } else if (isDom(el)) {
-    if ([document.documentElement, document.body].includes(el)) {
-      pos = {
-        x: 0,
-        y: 0
-      }
-    } else {
-      pos = {
-        x: getRect(el)?.left,
-        y: getRect(el).top
-      };
-    }
-  }
-  return pos;
-}
-
 // 获取页面或元素的宽高 = 可视宽高 + 滚动条 + 边框
 export function getOffsetWH(el: HTMLElement): undefined | {
   width: number;
@@ -151,19 +117,20 @@ export function getInsidePosition(el: HTMLElement, parent: HTMLElement = documen
 } {
   let pos = null;
   if (isDom(el)) {
-    const nodeOffset = getOffsetWH(el);
-    if (!nodeOffset) return null;
-    const parentBorderWidth = parseFloat(getComputedStyle(parent)?.borderLeftWidth);
+      const nodeOffset = getOffsetWH(el);
+      if (!nodeOffset) return null;
+      const borderLeftWidth = parseFloat(getComputedStyle(parent)?.borderLeftWidth) || 0;
+      const borderTopWidth = parseFloat(getComputedStyle(parent)?.borderTopWidth) || 0;
 
-    const top = getRect(el).top - getRect(parent).top - parentBorderWidth;
-    const left = getRect(el).left - getRect(parent).left - parentBorderWidth;
+      const top = getRect(el).top - getRect(parent).top - borderTopWidth;
+      const left = getRect(el).left - getRect(parent).left - borderLeftWidth;
 
-    return {
-      left,
-      top,
-      right: left + nodeOffset?.width,
-      bottom: top + nodeOffset?.height
-    }
+      return {
+          left,
+          top,
+          right: left + nodeOffset?.width,
+          bottom: top + nodeOffset?.height
+      }
   }
   return pos;
 }
