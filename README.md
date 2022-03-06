@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-1.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -15,8 +15,8 @@ The architecture design has been redesigned to better support various scenarios 
 # features
 The component consists of three parts: the `DndContextProvider` component, the `DndArea` component and the `DndArea.Item` component.
 - `DndContextProvider` component: provides three callback functions to modify the state after dragging and dropping. Determine if the drag is within the same area based on the `source` (source of the drag) and `target` (target of the placement) in the drag callback function parameters.
-- `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`, Different `DndArea` nesting is also supported
-- `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given `index`;
+- `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`, Different `DndArea` nesting is also supported. Note that this component must be given `id`;
+- `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given `id`;
 
 ### install
 ```
@@ -42,13 +42,12 @@ export const Example = () => {
     const targetItem = target?.item;
     if (!source.area || !target?.area || !targetItem) return;
     let sourceCollect = source?.collect as any;
-    let sourceData = sourceCollect?.list;
-    const sourceAreaPath = sourceCollect?.path;
-    const preIndex = sourceItem.index;
-    const nextIndex = targetItem?.index;
-    if (preIndex >= 0 && nextIndex >= 0) {
-      const newItem = arrayMove(sourceData, preIndex, nextIndex);
-      const newData = deepSet(data, `${sourceAreaPath}.list`, newItem);
+    const preIndex = sourceItem.path?.split('.')?.pop();
+    const nextIndex = targetItem.path?.split('.')?.pop();
+    const sourceDataPath = source.path;
+    if (preIndex !== undefined && nextIndex !== undefined) {
+      const newItem = arrayMove(sourceCollect, Number(preIndex), Number(nextIndex));
+      const newData = deepSet(data, sourceDataPath, newItem);
       setData(newData);
     }
   };
@@ -59,21 +58,18 @@ export const Example = () => {
     const targetItem = target?.item;
     if (!source.area || !target?.area) return;
     let sourceCollect = source?.collect as any;
-    let sourceData = sourceCollect?.list;
     let targetCollect = target?.collect as any;
-    let targetData = targetCollect?.list;
-    const sourceAreaPath = sourceCollect?.path;
-    const targetAreaPath = targetCollect?.path;
-
-    const sourceIndex = sourceItem.index;
-    const targetIndex = targetItem ? targetItem?.index : targetData?.length;
+    const sourceIndex = sourceItem.path && Number(sourceItem.path?.split('.')?.pop());
+    const sourceDataPath = source.path;
+    const targetIndex = targetItem ? targetItem.path && Number(targetItem?.path?.split('.')?.pop()) : targetCollect?.length;
+    const targetDataPath = target.path;
     if (sourceIndex >= 0 && targetIndex >= 0) {
-      targetData?.splice(targetIndex + 1, 0, sourceData?.[sourceIndex]);
-      sourceData?.splice(sourceIndex, 1);
+      targetCollect?.splice(targetIndex + 1, 0, sourceCollect?.[sourceIndex]);
+      sourceCollect?.splice(sourceIndex, 1);
       // remove
-      const tmp = deepSet(data, `${sourceAreaPath}.list`, sourceData);
+      const tmp = deepSet(data, sourceDataPath, sourceCollect);
       // add
-      const newData = deepSet(tmp, `${targetAreaPath}.list`, targetData);
+      const newData = deepSet(tmp, targetDataPath, targetCollect);
       setData(newData);
     }
   }
@@ -81,11 +77,11 @@ export const Example = () => {
   const renderChildren = (list: any[]) => {
     return list?.map((areaItem, areaIndex) => {
       return (
-        <DndArea key={areaIndex} collect={{ path: `${areaIndex}`, list: areaItem?.list }} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
+        <DndArea key={areaIndex} collect={areaItem?.list} id={`${areaIndex}.list`} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
           {
             areaItem?.list?.map((item, index) => {
               return (
-                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} index={index}>
+                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={index}>
                   <div>
                     {item}
                   </div>
@@ -125,4 +121,4 @@ export const Example = () => {
 ## DndArea.Item
 
 - base：from [react-free-draggable](https://github.com/mezhanglei/react-free-draggable)
-- `index`：required, the position serial number;
+- `id`：required, Node markers;

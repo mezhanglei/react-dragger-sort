@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-1.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-1.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -15,8 +15,8 @@
 # features
 组件包括三个部分：`DndContextProvider`组件, `DndArea`组件和`DndArea.Item`组件。
 - `DndContextProvider`组件：提供三个拖拽的回调函数，用来修改拖拽后的状态, 根据拖拽回调函数参数中的`source`(拖拽源)和`target`(放置目标)来判断是否是同一区域内的拖拽。
-- `DndArea`组件：提供可拖放的区域，拖拽行为在里面进行。支持不同的`DndArea`之间相互跨域拖拽，同时也支持不同的`DndArea`嵌套。
-- `DndArea.Item`组件：包裹需要拖拽的元素，使其可被拖放。注意此组件必须赋予位置序号`index`;
+- `DndArea`组件：提供可拖放的区域，拖拽行为在里面进行。支持不同的`DndArea`之间相互跨域拖拽，同时也支持不同的`DndArea`嵌套。注意此组件必须赋予`id`;
+- `DndArea.Item`组件：包裹需要拖拽的元素，使其可被拖放。注意此组件必须赋予`id`;
 
 ### 快速安装
 ```
@@ -42,13 +42,12 @@ export const Example = () => {
     const targetItem = target?.item;
     if (!source.area || !target?.area || !targetItem) return;
     let sourceCollect = source?.collect as any;
-    let sourceData = sourceCollect?.list;
-    const sourceAreaPath = sourceCollect?.path;
-    const preIndex = sourceItem.index;
-    const nextIndex = targetItem?.index;
-    if (preIndex >= 0 && nextIndex >= 0) {
-      const newItem = arrayMove(sourceData, preIndex, nextIndex);
-      const newData = deepSet(data, `${sourceAreaPath}.list`, newItem);
+    const preIndex = sourceItem.path?.split('.')?.pop();
+    const nextIndex = targetItem.path?.split('.')?.pop();
+    const sourceDataPath = source.path;
+    if (preIndex !== undefined && nextIndex !== undefined) {
+      const newItem = arrayMove(sourceCollect, Number(preIndex), Number(nextIndex));
+      const newData = deepSet(data, sourceDataPath, newItem);
       setData(newData);
     }
   };
@@ -59,21 +58,18 @@ export const Example = () => {
     const targetItem = target?.item;
     if (!source.area || !target?.area) return;
     let sourceCollect = source?.collect as any;
-    let sourceData = sourceCollect?.list;
     let targetCollect = target?.collect as any;
-    let targetData = targetCollect?.list;
-    const sourceAreaPath = sourceCollect?.path;
-    const targetAreaPath = targetCollect?.path;
-
-    const sourceIndex = sourceItem.index;
-    const targetIndex = targetItem ? targetItem?.index : targetData?.length;
+    const sourceIndex = sourceItem.path && Number(sourceItem.path?.split('.')?.pop());
+    const sourceDataPath = source.path;
+    const targetIndex = targetItem ? targetItem.path && Number(targetItem?.path?.split('.')?.pop()) : targetCollect?.length;
+    const targetDataPath = target.path;
     if (sourceIndex >= 0 && targetIndex >= 0) {
-      targetData?.splice(targetIndex + 1, 0, sourceData?.[sourceIndex]);
-      sourceData?.splice(sourceIndex, 1);
+      targetCollect?.splice(targetIndex + 1, 0, sourceCollect?.[sourceIndex]);
+      sourceCollect?.splice(sourceIndex, 1);
       // remove
-      const tmp = deepSet(data, `${sourceAreaPath}.list`, sourceData);
+      const tmp = deepSet(data, sourceDataPath, sourceCollect);
       // add
-      const newData = deepSet(tmp, `${targetAreaPath}.list`, targetData);
+      const newData = deepSet(tmp, targetDataPath, targetCollect);
       setData(newData);
     }
   }
@@ -81,11 +77,11 @@ export const Example = () => {
   const renderChildren = (list: any[]) => {
     return list?.map((areaItem, areaIndex) => {
       return (
-        <DndArea key={areaIndex} collect={{ path: `${areaIndex}`, list: areaItem?.list }} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
+        <DndArea key={areaIndex} collect={areaItem?.list} id={`${areaIndex}.list`} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
           {
             areaItem?.list?.map((item, index) => {
               return (
-                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} index={index}>
+                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={index}>
                   <div>
                     {item}
                   </div>
@@ -125,4 +121,4 @@ export const Example = () => {
 ## DndArea.Item
 
 - 基本属性：来自[react-free-draggable](https://github.com/mezhanglei/react-free-draggable)
-- `index`：必填参数，表示位置序号。
+- `id`：必填参数，标记节点。

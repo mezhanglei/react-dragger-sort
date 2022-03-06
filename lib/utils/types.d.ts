@@ -10,11 +10,12 @@ export declare enum DragTypes {
 }
 export interface DndTargetItemType {
     node: HTMLElement;
-    index: number;
+    path: string;
 }
 export interface SubscribeTargetParams {
     area: HTMLElement;
     collect: unknown;
+    path: string;
 }
 export interface TargetParams extends SubscribeTargetParams {
     item?: DndTargetItemType;
@@ -25,6 +26,7 @@ export interface SourceParams {
         area: HTMLElement;
         item: DndSourceItem;
         collect: unknown;
+        path: string;
     };
 }
 export interface ListenParams extends SourceParams {
@@ -42,6 +44,8 @@ export interface DndAreaProps {
     style?: CSSProperties;
     children: any;
     collect: unknown;
+    id: any;
+    path?: string;
 }
 export interface DndParams extends SourceParams {
     target: TargetParams;
@@ -63,4 +67,5 @@ export interface DndAreaContextProps {
     onDrag?: DndItemHandler;
     onDragEnd?: DndItemHandler;
     targetItem?: DndTargetItemType;
+    path: string;
 }
