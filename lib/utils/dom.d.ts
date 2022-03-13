@@ -5,19 +5,36 @@ export interface BoundingRect {
     right: number;
     bottom: number;
 }
-export declare const isOverLay: (move: BoundingRect, other: BoundingRect) => boolean;
-export declare function getDistance(move: BoundingRect, other: BoundingRect): number;
-export declare const getDirection: (move: BoundingRect, other: BoundingRect) => string[];
-export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => void;
+export declare const isMoveIn: (event: {
+    x: number;
+    y: number;
+}, other: BoundingRect) => boolean;
+export declare function getMinDistance(event: {
+    x: number;
+    y: number;
+}, other: BoundingRect): number;
 /**
-* 返回元素的视窗内的位置
-* @param el
-* @returns
-*/
+ * 返回元素的视窗内的位置
+ * @param el
+ * @returns
+ */
 export declare function getRect(el: HTMLElement): DOMRect;
+export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
+    x: number;
+    y: number;
+};
 export declare function getOffsetWH(el: HTMLElement): undefined | {
     width: number;
     height: number;
+};
+/**
+ * 返回事件对象相对于父元素的真实位置
+ * @param el 事件对象
+ * @param parent 父元素
+ */
+export declare function getEventPosition(el: MouseEvent | TouchEvent, parent?: HTMLElement): null | {
+    x: number;
+    y: number;
 };
 export declare function getInsidePosition(el: HTMLElement, parent?: HTMLElement): null | {
     left: number;

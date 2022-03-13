@@ -1,9 +1,7 @@
-import DndArea from './dnd-area';
-import BuildDndProvider from './dnd-provider';
+/// <reference types="react" />
+import BuildDndSortable from './dnd-core';
 import { arrayMove } from './utils/array';
-import { deepSet } from './utils/object';
-declare const DndContextProvider: (props: import("./utils/types").DndProviderProps) => JSX.Element;
-export default DndArea;
-export { BuildDndProvider, DndContextProvider, arrayMove, deepSet };
-export * from './dnd-store';
+declare const DndSortable: import("react").ForwardRefExoticComponent<import("./dnd-core").DndProps & import("react").RefAttributes<any>>;
+export default DndSortable;
+export { BuildDndSortable, arrayMove };
 export * from './utils/types';

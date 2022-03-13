@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-1.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-1.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -13,10 +13,8 @@
 为了更好的支持拖拽中的各种场景，架构设计进行了重新设计，新设计更简单的实现拖拽功能，请使用旧版本的及时更新到`1.x`版本。
 
 # features
-组件包括三个部分：`DndContextProvider`组件, `DndArea`组件和`DndArea.Item`组件。
-- `DndContextProvider`组件：提供三个拖拽的回调函数，用来修改拖拽后的状态, 根据拖拽回调函数参数中的`source`(拖拽源)和`target`(放置目标)来判断是否是同一区域内的拖拽。
-- `DndArea`组件：提供可拖放的区域，拖拽行为在里面进行。支持不同的`DndArea`之间相互跨域拖拽，同时也支持不同的`DndArea`嵌套。注意此组件必须赋予`id`;
-- `DndArea.Item`组件：包裹需要拖拽的元素，使其可被拖放。注意此组件必须赋予`id`;
+- 提供回调函数，用来修改拖拽后的状态，注意`path`属性提供位置标记
+- 支持相互嵌套，进行跨域拖拽操作。
 
 ### 快速安装
 ```
@@ -27,98 +25,142 @@ yarn add react-dragger-sort
 
 ### demo
 ```javascript
-import DndArea, { DndContextProvider, arrayMove, deepSet, DragMoveHandle } from "react-dragger-sort";
+import DndSortable, { arrayMove, DragMoveHandle } from "react-dragger-sort";
+import { klona } from 'klona';
 
 export const Example = () => {
 
   const [data, setData] = useState([
-    { list: [1, 2, 3, 4, 5, 6, 7], backgroundColor: 'blue' },
-    { list: [8, 9, 10, 11, 12, 13, 14], backgroundColor: 'green' }
+    { children: [{ children: [{ children: [1, 2, 3, 4, 5], backgroundColor: 'pink' }], backgroundColor: 'yellow' },], backgroundColor: 'blue' },
+    { children: [8, 9, 10, 11, 12, 13, 14], backgroundColor: 'green' },
+    { children: [15, 16, 17, 18, 19, 20, 21], backgroundColor: 'green' },
   ]);
+
+  const indexToArray = (pathStr: string) => `${pathStr}`.split('.').map(n => +n);
+
+  const getLastIndex = (pathStr: string) => {
+    const array = indexToArray(pathStr);
+    return (array.pop()) as number;
+  };
+
+  const getItem = (path: string, data: any) => {
+    const arr = indexToArray(path);
+    // 嵌套节点删除
+    let parent: any;
+    if (arr.length === 0) {
+      return data;
+    }
+    arr.forEach((item, index) => {
+      if (index === 0) {
+        parent = data[item];
+      } else {
+        parent = parent?.children?.[item];
+      }
+    });
+    if (parent.children) return parent.children;
+    return parent;
+  };
+
+  const setInfo = (pathStr: string, treeData: any, data: any) => {
+    const arr = indexToArray(pathStr);
+    treeData = klona(treeData);
+    let parent: any;
+    arr.forEach((item, index) => {
+      if (index == 0) {
+        parent = treeData[item];
+      } else {
+        parent = parent.children[item];
+      }
+    });
+    parent.children = data;
+    return treeData;
+  };
 
   const onDragEnd: DragMoveHandle = (params) => {
     const { source, target } = params;
     const sourceItem = source.item;
     const targetItem = target?.item;
-    if (!source.area || !target?.area || !targetItem) return;
-    let sourceCollect = source?.collect as any;
-    const preIndex = sourceItem.path?.split('.')?.pop();
-    const nextIndex = targetItem.path?.split('.')?.pop();
-    const sourceDataPath = source.path;
+    if (!sourceItem || !targetItem) return;
+    console.log(params, '同区域');
+    const preIndex = getLastIndex(sourceItem.path);
+    const nextIndex = getLastIndex(targetItem.path);
+    const parentPath = source.path;
+    let parent = parentPath ? getItem(parentPath, data) : data;
     if (preIndex !== undefined && nextIndex !== undefined) {
-      const newItem = arrayMove(sourceCollect, Number(preIndex), Number(nextIndex));
-      const newData = deepSet(data, sourceDataPath, newItem);
+      parent = arrayMove(parent, Number(preIndex), Number(nextIndex));
+      const newData = parentPath ? setInfo(parentPath, data, parent) : parent;
       setData(newData);
     }
   };
 
-  const onAreaDropEnd: DragMoveHandle = (params) => {
+  const onMoveInEnd: DragMoveHandle = (params) => {
     const { source, target } = params;
     const sourceItem = source.item;
     const targetItem = target?.item;
-    if (!source.area || !target?.area) return;
-    let sourceCollect = source?.collect as any;
-    let targetCollect = target?.collect as any;
-    const sourceIndex = sourceItem.path && Number(sourceItem.path?.split('.')?.pop());
-    const sourceDataPath = source.path;
-    const targetIndex = targetItem ? targetItem.path && Number(targetItem?.path?.split('.')?.pop()) : targetCollect?.length;
-    const targetDataPath = target.path;
-    if (sourceIndex >= 0 && targetIndex >= 0) {
-      targetCollect?.splice(targetIndex + 1, 0, sourceCollect?.[sourceIndex]);
-      sourceCollect?.splice(sourceIndex, 1);
-      // remove
-      const tmp = deepSet(data, sourceDataPath, sourceCollect);
+    if (!sourceItem || !targetItem) return;
+    console.log(params, '跨区域');
+    const sourceData = getItem(source.path, data);
+    const targetData = getItem(target.path, data);
+    const sourceIndex = getLastIndex(sourceItem.path);
+    let targetIndex;
+    if(targetItem.path && targetItem.path === target.path) {
+      targetIndex = targetData?.length;
+    } else {
+      targetIndex = getLastIndex(targetItem.path);
+    }
+    if(sourceIndex >= 0 && targetIndex >= 0) {
+      targetData?.splice(targetIndex + 1, 0, sourceData?.[sourceIndex]);
+      sourceData?.splice(sourceIndex, 1);
       // add
-      const newData = deepSet(tmp, targetDataPath, targetCollect);
+      const afterAdd = setInfo(target.path, data, targetData);
+      // remove
+      const newData = setInfo(source.path, afterAdd, sourceData);
       setData(newData);
     }
-  }
+  };
 
-  const renderChildren = (list: any[]) => {
-    return list?.map((areaItem, areaIndex) => {
+  const loopChildren = (arr: any[], parent?: string) => {
+    return arr.map((item, index) => {
+      const path = parent === undefined ? String(index) : `${parent}.${index}`;
+      if (item.children) {
+        return (
+          <div key={index}>
+            <DndSortable
+              style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
+              path={path}
+              onDragEnd={onDragEnd}
+              onMoveInEnd={onMoveInEnd}
+            >
+              {loopChildren(item.children, path)}
+            </DndSortable>
+          </div>
+        );
+      }
       return (
-        <DndArea key={areaIndex} collect={areaItem?.list} id={`${areaIndex}.list`} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
-          {
-            areaItem?.list?.map((item, index) => {
-              return (
-                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={index}>
-                  <div>
-                    {item}
-                  </div>
-                </DndArea.Item>
-              );
-            })
-          }
-        </DndArea>
-      )
-    })
-  }
+        <DndSortable style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} path={path}>
+          <div>
+            {item}
+          </div>
+        </DndSortable>
+      );
+    });
+  };
 
-    return (
-      <DndContextProvider onDragEnd={onDragEnd} onAreaDropEnd={onAreaDropEnd}>
-        {renderChildren(data)}
-      </DndContextProvider>
-    )
+  return (
+    <DndSortable>
+      {loopChildren(data)}
+    </DndSortable>
+  )
 }
 ```
 
-## DndContextProvider
+## 属性
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | onDragStart                      | `({e, source }) => void`            | -                                                  | 同区域拖拽开始时触发的函数                                                                                  |
 | onDrag                      | `({e, source, target}) => void`            | -                                                  | 同区域拖拽时触发的函数                                                                                  |
 | onDragEnd                      | `({e, source, target}) => void`            | -                                                  | 同区域拖拽结束时触发的函数                                                                                  |
-| onAreaDropping                      | `({e, source, target}) => void`            | -                                                  | 跨区域拖拽时触发的函数                                                                                  |
-| onAreaDropEnd                      | `({e, source, target}) => void`            | -                                                  | 跨区域拖拽结束时触发的函数                                                                                  |
-
-## DndArea
-
-| 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
-| ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| collect                      | `unknown`            | -                                                  | 拖传递给拖拽区域内部的参数                                                                                  |
-
-## DndArea.Item
-
-- 基本属性：来自[react-free-draggable](https://github.com/mezhanglei/react-free-draggable)
-- `id`：必填参数，标记节点。
+| onMoveIn                      | `({e, source, target}) => void`            | -                                                  | 跨区域拖拽时触发的函数                                                                                  |
+| onMoveInEnd                      | `({e, source, target}) => void`            | -                                                  | 跨区域拖拽结束时触发的函数                                                                                  |
+| path                      | `string`            | -                                                  |  标记目标的路径                                                                                 |

@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { ChildrenType, DragTypes } from "./utils/types";
+import { DragMoveHandle, DragTypes, SourceParams } from "./utils/types";
 export declare type EventType = MouseEvent | TouchEvent;
 export declare type DndItemHandler<E = EventType, T = DndSourceItem> = (e: E, data: T) => void | boolean;
 export interface DndSourceItem {
@@ -7,22 +7,20 @@ export interface DndSourceItem {
     height: number;
     x: number;
     y: number;
-    translateX?: number;
-    translateY?: number;
     node: HTMLElement;
     dragType?: DragTypes;
     path: string;
 }
 export interface DndProps {
-    children: ChildrenType;
+    children: any;
     className?: string;
     style?: CSSProperties;
-    onDragStart?: DndItemHandler;
-    onDrag?: DndItemHandler;
-    onDragEnd?: DndItemHandler;
+    onDragStart?: (params: SourceParams) => void | boolean;
+    onDrag?: DragMoveHandle;
+    onDragEnd?: DragMoveHandle;
+    onMoveIn?: DragMoveHandle;
+    onMoveInEnd?: DragMoveHandle;
     dragAxis?: string[];
-    id: any;
     path?: string;
 }
-declare const DndItem: React.ForwardRefExoticComponent<DndProps & React.RefAttributes<any>>;
-export default DndItem;
+export default function BuildDndSortable(): React.ForwardRefExoticComponent<DndProps & React.RefAttributes<any>>;

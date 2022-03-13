@@ -7,86 +7,63 @@ export interface BoundingRect {
   right: number;
   bottom: number;
 }
-// 判断是否碰撞
-export const isOverLay = (move: BoundingRect, other: BoundingRect) => {
-  let l1 = move?.left
-  let t1 = move?.top
-  let r1 = move?.right
-  let b1 = move?.bottom
+// 事件对象是否在目标范围内
+export const isMoveIn = (event: { x: number, y: number }, other: BoundingRect) => {
 
-  let l2 = other?.left
-  let t2 = other?.top
-  let r2 = other?.right
-  let b2 = other?.bottom
+  const eventX = event?.x;
+  const eventY = event?.y;
 
-  const otherW = other.right - other?.left;
-  const otherH = other.bottom - other?.top;
+  return !(eventX - other?.left < 0 || eventY - other?.top < 0 || eventX - other?.right > 0 || eventY - other?.bottom > 0);
+};
 
-  const maxX = Math.min(15, otherW / 4);
-  const maxY = Math.min(15, otherH / 4);
-
-  return !(r1 - l2 < maxX || b1 - t2 < maxY || r2 - l1 < maxX || b2 - t1 < maxY)
-}
-
-// 求两点之间的距离
-export function getDistance(move: BoundingRect, other: BoundingRect) {
-  const moveCenter = {
-    x: move?.left + (move.right - move?.left) / 2,
-    y: move?.top + (move.bottom - move?.top) / 2
-  }
-  const otherCenter = {
-    x: other?.left + (other.right - other?.left) / 2,
-    y: other?.top + (other.bottom - other?.top) / 2
-  }
-
-  const x = moveCenter.x - otherCenter.x;
-  const y = moveCenter.y - otherCenter.y;
-  return Math.sqrt(x * x + y * y)
-}
-
-// 拖拽元素在另一元素的方位
-export const getDirection = (move: BoundingRect, other: BoundingRect) => {
-  let l1 = move?.left
-  let t1 = move?.top
-  let r1 = move?.right
-  let b1 = move?.bottom
-
-  let l2 = other?.left
-  let t2 = other?.top
-  let otherXcenter = other?.left + (other.right - other?.left) / 2;
-  let otherYcenter = other?.top + (other.bottom - other?.top) / 2;
-
-  const direction = [];
-  if (r1 < otherXcenter || l1 < l2) {
-    direction.push('left');
-  } else {
-    direction.push('right');
-  }
-  if (b1 < otherYcenter || t1 < t2) {
-    direction.push('top');
-  } else {
-    direction.push('bottom');
-  }
-  return direction;
-}
-
-export const insertAfter = (newElement: HTMLElement, targetElement: HTMLElement) => {
-  const parentElement = targetElement.parentNode;
-  if (!parentElement) return;
-  if ((parentElement as HTMLElement).lastChild == targetElement) {
-    (parentElement as HTMLElement).appendChild(newElement);
-  } else {
-    (parentElement as HTMLElement).insertBefore(newElement, targetElement.nextSibling);
-  }
-}
+// 点距离目标内的四条边的最短距离
+export function getMinDistance(event: { x: number, y: number }, other: BoundingRect) {
+  const distances = [Math.floor(event.x - other.left), Math.floor(event.y - other?.top), Math.floor(other?.bottom - event?.y), Math.floor(other?.right - event.x)];
+  const minDistance = Math.min.apply(Math, distances);
+  return minDistance;
+};
 
 /**
-* 返回元素的视窗内的位置
-* @param el 
-* @returns 
-*/
-export function getRect(el: HTMLElement) {
-  return el.getBoundingClientRect()
+ * 返回元素的视窗内的位置
+ * @param el 
+ * @returns 
+ */
+ export function getRect(el: HTMLElement) {
+  return el.getBoundingClientRect();
+}
+
+// 返回元素或事件对象的视口位置
+export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
+  x: number;
+  y: number;
+} {
+  let pos = null;
+  if ("clientX" in el) {
+    pos = {
+      x: el.clientX,
+      y: el.clientY
+    };
+  } else if ("touches" in el) {
+    if (el?.touches[0]) {
+      pos = {
+        x: el.touches[0]?.clientX,
+        y: el.touches[0]?.clientY
+      };
+    }
+  } else if (isDom(el)) {
+    if ([document.documentElement, document.body].includes(el)) {
+      pos = {
+        x: 0,
+        y: 0
+      }
+    } else {
+      pos = {
+        x: getRect(el)?.left,
+        y: getRect(el).top
+      };
+    }
+  }
+  return pos;
 }
 
 // 获取页面或元素的宽高 = 可视宽高 + 滚动条 + 边框
@@ -108,6 +85,33 @@ export function getOffsetWH(el: HTMLElement): undefined | {
   }
 };
 
+/**
+ * 返回事件对象相对于父元素的真实位置
+ * @param el 事件对象
+ * @param parent 父元素
+ */
+ export function getEventPosition(el: MouseEvent | TouchEvent, parent: HTMLElement = document.body || document.documentElement): null | {
+  x: number;
+  y: number;
+} {
+  let pos = null;
+  if ("clientX" in el) {
+    pos = {
+      x: el?.clientX - getRect(parent).left,
+      y: el?.clientY - getRect(parent).top,
+    };
+  } else if ("touches" in el) {
+    if (el?.touches[0]) {
+      pos = {
+        x: el?.touches[0]?.clientX - getRect(parent).left,
+        y: el?.touches[0]?.clientY - getRect(parent).top
+      };
+    }
+  }
+
+  return pos;
+}
+
 // 目标在父元素内的四条边位置信息
 export function getInsidePosition(el: HTMLElement, parent: HTMLElement = document.body || document.documentElement): null | {
   left: number;
@@ -117,20 +121,20 @@ export function getInsidePosition(el: HTMLElement, parent: HTMLElement = documen
 } {
   let pos = null;
   if (isDom(el)) {
-      const nodeOffset = getOffsetWH(el);
-      if (!nodeOffset) return null;
-      const borderLeftWidth = parseFloat(getComputedStyle(parent)?.borderLeftWidth) || 0;
-      const borderTopWidth = parseFloat(getComputedStyle(parent)?.borderTopWidth) || 0;
+    const nodeOffset = getOffsetWH(el);
+    if (!nodeOffset) return null;
+    const borderLeftWidth = parseFloat(getComputedStyle(parent)?.borderLeftWidth) || 0;
+    const borderTopWidth = parseFloat(getComputedStyle(parent)?.borderTopWidth) || 0;
 
-      const top = getRect(el).top - getRect(parent).top - borderTopWidth;
-      const left = getRect(el).left - getRect(parent).left - borderLeftWidth;
+    const top = getRect(el).top - getRect(parent).top - borderTopWidth;
+    const left = getRect(el).left - getRect(parent).left - borderLeftWidth;
 
-      return {
-          left,
-          top,
-          right: left + nodeOffset?.width,
-          bottom: top + nodeOffset?.height
-      }
+    return {
+      left,
+      top,
+      right: left + nodeOffset?.width,
+      bottom: top + nodeOffset?.height
+    }
   }
   return pos;
 }
@@ -140,7 +144,7 @@ export function getInsidePosition(el: HTMLElement, parent: HTMLElement = documen
  * @param {*} style 样式对象
  * @param {*} node 目标元素
  */
-export function setStyle(style: any, node: HTMLElement = document.body || document.documentElement): CSSProperties {
+ export function setStyle(style: any, node: HTMLElement = document.body || document.documentElement): CSSProperties {
   const oldStyle: any = {};
 
   const styleKeys: string[] = Object.keys(style);
@@ -155,3 +159,4 @@ export function setStyle(style: any, node: HTMLElement = document.body || docume
 
   return oldStyle;
 }
+

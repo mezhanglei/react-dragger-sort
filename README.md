@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-1.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -13,10 +13,8 @@ A component that provides a drag container and drag capability and no affect for
 The architecture design has been redesigned to better support various scenarios in drag and drop. The new design is simpler to implement the drag and drop function, please update to `1.x` version in time with the old version.
 
 # features
-The component consists of three parts: the `DndContextProvider` component, the `DndArea` component and the `DndArea.Item` component.
-- `DndContextProvider` component: provides three callback functions to modify the state after dragging and dropping. Determine if the drag is within the same area based on the `source` (source of the drag) and `target` (target of the placement) in the drag callback function parameters.
-- `DndArea` component: provides the draggable area in which the dragging and dropping behaviour takes place.Support for cross-domain drag and drop between different `DndArea`, Different `DndArea` nesting is also supported. Note that this component must be given `id`;
-- `DndArea.Item` component: wraps the element to be dragged and dropped so that it can be dragged and dropped. Note that this component must be given `id`;
+- Provide callback functions to modify the state after dragging and dropping, note that the `path` attribute provides a location marker
+- Supports inter-nesting for cross-domain drag-and-drop operations.
 
 ### install
 ```
@@ -27,98 +25,142 @@ yarn add react-dragger-sort
 
 ### demo
 ```javascript
-import DndArea, { DndContextProvider, arrayMove, deepSet, DragMoveHandle } from "react-dragger-sort";
+import DndSortable, { arrayMove, DragMoveHandle } from "react-dragger-sort";
+import { klona } from 'klona';
 
 export const Example = () => {
 
   const [data, setData] = useState([
-    { list: [1, 2, 3, 4, 5, 6, 7], backgroundColor: 'blue' },
-    { list: [8, 9, 10, 11, 12, 13, 14], backgroundColor: 'green' }
+    { children: [{ children: [{ children: [1, 2, 3, 4, 5], backgroundColor: 'pink' }], backgroundColor: 'yellow' },], backgroundColor: 'blue' },
+    { children: [8, 9, 10, 11, 12, 13, 14], backgroundColor: 'green' },
+    { children: [15, 16, 17, 18, 19, 20, 21], backgroundColor: 'green' },
   ]);
+
+  const indexToArray = (pathStr: string) => `${pathStr}`.split('.').map(n => +n);
+
+  const getLastIndex = (pathStr: string) => {
+    const array = indexToArray(pathStr);
+    return (array.pop()) as number;
+  };
+
+  const getItem = (path: string, data: any) => {
+    const arr = indexToArray(path);
+    // 嵌套节点删除
+    let parent: any;
+    if (arr.length === 0) {
+      return data;
+    }
+    arr.forEach((item, index) => {
+      if (index === 0) {
+        parent = data[item];
+      } else {
+        parent = parent?.children?.[item];
+      }
+    });
+    if (parent.children) return parent.children;
+    return parent;
+  };
+
+  const setInfo = (pathStr: string, treeData: any, data: any) => {
+    const arr = indexToArray(pathStr);
+    treeData = klona(treeData);
+    let parent: any;
+    arr.forEach((item, index) => {
+      if (index == 0) {
+        parent = treeData[item];
+      } else {
+        parent = parent.children[item];
+      }
+    });
+    parent.children = data;
+    return treeData;
+  };
 
   const onDragEnd: DragMoveHandle = (params) => {
     const { source, target } = params;
     const sourceItem = source.item;
     const targetItem = target?.item;
-    if (!source.area || !target?.area || !targetItem) return;
-    let sourceCollect = source?.collect as any;
-    const preIndex = sourceItem.path?.split('.')?.pop();
-    const nextIndex = targetItem.path?.split('.')?.pop();
-    const sourceDataPath = source.path;
+    if (!sourceItem || !targetItem) return;
+    console.log(params, '同区域');
+    const preIndex = getLastIndex(sourceItem.path);
+    const nextIndex = getLastIndex(targetItem.path);
+    const parentPath = source.path;
+    let parent = parentPath ? getItem(parentPath, data) : data;
     if (preIndex !== undefined && nextIndex !== undefined) {
-      const newItem = arrayMove(sourceCollect, Number(preIndex), Number(nextIndex));
-      const newData = deepSet(data, sourceDataPath, newItem);
+      parent = arrayMove(parent, Number(preIndex), Number(nextIndex));
+      const newData = parentPath ? setInfo(parentPath, data, parent) : parent;
       setData(newData);
     }
   };
 
-  const onAreaDropEnd: DragMoveHandle = (params) => {
+  const onMoveInEnd: DragMoveHandle = (params) => {
     const { source, target } = params;
     const sourceItem = source.item;
     const targetItem = target?.item;
-    if (!source.area || !target?.area) return;
-    let sourceCollect = source?.collect as any;
-    let targetCollect = target?.collect as any;
-    const sourceIndex = sourceItem.path && Number(sourceItem.path?.split('.')?.pop());
-    const sourceDataPath = source.path;
-    const targetIndex = targetItem ? targetItem.path && Number(targetItem?.path?.split('.')?.pop()) : targetCollect?.length;
-    const targetDataPath = target.path;
-    if (sourceIndex >= 0 && targetIndex >= 0) {
-      targetCollect?.splice(targetIndex + 1, 0, sourceCollect?.[sourceIndex]);
-      sourceCollect?.splice(sourceIndex, 1);
-      // remove
-      const tmp = deepSet(data, sourceDataPath, sourceCollect);
+    if (!sourceItem || !targetItem) return;
+    console.log(params, '跨区域');
+    const sourceData = getItem(source.path, data);
+    const targetData = getItem(target.path, data);
+    const sourceIndex = getLastIndex(sourceItem.path);
+    let targetIndex;
+    if(targetItem.path && targetItem.path === target.path) {
+      targetIndex = targetData?.length;
+    } else {
+      targetIndex = getLastIndex(targetItem.path);
+    }
+    if(sourceIndex >= 0 && targetIndex >= 0) {
+      targetData?.splice(targetIndex + 1, 0, sourceData?.[sourceIndex]);
+      sourceData?.splice(sourceIndex, 1);
       // add
-      const newData = deepSet(tmp, targetDataPath, targetCollect);
+      const afterAdd = setInfo(target.path, data, targetData);
+      // remove
+      const newData = setInfo(source.path, afterAdd, sourceData);
       setData(newData);
     }
-  }
+  };
 
-  const renderChildren = (list: any[]) => {
-    return list?.map((areaItem, areaIndex) => {
+  const loopChildren = (arr: any[], parent?: string) => {
+    return arr.map((item, index) => {
+      const path = parent === undefined ? String(index) : `${parent}.${index}`;
+      if (item.children) {
+        return (
+          <div key={index}>
+            <DndSortable
+              style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
+              path={path}
+              onDragEnd={onDragEnd}
+              onMoveInEnd={onMoveInEnd}
+            >
+              {loopChildren(item.children, path)}
+            </DndSortable>
+          </div>
+        );
+      }
       return (
-        <DndArea key={areaIndex} collect={areaItem?.list} id={`${areaIndex}.list`} style={{ display: 'flex', flexWrap: 'wrap', background: areaItem.backgroundColor, width: '200px', marginTop: '10px' }}>
-          {
-            areaItem?.list?.map((item, index) => {
-              return (
-                <DndArea.Item style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} id={index}>
-                  <div>
-                    {item}
-                  </div>
-                </DndArea.Item>
-              );
-            })
-          }
-        </DndArea>
-      )
-    })
-  }
+        <DndSortable style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} path={path}>
+          <div>
+            {item}
+          </div>
+        </DndSortable>
+      );
+    });
+  };
 
-    return (
-      <DndContextProvider onDragEnd={onDragEnd} onAreaDropEnd={onAreaDropEnd}>
-        {renderChildren(data)}
-      </DndContextProvider>
-    )
+  return (
+    <DndSortable>
+      {loopChildren(data)}
+    </DndSortable>
+  )
 }
 ```
 
-## DndContextProvider
+## attributes
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | onDragStart                      | `({e, source }) => void`            | -                                                  | when drag start in the same area                                                                                  |
 | onDrag                      | `({e, source, target}) => void`            | -                                                  | when drag ging in the same area                                                                                 |
 | onDragEnd                      | `({e, source, target}) => void`            | -                                                  | when drag end in the same area                                                                                 |
-| onAreaDropping                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region dropping                                                                                  |
-| onAreaDropEnd                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region drog end                                                                                  |
-
-## DndArea
-
-| name                          | type                  | defaultValue                                                   | description                                                                                                      |
-| ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| collect                      | `unknown`            | -                                                  | Parameters passed by drag to the inside of the drag area                                                                                  |
-
-## DndArea.Item
-
-- base：from [react-free-draggable](https://github.com/mezhanglei/react-free-draggable)
-- `id`：required, Node markers;
+| onMoveIn                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region dropping                                                                                  |
+| onMoveInEnd                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region drog end                                                                                  |
+| path                      | `string`            | -                                                  |  Marking the path of the target                                                                                 |
