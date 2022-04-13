@@ -2,19 +2,21 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-1.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
-A component that provides a drag container and drag capability and no affect for `style`, wrapping the area where the target element is located and the target element, Only drag and drop capability and callback functions are provided, the drag and drop results need to be implemented by yourself for specific data changes.
+Components that provide drag-and-drop containers and drag-and-drop capabilities, with the drag-and-drop results requiring you to change the `state` data yourself.
 
 # version update
 
-The architecture design has been redesigned to better support various scenarios in drag and drop. The new design is simpler to implement the drag and drop function, please update to `1.x` version in time with the old version.
+The architecture design has been redesigned to better support various scenarios in drag and drop. The new design is simpler to implement the drag and drop function, please update to `2.x` version in time with the old version.
 
 # features
-- Provide callback functions to modify the state after dragging and dropping, note that the `path` attribute provides a location marker
-- Supports inter-nesting for cross-domain drag-and-drop operations.
+- Drag-and-drop containers are provided, and child elements (direct children, excluding grandchildren) of the containers have drag-and-drop capability.
+- Different containers support nesting within each other and cross-domain drag-and-drop operations are possible for different containers.
+- The drag and drop behaviour of a container can be controlled by configuring properties to the container.
+- When nesting different containers, note that the `groupPath` of the container is set to mark the position of the container.
 
 ### install
 ```
@@ -25,47 +27,24 @@ yarn add react-dragger-sort
 
 ### demo
 ```javascript
-import DndSortable, { arrayMove, DragMoveHandle } from "react-dragger-sort";
+import DndSortable, { arrayMove, Dndprops } from "react-dragger-sort";
 import { klona } from 'klona';
 
 export const Example = () => {
 
   const [data, setData] = useState([
-    { children: [{ children: [{ children: [1, 2, 3, 4, 5], backgroundColor: 'pink' }], backgroundColor: 'yellow' },], backgroundColor: 'blue' },
-    { children: [8, 9, 10, 11, 12, 13, 14], backgroundColor: 'green' },
-    { children: [15, 16, 17, 18, 19, 20, 21], backgroundColor: 'green' },
+    { backgroundColor: 'blue', children: [{ label: 1, backgroundColor: 'green', children: [{ label: 1 }, { label: 2 }, { label: 3 }, { label: 4 }, { label: 5 }] }, { label: 2 }, { label: 3 }, { label: 4 }, { label: 5 }] },
+    { backgroundColor: 'green', children: [{ label: 6 }, { label: 7 }, { label: 8 }, { label: 9 }, { label: 10 }] },
+    { backgroundColor: 'green', children: [{ label: 11 }, { label: 12 }, { label: 13 }, { label: 14 }, { label: 15 }] }
   ]);
 
-  const indexToArray = (pathStr: string) => `${pathStr}`.split('.').map(n => +n);
+  const indexToArray = (pathStr?: string) => pathStr ? `${pathStr}`.split('.').map(n => +n) : [];
 
-  const getLastIndex = (pathStr: string) => {
-    const array = indexToArray(pathStr);
-    return (array.pop()) as number;
-  };
-
-  const getItem = (path: string, data: any) => {
-    const arr = indexToArray(path);
-    // 嵌套节点删除
-    let parent: any;
-    if (arr.length === 0) {
-      return data;
-    }
-    arr.forEach((item, index) => {
-      if (index === 0) {
-        parent = data[item];
-      } else {
-        parent = parent?.children?.[item];
-      }
-    });
-    if (parent.children) return parent.children;
-    return parent;
-  };
-
-  const setInfo = (pathStr: string, treeData: any, data: any) => {
-    const arr = indexToArray(pathStr);
+  const setChildren = (treeData: any, data: any, pathStr?: string) => {
+    const pathArr = indexToArray(pathStr);
     treeData = klona(treeData);
     let parent: any;
-    arr.forEach((item, index) => {
+    pathArr.forEach((item, index) => {
       if (index == 0) {
         parent = treeData[item];
       } else {
@@ -76,45 +55,86 @@ export const Example = () => {
     return treeData;
   };
 
-  const onDragEnd: DragMoveHandle = (params) => {
-    const { source, target } = params;
-    const sourceItem = source.item;
-    const targetItem = target?.item;
-    if (!sourceItem || !targetItem) return;
-    console.log(params, '同区域');
-    const preIndex = getLastIndex(sourceItem.path);
-    const nextIndex = getLastIndex(targetItem.path);
-    const parentPath = source.path;
-    let parent = parentPath ? getItem(parentPath, data) : data;
-    if (preIndex !== undefined && nextIndex !== undefined) {
-      parent = arrayMove(parent, Number(preIndex), Number(nextIndex));
-      const newData = parentPath ? setInfo(parentPath, data, parent) : parent;
-      setData(newData);
+  // 添加新元素(有副作用，会改变传入的data数据)
+  const addDragItem = (data: any[], dragItem: any, dropIndex?: number, groupPath?: string) => {
+    const dropContainer = groupPath ? getItem(data, groupPath) : data;
+    const item = dragItem instanceof Array ? { children: dragItem } : dragItem;
+    // 插入
+    if (dropIndex) {
+      dropContainer?.splice(dropIndex, 0, item);
+      // 末尾添加
+    } else {
+      dropContainer?.push(item);
     }
+    return data;
   };
 
-  const onMoveInEnd: DragMoveHandle = (params) => {
-    const { source, target } = params;
-    const sourceItem = source.item;
-    const targetItem = target?.item;
-    if (!sourceItem || !targetItem) return;
-    console.log(params, '跨区域');
-    const sourceData = getItem(source.path, data);
-    const targetData = getItem(target.path, data);
-    const sourceIndex = getLastIndex(sourceItem.path);
-    let targetIndex;
-    if(targetItem.path && targetItem.path === target.path) {
-      targetIndex = targetData?.length;
-    } else {
-      targetIndex = getLastIndex(targetItem.path);
+  // 移除拖拽元素(有副作用, 会改变传入的data数据)
+  const removeDragItem = (data: any[], dragIndex: number, groupPath?: string) => {
+    const dragContainer = groupPath ? getItem(data, groupPath) : data;
+    dragContainer?.splice(dragIndex, 1);
+    return data;
+  };
+
+  // 根据路径获取指定路径的元素
+  const getItem = (data: any[], path?: string) => {
+    const pathArr = indexToArray(path);
+    // 嵌套节点删除
+    let temp: any;
+    if (pathArr.length === 0) {
+      return data;
     }
-    if(sourceIndex >= 0 && targetIndex >= 0) {
-      targetData?.splice(targetIndex + 1, 0, sourceData?.[sourceIndex]);
-      sourceData?.splice(sourceIndex, 1);
-      // add
-      const afterAdd = setInfo(target.path, data, targetData);
-      // remove
-      const newData = setInfo(source.path, afterAdd, sourceData);
+    pathArr.forEach((item, index) => {
+      if (index === 0) {
+        temp = data[item];
+      } else {
+        temp = temp?.children?.[item];
+      }
+    });
+    if (temp.children) return temp.children;
+    return temp;
+  };
+
+  const onUpdate: DndProps['onUpdate'] = (params) => {
+    const { drag, drop } = params;
+    console.log(params, '同区域');
+    const dragIndex = drag?.index;
+    const dropIndex = drop?.dropIndex;
+    const parentPath = drag?.groupPath;
+    let parent = parentPath ? getItem(data, parentPath) : data;
+    parent = arrayMove(parent, Number(dragIndex), Number(dropIndex));
+    const newData = parentPath ? setChildren(data, parent, parentPath) : parent;
+    setData(newData);
+  };
+
+  // 先计算内层的数据再计算外层的数据
+  const onAdd: DndProps['onAdd'] = (params) => {
+    const { drag, drop } = params;
+    console.log(params, '跨区域');
+    const cloneData = klona(data);
+    // 拖拽区域信息
+    const dragGroupPath = drag.groupPath;
+    const dragIndex = drag?.index;
+    const dragPath = drag?.path;
+    const dragItem = getItem(cloneData, dragPath);
+    // 拖放区域的信息
+    const dropGroupPath = drop.groupPath;
+    const dropIndex = drop?.dropIndex;
+    const dropPath = drop?.path;
+    const dragIndexPathArr = indexToArray(dragPath);
+    const dropIndexPathArr = indexToArray(dropPath || dropGroupPath);
+    // 先计算内部的变动，再计算外部的变动
+    if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
+      // 减去拖拽的元素
+      const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
+      // 添加新元素
+      const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
+      setData(addAfterData);
+    } else {
+      // 添加新元素
+      const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
+      // 减去拖拽的元素
+      const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
       setData(newData);
     }
   };
@@ -126,31 +146,37 @@ export const Example = () => {
         return (
           <div key={index}>
             <DndSortable
+              options={{
+                groupPath: path,
+                childDrag: true,
+                allowDrop: true,
+                allowSort: true
+              }}
               style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
-              path={path}
-              onDragEnd={onDragEnd}
-              onMoveInEnd={onMoveInEnd}
+              onUpdate={onUpdate}
+              onAdd={onAdd}
             >
               {loopChildren(item.children, path)}
             </DndSortable>
           </div>
         );
       }
-      return (
-        <DndSortable style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={item} path={path}>
-          <div>
-            {item}
-          </div>
-        </DndSortable>
-      );
+      return (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={path}>{item.label}</div>);
     });
   };
 
   return (
-    <DndSortable>
+    <DndSortable
+      onUpdate={onUpdate}
+      onAdd={onAdd}
+      options={{
+        childDrag: true,
+        allowDrop: true,
+        allowSort: true
+      }}>
       {loopChildren(data)}
     </DndSortable>
-  )
+  );
 }
 ```
 
@@ -158,9 +184,21 @@ export const Example = () => {
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| onDragStart                      | `({e, source }) => void`            | -                                                  | when drag start in the same area                                                                                  |
-| onDrag                      | `({e, source, target}) => void`            | -                                                  | when drag ging in the same area                                                                                 |
-| onDragEnd                      | `({e, source, target}) => void`            | -                                                  | when drag end in the same area                                                                                 |
-| onMoveIn                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region dropping                                                                                  |
-| onMoveInEnd                      | `({e, source, target}) => void`            | -                                                  | triggered on cross-region drog end                                                                                  |
-| path                      | `string`            | -                                                  |  Marking the path of the target                                                                                 |
+| onStart                      | `({e, source }) => void`            | -                                                  | when drag start                                                                                  |
+| onMove                      | `({e, drag, drop}) => void`            | -                                                  | when drag ging                                                                                 |
+| onEnd                      | `({e, drag, drop}) => void`| -                                                  | when drag end                                                                                 |
+| onUpdate                      | `({e, drag, drop}) => void`            | -                                                  | End of drag and drop trigger in current area                                                                                  |
+| onAdd                      | `({e, drag, drop}) => void`            | -                                                  | End trigger when a new element is added to the current area                                                                                  |
+| options                           | -            | -                                                  |  Configuration of drag and drop                                                                                 |
+
+### options
+
+- `groupPath`: string The path of the drag container, used to mark the position `Optional`.
+- `handle`: string | HTMLElement Drag and drop handle `optional`.
+- `filter`: string | HTMLElement Selector for filtering handles `optional`.
+- `allowDrop`: boolean Whether to allow dragging and dropping of new elements, `must`.
+- `allowSort`: boolean Whether or not dynamic insertion sorting is allowed, `optional`.
+- `childDrag`: boolean | (HTMLElement | string)[]; Whether child elements are allowed to be dragged or allowed to be dragged `must`.
+- `direction`: [`vertical`, `horizontal`] the axial direction to allow dragging, `optional`.
+- `sortSmallClass`: string The class to add when the element is sorted towards a smaller ordinal number, `optional`.
+- `sortBigClass`: string The class to add when the element is sorted towards a larger ordinal number, `optional`.

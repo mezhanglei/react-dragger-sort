@@ -1,50 +1,39 @@
 import { CSSProperties } from "react";
-export interface BoundingRect {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-}
-export declare const isMoveIn: (event: {
-    x: number;
-    y: number;
-}, other: BoundingRect) => boolean;
-export declare function getMinDistance(event: {
-    x: number;
-    y: number;
-}, other: BoundingRect): number;
+export declare const getWindow: (el?: any) => any;
+export declare function css(el: any, prop?: string | CSSProperties): any;
+export declare function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties): void;
 /**
- * 返回元素的视窗内的位置
- * @param el
- * @returns
+ * 添加事件监听
+ * @param el 目标元素
+ * @param event 事件名称
+ * @param handler 事件函数
+ * @param inputOptions 配置
  */
-export declare function getRect(el: HTMLElement): DOMRect;
-export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
-    x: number;
-    y: number;
-};
-export declare function getOffsetWH(el: HTMLElement): undefined | {
-    width: number;
-    height: number;
-};
+export declare function addEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
+    captrue?: boolean;
+    once?: boolean;
+    passive?: boolean;
+}): void;
 /**
- * 返回事件对象相对于父元素的真实位置
- * @param el 事件对象
- * @param parent 父元素
+ * 移除事件监听
+ * @param el 目标元素
+ * @param event 事件名称
+ * @param handler 事件函数
+ * @param inputOptions 配置
  */
-export declare function getEventPosition(el: MouseEvent | TouchEvent, parent?: HTMLElement): null | {
-    x: number;
-    y: number;
-};
-export declare function getInsidePosition(el: HTMLElement, parent?: HTMLElement): null | {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-};
+export declare function removeEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
+    captrue?: boolean;
+    once?: boolean;
+    passive?: boolean;
+}): void;
+export declare function matches(el: any, selector: string): any;
+export declare function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>, include?: Array<string | HTMLElement>): number;
+export declare const insertBefore: (newElement: HTMLElement, targetElement: HTMLElement) => void;
+export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => void;
 /**
- * 给目标节点设置样式,并返回旧样式
- * @param {*} style 样式对象
- * @param {*} node 目标元素
+ * 判断根元素是不是包含目标元素
+ * @param {*} root 根元素
+ * @param {*} child 目标元素
  */
-export declare function setStyle(style: any, node?: HTMLElement): CSSProperties;
+export declare function isContains(root: HTMLElement, child: HTMLElement): boolean;
+export declare const getOwnerDocument: (el?: any) => any;

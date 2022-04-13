@@ -1,49 +1,66 @@
-import { DndSourceItem, DndItemHandler } from "../dnd-core";
+import { CSSProperties } from "react";
 export declare type EventType = MouseEvent | TouchEvent;
-export declare enum DragTypes {
-    dragStart = "dragStart",
-    draging = "draging",
-    dragEnd = "dragEnd"
+export interface DndSortable {
+    groupPath?: string;
+    groupNode: HTMLElement;
+    props: DndBaseProps;
 }
-export interface DndTargetItemType {
-    node: HTMLElement;
+export interface SortableItem extends DndSortable {
+    item: HTMLElement & {
+        animated?: boolean;
+    };
+    index: number;
+    draggableIndex?: number;
     path: string;
 }
-export interface MoveInArea {
-    area: HTMLElement;
-    path: string;
+export interface DragItem extends SortableItem {
+    clone?: HTMLElement;
 }
-export interface TargetParams extends MoveInArea {
-    item: DndTargetItemType;
+export interface DropItem extends DndSortable {
+    item?: HTMLElement & {
+        animated?: boolean;
+    };
+    index?: number;
+    draggableIndex?: number;
+    path?: string;
+    dropIndex: number;
 }
-export interface SourceParams {
+export interface DragParams {
     e: EventType;
-    source: {
-        area: HTMLElement;
-        item: DndSourceItem;
-        path: string;
+    drag: DragItem;
+}
+export declare enum ActiveTypes {
+    Active = "0",
+    NotActive = "1"
+}
+export interface DndParams extends DragParams {
+    drop: DropItem;
+}
+export interface DndMoveParams extends DragParams {
+    drop?: SortableItem | DndSortable;
+}
+export declare type DndHandle = (params: DndParams) => void;
+export declare type DragHandle = (params: DndMoveParams) => void;
+export interface DndBaseProps {
+    onStart?: DragHandle;
+    onMove?: DragHandle;
+    onEnd?: DragHandle;
+    onAdd?: DndHandle;
+    onUpdate?: DndHandle;
+    options: {
+        groupPath?: string;
+        handle?: string;
+        filter?: string;
+        allowDrop: boolean;
+        allowSort?: boolean;
+        childDrag: boolean | (HTMLElement | string)[];
+        direction?: string[];
+        sortSmallClass?: string;
+        sortBigClass?: string;
     };
 }
-export interface ListenParams extends SourceParams {
-    target: MoveInArea;
-}
-export declare type listenEvent = {
-    listener: (params: ListenParams) => MoveInArea | void;
-    target: MoveInArea;
-};
-export declare type NotifyEventHandle = (sourceParams: SourceParams) => MoveInArea | void;
-export declare type SubscribeHandle = (target: MoveInArea, addEvent: listenEvent['listener']) => void;
-export interface DndParams extends SourceParams {
-    target: {
-        area: HTMLElement;
-        item?: DndTargetItemType;
-        path: string;
-    };
-}
-export declare type DragMoveHandle = (params: DndParams) => void | boolean;
-export interface DndChildrenContextProps {
-    contextDragStart?: DndItemHandler;
-    contextDrag?: DndItemHandler;
-    contextDragEnd?: DndItemHandler;
-    contextHoverItem?: DndTargetItemType;
+export interface DndProps extends DndBaseProps {
+    children: any;
+    className?: string;
+    style?: CSSProperties;
 }

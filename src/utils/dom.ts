@@ -1,162 +1,191 @@
 import { CSSProperties } from "react";
-import { isDom } from "./type";
+import { getPrefixStyle } from "./cssPrefix";
 
-export interface BoundingRect {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
-// 事件对象是否在目标范围内
-export const isMoveIn = (event: { x: number, y: number }, other: BoundingRect) => {
-
-  const eventX = event?.x;
-  const eventY = event?.y;
-
-  return !(eventX - other?.left < 0 || eventY - other?.top < 0 || eventX - other?.right > 0 || eventY - other?.bottom > 0);
+// 获取当前的window
+export const getWindow = (el?: any) => {
+  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
+  return ownerDocument ? (ownerDocument.defaultView || window) : window;
 };
 
-// 点距离目标内的四条边的最短距离
-export function getMinDistance(event: { x: number, y: number }, other: BoundingRect) {
-  const distances = [Math.floor(event.x - other.left), Math.floor(event.y - other?.top), Math.floor(other?.bottom - event?.y), Math.floor(other?.right - event.x)];
-  const minDistance = Math.min.apply(Math, distances);
-  return minDistance;
-};
-
-/**
- * 返回元素的视窗内的位置
- * @param el 
- * @returns 
- */
- export function getRect(el: HTMLElement) {
-  return el.getBoundingClientRect();
-}
-
-// 返回元素或事件对象的视口位置
-export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
-  x: number;
-  y: number;
-} {
-  let pos = null;
-  if ("clientX" in el) {
-    pos = {
-      x: el.clientX,
-      y: el.clientY
-    };
-  } else if ("touches" in el) {
-    if (el?.touches[0]) {
-      pos = {
-        x: el.touches[0]?.clientX,
-        y: el.touches[0]?.clientY
-      };
-    }
-  } else if (isDom(el)) {
-    if ([document.documentElement, document.body].includes(el)) {
-      pos = {
-        x: 0,
-        y: 0
+// 获取或设置目标元素的style值
+export function css(el: any, prop?: string | CSSProperties) {
+  let style = el && el.style;
+  const win = getWindow(el);
+  if (style) {
+    const ownerStyle = win.getComputedStyle(el, '') || el.currentStyle;
+    if (prop === void 0) {
+      return ownerStyle;
+    } else if (typeof prop === 'string') {
+      return ownerStyle[prop];
+    } else if (typeof prop === 'object') {
+      for (const key in prop) {
+        style[getPrefixStyle(key)] = prop[key]
       }
-    } else {
-      pos = {
-        x: getRect(el)?.left,
-        y: getRect(el).top
-      };
     }
   }
-  return pos;
 }
 
-// 获取页面或元素的宽高 = 可视宽高 + 滚动条 + 边框
-export function getOffsetWH(el: HTMLElement): undefined | {
-  width: number;
-  height: number;
-} {
-  if (!isDom(el)) {
-    return;
+// 触发动画
+export function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties) {
+  const ms = 160;
+  if (ms) {
+    // 目标后面的位置
+    const currentRect = target.getBoundingClientRect()
+    if (prevRect.nodeType === 1) {
+      prevRect = prevRect.getBoundingClientRect()
+    }
+
+    // 目标初始化位置为之前位置
+    css(target, {
+      transition: 'none',
+      'transform': `translate3d(${prevRect.left - currentRect.left}px, ${prevRect.top - currentRect.top}px,0)`
+    });
+
+    // dom的宽高位置属性会回流重绘目前的布局样式
+    target.offsetWidth;
+
+    // 目标重回现在的位置
+    css(target, {
+      'transition': `all ${ms}ms`,
+      'transform': 'translate3d(0,0,0)',
+      ...transitionStyle
+    });
+
+    clearTimeout(target.animated);
+    // 时间到了之后清空重置
+    target.animated = setTimeout(function () {
+      css(target, {
+        transition: '',
+        transform: ''
+      });
+      target.animated = false;
+    }, ms);
   }
-  if ([document.documentElement, document.body].includes(el)) {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    return { width, height };
+}
+
+/**
+ * 添加事件监听
+ * @param el 目标元素
+ * @param event 事件名称
+ * @param handler 事件函数
+ * @param inputOptions 配置
+ */
+ export function addEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
+  captrue?: boolean,
+  once?: boolean,
+  passive?: boolean
+}): void {
+  if (!el) return;
+  // captrue: true事件捕获 once: true只调用一次,然后销毁 passive: true不调用preventDefault
+  const options = { capture: false, once: false, passive: false, ...inputOptions };
+  if (el.addEventListener) {
+    el.addEventListener(event, handler, options);
+  } else if (el.attachEvent) {
+    el.attachEvent('on' + event, handler);
   } else {
-    const width = el.offsetWidth;
-    const height = el.offsetHeight;
-    return { width, height };
+    // $FlowIgnore: Doesn't think elements are indexable
+    el['on' + event] = handler;
   }
+}
+
+/**
+ * 移除事件监听
+ * @param el 目标元素
+ * @param event 事件名称
+ * @param handler 事件函数
+ * @param inputOptions 配置
+ */
+export function removeEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
+  captrue?: boolean,
+  once?: boolean,
+  passive?: boolean
+}): void {
+  if (!el) return;
+  const options = { capture: false, once: false, passive: false, ...inputOptions };
+  if (el.removeEventListener) {
+    el.removeEventListener(event, handler, options);
+  } else if (el.detachEvent) {
+    el.detachEvent('on' + event, handler);
+  } else {
+    // $FlowIgnore: Doesn't think elements are indexable
+    el['on' + event] = null;
+  }
+}
+
+// 目标元素是否匹配选择器
+export function matches(el: any, selector: string) {
+  if (!selector) return;
+
+  selector[0] === '>' && (selector = selector.substring(1));
+
+  if (el) {
+    try {
+      if (el.matches) {
+        return el.matches(selector);
+      } else if (el.msMatchesSelector) {
+        return el.msMatchesSelector(selector);
+      } else if (el.webkitMatchesSelector) {
+        return el.webkitMatchesSelector(selector);
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+// 根据选择器返回在父元素内的序号
+export function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>, include?: Array<string | HTMLElement>) {
+  const children = el?.parentNode?.children;
+  if (!children) return -1;
+  let index = 0;
+  for (let i = 0; i < children?.length; i++) {
+    const node = children[i];
+    if (
+      (!include || include?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)) &&
+      !excluded?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)
+    ) {
+      // 如果等于就结束循环
+      if (el !== node) {
+        index++
+      } else {
+        break;
+      }
+    }
+  }
+  return index;
+}
+
+export const insertBefore = (newElement: HTMLElement, targetElement: HTMLElement) => {
+  const parentElement = targetElement.parentNode;
+  if (!parentElement) return;
+  (parentElement as HTMLElement).insertBefore(newElement, targetElement);
+}
+
+export const insertAfter = (newElement: HTMLElement, targetElement: HTMLElement) => {
+  const parentElement = targetElement.parentNode;
+  if (!parentElement) return;
+  if ((parentElement as HTMLElement).lastChild == targetElement) {
+    (parentElement as HTMLElement).appendChild(newElement);
+  } else {
+    (parentElement as HTMLElement).insertBefore(newElement, targetElement.nextElementSibling);
+  }
+}
+
+/**
+ * 判断根元素是不是包含目标元素
+ * @param {*} root 根元素
+ * @param {*} child 目标元素
+ */
+ export function isContains(root: HTMLElement, child: HTMLElement): boolean {
+  if (!root || root === child) return false;
+  return root.contains(child);
 };
 
-/**
- * 返回事件对象相对于父元素的真实位置
- * @param el 事件对象
- * @param parent 父元素
- */
- export function getEventPosition(el: MouseEvent | TouchEvent, parent: HTMLElement = document.body || document.documentElement): null | {
-  x: number;
-  y: number;
-} {
-  let pos = null;
-  if ("clientX" in el) {
-    pos = {
-      x: el?.clientX - getRect(parent).left,
-      y: el?.clientY - getRect(parent).top,
-    };
-  } else if ("touches" in el) {
-    if (el?.touches[0]) {
-      pos = {
-        x: el?.touches[0]?.clientX - getRect(parent).left,
-        y: el?.touches[0]?.clientY - getRect(parent).top
-      };
-    }
-  }
-
-  return pos;
-}
-
-// 目标在父元素内的四条边位置信息
-export function getInsidePosition(el: HTMLElement, parent: HTMLElement = document.body || document.documentElement): null | {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-} {
-  let pos = null;
-  if (isDom(el)) {
-    const nodeOffset = getOffsetWH(el);
-    if (!nodeOffset) return null;
-    const borderLeftWidth = parseFloat(getComputedStyle(parent)?.borderLeftWidth) || 0;
-    const borderTopWidth = parseFloat(getComputedStyle(parent)?.borderTopWidth) || 0;
-
-    const top = getRect(el).top - getRect(parent).top - borderTopWidth;
-    const left = getRect(el).left - getRect(parent).left - borderLeftWidth;
-
-    return {
-      left,
-      top,
-      right: left + nodeOffset?.width,
-      bottom: top + nodeOffset?.height
-    }
-  }
-  return pos;
-}
-
-/**
- * 给目标节点设置样式,并返回旧样式
- * @param {*} style 样式对象
- * @param {*} node 目标元素
- */
- export function setStyle(style: any, node: HTMLElement = document.body || document.documentElement): CSSProperties {
-  const oldStyle: any = {};
-
-  const styleKeys: string[] = Object.keys(style);
-
-  styleKeys.forEach(key => {
-    oldStyle[key] = (node.style as any)[key];
-  });
-
-  styleKeys.forEach(key => {
-    (node.style as any)[key] = (style as any)[key];
-  });
-
-  return oldStyle;
-}
+// 获取当前的document
+export const getOwnerDocument = (el?: any) => {
+  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
+  return ownerDocument;
+};
 
