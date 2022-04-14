@@ -1,5 +1,11 @@
 import { CSSProperties } from "react";
 export declare type EventType = MouseEvent | TouchEvent;
+export declare enum DropEffect {
+    None = "none",
+    Move = "move",
+    Copy = "copy",
+    Link = "link"
+}
 export interface DndSortable {
     groupPath?: string;
     groupNode: HTMLElement;
