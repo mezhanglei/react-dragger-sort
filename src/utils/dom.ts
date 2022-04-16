@@ -1,5 +1,85 @@
 import { CSSProperties } from "react";
 import { getPrefixStyle } from "./cssPrefix";
+import { EventType } from "./types";
+
+export function isDom(ele: any) {
+  if (typeof HTMLElement === 'object') {
+    return ele instanceof HTMLElement;
+  } else {
+    return ele && typeof ele === 'object' && ele.nodeType === 1 && typeof ele.nodeName === 'string';
+  }
+}
+
+/**
+ * 返回元素的视窗内的位置
+ * @param el 
+ * @returns 
+ */
+ export function getRect(el: HTMLElement) {
+  return el.getBoundingClientRect()
+}
+
+// 返回元素或事件对象的视口位置
+export function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
+  x: number;
+  y: number;
+} {
+  let pos = null;
+  if ("clientX" in el) {
+    pos = {
+      x: el.clientX,
+      y: el.clientY
+    };
+  } else if ("touches" in el) {
+    if (el?.touches[0]) {
+      pos = {
+        x: el.touches[0]?.clientX,
+        y: el.touches[0]?.clientY
+      };
+    }
+  } else if (isDom(el)) {
+    if ([document.documentElement, document.body].includes(el)) {
+      pos = {
+        x: 0,
+        y: 0
+      }
+    } else {
+      pos = {
+        x: getRect(el)?.left,
+        y: getRect(el).top
+      };
+    }
+  }
+  return pos;
+}
+
+// 事件是否在目标内部
+export const isMoveIn = (e: EventType, target: HTMLElement) => {
+  const eventXY = getClientXY(e);
+  const rect = getRect(target);
+  if (eventXY && rect) {
+    const { x, y } = eventXY;
+    const { left, top, right, bottom } = rect;
+    return !(x - left < 0 || y - top < 0 || x - right > 0 || y - bottom > 0);
+  }
+};
+
+// 判断事件对象在容器内处于前面还是后面
+export const getEventDirction = (e: any, ele: HTMLElement) => {
+  const eventXY = getClientXY(e);
+  if (!eventXY) return;
+  const rect = getRect(ele);
+  const { x, y } = eventXY;
+  const { left, top } = rect;
+  const leftDistance = x - left;
+  const topDistance = y - top;
+
+  if (topDistance < 20 && leftDistance < 20) {
+    return 'pre';
+  } else {
+    return 'next';
+  }
+};
 
 // 获取当前的window
 export const getWindow = (el?: any) => {

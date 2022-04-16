@@ -44,10 +44,9 @@ declare const DndSortable: {
             sortSmallClass?: string | undefined;
             sortBigClass?: string | undefined;
         }) => boolean | undefined;
-        onStartHandle: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
-        onEndHandle: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
-        onDragStartHandle: (e: any) => void;
-        onDragEndHandle: (e: any) => void;
+        onStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
+        onEnd: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
+        onDragEnd: (e: any) => void;
         resetData: () => void;
         handleDragOverClass: (params: {
             draggedIndex: number;
@@ -67,12 +66,17 @@ declare const DndSortable: {
                 sortBigClass?: string | undefined;
             };
         }) => void;
+        onDragStart: (e: any) => void;
+        onTouchStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
+        moveStartHandle: (e: any, currentTarget?: any) => void;
+        moveHandle: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
+        onTouchMove: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
+        onDragOver: (e: any) => void;
         sortInSameArea: (newOver?: (HTMLElement & {
             animated?: boolean | undefined;
         }) | undefined) => void;
-        insertNewOver: (dropItem: import("./utils/types").DndSortable, sortableItem: import("./utils/types").SortableItem) => void;
-        appendNewOver: (dropItem: import("./utils/types").DndSortable) => void;
-        onDragOverHandle: (e: any) => void;
+        addNewOver: (dropItem: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
+        setDropChild: (parent: HTMLElement, target: HTMLElement) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;

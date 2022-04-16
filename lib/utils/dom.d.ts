@@ -1,4 +1,18 @@
 import { CSSProperties } from "react";
+import { EventType } from "./types";
+export declare function isDom(ele: any): boolean;
+/**
+ * 返回元素的视窗内的位置
+ * @param el
+ * @returns
+ */
+export declare function getRect(el: HTMLElement): DOMRect;
+export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
+    x: number;
+    y: number;
+};
+export declare const isMoveIn: (e: EventType, target: HTMLElement) => boolean | undefined;
+export declare const getEventDirction: (e: any, ele: HTMLElement) => "pre" | "next" | undefined;
 export declare const getWindow: (el?: any) => any;
 export declare function css(el: any, prop?: string | CSSProperties): any;
 export declare function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties): void;

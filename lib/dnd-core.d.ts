@@ -14,10 +14,9 @@ export default function BuildDndSortable(): {
         getOptions: (options: DndProps['options']) => DndProps['options'];
         initManagerData: () => void;
         isCanDrag: (el: HTMLElement, options: DndProps['options']) => boolean | undefined;
-        onStartHandle: EventHandler;
-        onEndHandle: EventHandler;
-        onDragStartHandle: (e: any) => void;
-        onDragEndHandle: (e: any) => void;
+        onStart: EventHandler;
+        onEnd: EventHandler;
+        onDragEnd: (e: any) => void;
         resetData: () => void;
         handleDragOverClass: (params: {
             draggedIndex: number;
@@ -27,12 +26,17 @@ export default function BuildDndSortable(): {
             oldOver?: HTMLElement;
             options: DndProps['options'];
         }) => void;
+        onDragStart: (e: any) => void;
+        onTouchStart: EventHandler;
+        moveStartHandle: (e: any, currentTarget?: any) => void;
+        moveHandle: EventHandler;
+        onTouchMove: EventHandler;
+        onDragOver: (e: any) => void;
         sortInSameArea: (newOver?: (HTMLElement & {
             animated?: boolean | undefined;
         }) | undefined) => void;
-        insertNewOver: (dropItem: DndSortable, sortableItem: SortableItem) => void;
-        appendNewOver: (dropItem: DndSortable) => void;
-        onDragOverHandle: (e: any) => void;
+        addNewOver: (dropItem: DndSortable, sortableItem?: SortableItem | undefined) => void;
+        setDropChild: (parent: HTMLElement, target: HTMLElement) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;

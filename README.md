@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-2.0.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.0.2-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -60,9 +60,9 @@ export const Example = () => {
     const dropContainer = groupPath ? getItem(data, groupPath) : data;
     const item = dragItem instanceof Array ? { children: dragItem } : dragItem;
     // 插入
-    if (dropIndex) {
+    if (typeof dropIndex === 'number') {
       dropContainer?.splice(dropIndex, 0, item);
-      // 末尾添加
+    // 末尾添加
     } else {
       dropContainer?.push(item);
     }
