@@ -99,7 +99,6 @@ declare const DndSortable: {
         componentWillUpdate?(nextProps: Readonly<import("./utils/types").DndProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<import("./utils/types").DndProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
-    getDerivedStateFromProps(nextProps: import("./utils/types").DndProps, prevState: any): any;
     contextType?: import("react").Context<any> | undefined;
 };
 export default DndSortable;

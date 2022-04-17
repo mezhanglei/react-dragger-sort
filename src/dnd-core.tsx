@@ -32,25 +32,14 @@ export default function BuildDndSortable() {
       removeEvent(ownerDocument, 'dragover', this.onDragOver);
     }
 
+    // 当外部的state数据改变时触发更新
     componentDidUpdate(prevProps: DndProps) {
-      const optionsChanged = this.props.options !== undefined && this.props.options !== prevProps.options;
-      if (optionsChanged) {
+      if (this.props.options !== undefined) {
         // 异步更新
         setTimeout(() => {
           this.initManagerData();
         }, 0);
       }
-    }
-
-    static getDerivedStateFromProps(nextProps: DndProps, prevState: any) {
-      const optionsChanged = nextProps.options !== prevState.prevOptions;
-      if (optionsChanged) {
-        return {
-          ...prevState,
-          prevWidth: nextProps.options,
-        };
-      }
-      return null;
     }
 
     // 获取options

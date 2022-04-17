@@ -59,6 +59,5 @@ export default function BuildDndSortable(): {
         componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
-    getDerivedStateFromProps(nextProps: DndProps, prevState: any): any;
     contextType?: React.Context<any> | undefined;
 };
