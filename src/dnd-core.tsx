@@ -58,6 +58,7 @@ export default function BuildDndSortable() {
 
     // 初始化manager的数据
     initManagerData = () => {
+      if(!this.sortArea) return;
       const { children, className, style, ...restProps } = this.props;
       const options = this.getOptions(restProps?.options);
       const childNodes = this.sortArea?.children;
