@@ -35,7 +35,10 @@ export default function BuildDndSortable() {
     componentDidUpdate(prevProps: DndProps) {
       const optionsChanged = this.props.options !== undefined && this.props.options !== prevProps.options;
       if (optionsChanged) {
-        this.initManagerData();
+        // 异步更新
+        setTimeout(() => {
+          this.initManagerData();
+        }, 0);
       }
     }
 
