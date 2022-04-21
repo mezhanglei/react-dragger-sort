@@ -75,8 +75,8 @@ declare const DndSortable: {
         sortInSameArea: (newOver?: (HTMLElement & {
             animated?: boolean | undefined;
         }) | undefined) => void;
-        addNewOver: (dropItem: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
-        setDropChild: (parent: HTMLElement, target: HTMLElement) => void;
+        addNewOver: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
+        setDropChild: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, cloneDragged: HTMLElement) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;
@@ -99,6 +99,7 @@ declare const DndSortable: {
         componentWillUpdate?(nextProps: Readonly<import("./utils/types").DndProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<import("./utils/types").DndProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
+    getDerivedStateFromProps(nextProps: import("./utils/types").DndProps, prevState: any): any;
     contextType?: import("react").Context<any> | undefined;
 };
 export default DndSortable;

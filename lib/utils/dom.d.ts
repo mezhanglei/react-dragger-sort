@@ -12,7 +12,15 @@ export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): 
     y: number;
 };
 export declare const isMoveIn: (e: EventType, target: HTMLElement) => boolean | undefined;
-export declare const getEventDirction: (e: any, ele: HTMLElement) => "pre" | "next" | undefined;
+export declare function dotToRect(rect: {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+}, p: {
+    x: number;
+    y: number;
+}): number;
 export declare const getWindow: (el?: any) => any;
 export declare function css(el: any, prop?: string | CSSProperties): any;
 export declare function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties): void;

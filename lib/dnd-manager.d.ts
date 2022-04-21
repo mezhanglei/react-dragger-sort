@@ -9,5 +9,6 @@ export declare class DndManager<T extends Object = any> {
     getDragItem: (node: HTMLElement) => SortableItem | undefined;
     setActive: (target: HTMLElement) => void;
     removeActive: (target: HTMLElement) => void;
-    findNearest: (e: EventType, self: HTMLElement) => HTMLElement | undefined;
+    findOver: (e: EventType, self: HTMLElement) => HTMLElement | undefined;
+    findNearest: (e: EventType, parent: HTMLElement) => HTMLElement | undefined;
 }

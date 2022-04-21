@@ -64,22 +64,12 @@ export const isMoveIn = (e: EventType, target: HTMLElement) => {
   }
 };
 
-// 判断事件对象在容器内处于前面还是后面
-export const getEventDirction = (e: any, ele: HTMLElement) => {
-  const eventXY = getClientXY(e);
-  if (!eventXY) return;
-  const rect = getRect(ele);
-  const { x, y } = eventXY;
-  const { left, top } = rect;
-  const leftDistance = x - left;
-  const topDistance = y - top;
-
-  if (topDistance < 20 && leftDistance < 20) {
-    return 'pre';
-  } else {
-    return 'next';
-  }
-};
+// 获取点到矩形框的最短距离
+export function dotToRect(rect: { left: number, top: number, right: number, bottom: number }, p: { x: number, y: number }) {
+  const dx = Math.max(rect.left - p.x, 0, p.x - rect.right);
+  const dy = Math.max(rect.top - p.y, 0, p.y - rect.bottom);
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
 // 获取当前的window
 export const getWindow = (el?: any) => {

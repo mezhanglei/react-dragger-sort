@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { EventHandler } from "react-free-draggable";
+import { EventHandler, EventType } from "react-free-draggable";
 import { DndProps, DndSortable, SortableItem } from "./utils/types";
 export default function BuildDndSortable(): {
     new (props: DndProps): {
@@ -35,8 +35,8 @@ export default function BuildDndSortable(): {
         sortInSameArea: (newOver?: (HTMLElement & {
             animated?: boolean | undefined;
         }) | undefined) => void;
-        addNewOver: (dropItem: DndSortable, sortableItem?: SortableItem | undefined) => void;
-        setDropChild: (parent: HTMLElement, target: HTMLElement) => void;
+        addNewOver: (e: EventType, dropItem: DndSortable, sortableItem?: SortableItem | undefined) => void;
+        setDropChild: (e: EventType, dropItem: DndSortable, cloneDragged: HTMLElement) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;
@@ -59,5 +59,6 @@ export default function BuildDndSortable(): {
         componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
+    getDerivedStateFromProps(nextProps: DndProps, prevState: any): any;
     contextType?: React.Context<any> | undefined;
 };
