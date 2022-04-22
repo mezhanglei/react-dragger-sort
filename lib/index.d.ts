@@ -54,17 +54,7 @@ declare const DndSortable: {
             oldOverIndex: number;
             newOver: HTMLElement;
             oldOver?: HTMLElement | undefined;
-            options: {
-                groupPath?: string | undefined;
-                handle?: string | undefined;
-                filter?: string | undefined;
-                allowDrop: boolean;
-                allowSort?: boolean | undefined;
-                childDrag: boolean | (string | HTMLElement)[];
-                direction?: string[] | undefined;
-                sortSmallClass?: string | undefined;
-                sortBigClass?: string | undefined;
-            };
+            props: import("./utils/types").DndBaseProps;
         }) => void;
         onDragStart: (e: any) => void;
         onTouchStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
@@ -76,7 +66,7 @@ declare const DndSortable: {
             animated?: boolean | undefined;
         }) | undefined) => void;
         addNewOver: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
-        setDropChild: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, cloneDragged: HTMLElement) => void;
+        setDropEndChild: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, cloneDragged: HTMLElement) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;

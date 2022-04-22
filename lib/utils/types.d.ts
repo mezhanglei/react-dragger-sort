@@ -35,10 +35,6 @@ export interface DragParams {
     e: EventType;
     drag: DragItem;
 }
-export declare enum ActiveTypes {
-    Active = "0",
-    NotActive = "1"
-}
 export interface DndParams extends DragParams {
     drop: DropItem;
 }
@@ -53,6 +49,8 @@ export interface DndBaseProps {
     onEnd?: DragHandle;
     onAdd?: DndHandle;
     onUpdate?: DndHandle;
+    onHover?: (over: HTMLElement) => void;
+    onUnHover?: (over: HTMLElement) => void;
     options: {
         groupPath?: string;
         handle?: string;

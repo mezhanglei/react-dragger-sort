@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-2.0.6-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -189,6 +189,8 @@ export const Example = () => {
 | onEnd                      | `({e, drag, drop}) => void`| -                                                  | when drag end                                                                                 |
 | onUpdate                      | `({e, drag, drop}) => void`            | -                                                  | End of drag and drop trigger in current area                                                                                  |
 | onAdd                      | `({e, drag, drop}) => void`            | -                                                  | End trigger when a new element is added to the current area                                                                                  |
+| onHover                      | `(item: HTMLElement) => void`            | -                                                  | Triggered when an immediate sortable child element is hovered                                                                                  |
+| onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | Triggered when the previous hover child element is moved away                                                                                  |
 | options                           | -            | -                                                  |  Configuration of drag and drop                                                                                 |
 
 ### options

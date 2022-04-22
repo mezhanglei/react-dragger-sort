@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-2.0.6-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -189,6 +189,8 @@ export const Example = () => {
 | onEnd                      | `({e, drag, drop}) => void`            | -                                                  | 拖拽结束时触发的函数                                                                                  |
 | onUpdate                      | `({e, drag, drop}) => void`            | -                                                  | 当前区域内排序结束触发                                                                                  |
 | onAdd                      | `({e, drag, drop}) => void`            | -                                                  | 当前区域内添加新元素时结束触发                                                                                  |
+| onHover                      | `(item: HTMLElement) => void`            | -                                                  | 直属可排序子元素被hover时触发                                                                                  |
+| onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | 上一个hover子元素移开时触发                                                                                  |
 | options                      | -            | -                                                  |  拖放的配置                                                                                 |
 
 ### options
