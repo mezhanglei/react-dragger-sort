@@ -19,8 +19,8 @@ declare const DndSortable: {
             allowSort?: boolean | undefined;
             childDrag: boolean | (string | HTMLElement)[];
             direction?: string[] | undefined;
-            sortSmallClass?: string | undefined;
-            sortBigClass?: string | undefined;
+            sortPreClass?: string | undefined;
+            sortNextClass?: string | undefined;
         }) => {
             groupPath?: string | undefined;
             handle?: string | undefined;
@@ -29,8 +29,8 @@ declare const DndSortable: {
             allowSort?: boolean | undefined;
             childDrag: boolean | (string | HTMLElement)[];
             direction?: string[] | undefined;
-            sortSmallClass?: string | undefined;
-            sortBigClass?: string | undefined;
+            sortPreClass?: string | undefined;
+            sortNextClass?: string | undefined;
         };
         initManagerData: () => void;
         isCanDrag: (el: HTMLElement, options: {
@@ -41,8 +41,8 @@ declare const DndSortable: {
             allowSort?: boolean | undefined;
             childDrag: boolean | (string | HTMLElement)[];
             direction?: string[] | undefined;
-            sortSmallClass?: string | undefined;
-            sortBigClass?: string | undefined;
+            sortPreClass?: string | undefined;
+            sortNextClass?: string | undefined;
         }) => boolean | undefined;
         onStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
         onEnd: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;

@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-2.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.0.8-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -202,5 +202,5 @@ export const Example = () => {
 - `allowSort`: boolean Whether or not dynamic insertion sorting is allowed, `optional`.
 - `childDrag`: boolean | (HTMLElement | string)[]; Whether child elements are allowed to be dragged or allowed to be dragged `must`.
 - `direction`: [`vertical`, `horizontal`] the axial direction to allow dragging, `optional`.
-- `sortSmallClass`: string The class to add when the element is sorted towards a smaller ordinal number, `optional`.
-- `sortBigClass`: string The class to add when the element is sorted towards a larger ordinal number, `optional`.
+- `sortPreClass`: string The class to add when the element is sorted towards a smaller ordinal number, `optional`.
+- `sortNextClass`: string The class to add when the element is sorted towards a larger ordinal number, `optional`.

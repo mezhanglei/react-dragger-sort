@@ -59,8 +59,8 @@ export interface DndBaseProps {
         allowSort?: boolean;
         childDrag: boolean | (HTMLElement | string)[];
         direction?: string[];
-        sortSmallClass?: string;
-        sortBigClass?: string;
+        sortPreClass?: string;
+        sortNextClass?: string;
     };
 }
 export interface DndProps extends DndBaseProps {

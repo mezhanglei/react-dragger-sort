@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-2.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.0.8-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -202,5 +202,5 @@ export const Example = () => {
 - `allowSort`: boolean 是否可以动态插入排序，`可选`。
 - `childDrag`: boolean | (HTMLElement | string)[]; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
 - `direction`: [`vertical`, `horizontal`]允许拖拽的轴向，`可选`。
-- `sortSmallClass`: string 元素往序号小的排序时添加的class，`可选`。
-- `sortBigClass`: string 元素往序号大的排序时添加的class，`可选`。
+- `sortPreClass`: string 元素往序号小的排序时添加的class，`可选`。
+- `sortNextClass`: string 元素往序号大的排序时添加的class，`可选`。
