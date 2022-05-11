@@ -17,7 +17,7 @@ export default function BuildDndSortable(): {
         onStart: EventHandler;
         onEnd: EventHandler;
         onDragEnd: (e: any) => void;
-        resetData: () => void;
+        sortEnd: () => void;
         handleDragOverClass: (params: {
             draggedIndex: number;
             newOverIndex: number;

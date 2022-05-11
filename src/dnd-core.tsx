@@ -25,7 +25,9 @@ export default function BuildDndSortable() {
     }
 
     componentDidMount() {
-      this.initManagerData();
+      setTimeout(() => {
+        this.initManagerData();
+      }, 0);
     }
 
     componentWillUnmount() {
@@ -70,10 +72,11 @@ export default function BuildDndSortable() {
 
     // 初始化manager的数据
     initManagerData = () => {
-      if (!this.sortArea) return;
+      const sortArea = this.sortArea;
+      if (!sortArea) return;
       const { children, className, style, ...restProps } = this.props;
       const options = this.getOptions(restProps?.options);
-      const childNodes = this.sortArea?.children;
+      const childNodes = sortArea?.children;
       const childDrag = options?.childDrag instanceof Array ? options?.childDrag : [];
       const parentPath = options?.groupPath;
       // 初始化可拖拽元素
@@ -82,7 +85,7 @@ export default function BuildDndSortable() {
         const path = parentPath !== undefined ? `${parentPath}.${index}` : `${index}`;
         dndManager.setDragItemsMap({
           groupPath: parentPath,
-          groupNode: this.sortArea,
+          groupNode: sortArea,
           props: restProps,
           item: childNode,
           index,
@@ -93,7 +96,7 @@ export default function BuildDndSortable() {
       // 初始化可拖放元素
       dndManager.setDropItemsMap({
         groupPath: parentPath,
-        groupNode: this.sortArea,
+        groupNode: sortArea,
         props: restProps
       });
     }
@@ -149,6 +152,7 @@ export default function BuildDndSortable() {
           const props = this.props;
           const options = this.getOptions(props.options);
           const dropIndex = options?.allowSort ? getChildrenIndex(cloneDragged, [dragged]) : overSortableItem?.index; // drop目标的位置index
+          // 结束时移除hover状态
           overSortableItem?.item && props?.onUnHover && props.onUnHover(overSortableItem?.item);
           props.onUpdate && props.onUpdate({ ...dragParams, drop: { ...dropItem, ...overSortableItem, dropIndex } });
         } else {
@@ -159,6 +163,7 @@ export default function BuildDndSortable() {
               const props = dropGroup?.props;
               const options = this.getOptions(props?.options);
               const dropIndex = options?.allowSort ? getChildrenIndex(cloneDragged, [dragged]) : overSortableItem?.index; // drop目标的位置index
+              // 结束时移除hover状态
               overSortableItem?.item && props?.onUnHover && props?.onUnHover(overSortableItem?.item);
               props?.onAdd && props?.onAdd({
                 ...dragParams,
@@ -169,10 +174,10 @@ export default function BuildDndSortable() {
         }
         this.props.onEnd && this.props.onEnd({ ...dragParams, drop: overSortableItem ? overSortableItem : dropItem });
       }
-      this.resetData();
+      this.sortEnd();
     }
 
-    resetData = () => {
+    sortEnd = () => {
       // 拖拽元素
       const dragged = this.dragged;
       // 克隆拖拽元素
@@ -415,7 +420,8 @@ export default function BuildDndSortable() {
           parent?.appendChild(cloneDragged);
           _animate(cloneDragged, draggedPreRect);
         }
-        this.over && props.onUnHover && props.onUnHover(this.over);
+        const oldOver = this.over;
+        oldOver && props.onUnHover && props.onUnHover(oldOver);
         this.over = parent;
       }
     }
