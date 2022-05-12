@@ -57,7 +57,7 @@ declare const DndSortable: {
             props: import("./utils/types").DndBaseProps;
         }) => void;
         onDragStart: (e: any) => void;
-        onTouchStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
+        onTouchMoveStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
         moveStartHandle: (e: any, currentTarget?: any) => void;
         moveHandle: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
         onTouchMove: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;

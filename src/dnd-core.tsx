@@ -4,7 +4,7 @@ import { DndBaseProps, DndProps, DndSortable, DropEffect, SortableItem } from ".
 import classNames from "classnames";
 import { _animate, css, addEvent, getChildrenIndex, insertAfter, insertBefore, removeEvent, isContains, getOwnerDocument, matches } from "./utils/dom";
 import { DndManager } from './dnd-manager';
-import { isMobile } from './utils/verify';
+import { isEventTouch, isMobile } from './utils/verify';
 import { isObjectEqual } from './utils/object';
 
 const ismobile = isMobile();
@@ -113,7 +113,10 @@ export default function BuildDndSortable() {
 
     // 鼠标点击/触摸事件开始
     onStart: EventHandler = (e: any) => {
-      e.stopPropagation();
+      // 兼容移动端
+      if(isEventTouch(e)) {
+        e.stopPropagation();
+      }
       const currentTarget = e.currentTarget;
       if (currentTarget && this.isCanDrag(currentTarget, this.props?.options)) {
         currentTarget.draggable = true;
@@ -123,12 +126,13 @@ export default function BuildDndSortable() {
 
     // 鼠标点击/触摸事件结束
     onEnd: EventHandler = (e: any) => {
-      this.onDragEnd(e)
+      if (this.dragged) {
+        this.onDragEnd(e)
+      }
     }
 
     // 鼠标拖拽结束事件
     onDragEnd = (e: any) => {
-      e.stopPropagation();
       // 拖拽元素
       const dragged = this.dragged;
       // 克隆拖拽元素
@@ -225,7 +229,10 @@ export default function BuildDndSortable() {
 
     // 鼠标拖拽开始事件(鼠标端，并且触发时其他事件将不会再触发)
     onDragStart = (e: any) => {
-      e.stopPropagation();
+      // 兼容移动端
+      if(!isEventTouch(e)) {
+        e.stopPropagation();
+      }
       const currentTarget = e.currentTarget;
       if (currentTarget) {
         const ownerDocument = getOwnerDocument(this.sortArea);
@@ -235,8 +242,7 @@ export default function BuildDndSortable() {
     }
 
     // 触摸拖拽开始事件(移动端)
-    onTouchStart: EventHandler = (e: any, data) => {
-      e.stopPropagation();
+    onTouchMoveStart: EventHandler = (e: any, data) => {
       const currentTarget = data?.node;
       this.moveStartHandle(e, currentTarget);
     }
@@ -320,8 +326,6 @@ export default function BuildDndSortable() {
 
     // 移动事件(移动端)
     onTouchMove: EventHandler = (e) => {
-      // 阻止冒泡
-      e.stopPropagation();
       this.moveHandle(e);
     }
 
@@ -329,8 +333,6 @@ export default function BuildDndSortable() {
     onDragOver = (e: any) => {
       // over默认行为阻止
       e.preventDefault();
-      // 阻止冒泡
-      e.stopPropagation();
       this.moveHandle(e);
     }
 
@@ -434,7 +436,7 @@ export default function BuildDndSortable() {
           handle={options?.handle}
           filter={options?.filter}
           onStart={this.onStart}
-          onMoveStart={ismobile ? this.onTouchStart : undefined}
+          onMoveStart={ismobile ? this.onTouchMoveStart : undefined}
           onMove={ismobile ? this.onTouchMove : undefined}
           onEnd={this.onEnd}
           direction={options?.direction}

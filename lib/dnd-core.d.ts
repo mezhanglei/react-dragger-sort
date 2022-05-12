@@ -27,7 +27,7 @@ export default function BuildDndSortable(): {
             props: DndBaseProps;
         }) => void;
         onDragStart: (e: any) => void;
-        onTouchStart: EventHandler;
+        onTouchMoveStart: EventHandler;
         moveStartHandle: (e: any, currentTarget?: any) => void;
         moveHandle: EventHandler;
         onTouchMove: EventHandler;
