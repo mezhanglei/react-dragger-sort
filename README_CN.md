@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-2.0.10-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -27,7 +27,7 @@ yarn add react-dragger-sort
 
 ### demo
 ```javascript
-import DndSortable, { arrayMove, Dndprops } from "react-dragger-sort";
+import DndSortable, { arraySwap, Dndprops } from "react-dragger-sort";
 import { klona } from 'klona';
 
 export const Example = () => {
@@ -102,7 +102,7 @@ export const Example = () => {
     const dropIndex = drop?.dropIndex;
     const parentPath = drag?.groupPath;
     let parent = parentPath ? getItem(data, parentPath) : data;
-    parent = arrayMove(parent, Number(dragIndex), Number(dropIndex));
+    parent = arraySwap(parent, Number(dragIndex), Number(dropIndex));
     const newData = parentPath ? setChildren(data, parent, parentPath) : parent;
     setData(newData);
   };

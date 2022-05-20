@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import BuildDndSortable from './dnd-core';
-import { arrayMove } from './utils/array';
+import { arraySwap } from './utils/array';
 declare const DndSortable: {
     new (props: import("./utils/types").DndProps): {
         sortArea: any;
@@ -66,7 +66,9 @@ declare const DndSortable: {
             animated?: boolean | undefined;
         }) | undefined) => void;
         addNewOver: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
-        setDropEndChild: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, cloneDragged: HTMLElement) => void;
+        setDropEndChild: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, cloneDragged: HTMLElement & {
+            animated?: boolean | undefined;
+        }) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;
@@ -93,5 +95,5 @@ declare const DndSortable: {
     contextType?: import("react").Context<any> | undefined;
 };
 export default DndSortable;
-export { BuildDndSortable, arrayMove };
+export { BuildDndSortable, arraySwap };
 export * from './utils/types';

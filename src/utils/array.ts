@@ -1,6 +1,6 @@
 import { klona } from "klona";
 
-export const arrayMove = (arr: any[], preIndex: number, nextIndex: number) => {
+export const arraySwap = (arr: any[], preIndex: number, nextIndex: number) => {
   const clone = klona(arr);
   if (preIndex > nextIndex) {
     clone.splice(nextIndex, 0, arr[preIndex]);

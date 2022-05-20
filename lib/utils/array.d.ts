@@ -1,1 +1,1 @@
-export declare const arrayMove: (arr: any[], preIndex: number, nextIndex: number) => any[];
+export declare const arraySwap: (arr: any[], preIndex: number, nextIndex: number) => any[];

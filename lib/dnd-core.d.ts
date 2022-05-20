@@ -36,7 +36,9 @@ export default function BuildDndSortable(): {
             animated?: boolean | undefined;
         }) | undefined) => void;
         addNewOver: (e: EventType, dropItem: DndSortable, sortableItem?: SortableItem | undefined) => void;
-        setDropEndChild: (e: EventType, dropItem: DndSortable, cloneDragged: HTMLElement) => void;
+        setDropEndChild: (e: EventType, dropItem: DndSortable, cloneDragged: HTMLElement & {
+            animated?: boolean;
+        }) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;

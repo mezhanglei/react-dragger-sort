@@ -1,4 +1,4 @@
-import { css, dotToRect, getClientXY, getRect, isMoveIn } from "./utils/dom";
+import { isMoveIn } from "./utils/dom";
 import { EventType, SortableItem, DndSortable } from "./utils/types";
 
 // 管理拖拽的类
@@ -35,14 +35,11 @@ export class DndManager<T extends Object = any> {
   }
 
   // 事件对象over的目标
-  findOver = (e: EventType, self: HTMLElement) => {
+  findOver = (e: EventType) => {
     const childs = [];
     const dragItems = this.dragItemMap.keys();
     const dropItems = this.dropItemMap.keys();
     const items = new Set([...dragItems, ...dropItems]);
-    if (self && isMoveIn(e, self)) {
-      return self;
-    }
     for (let child of items) {
       if (child && isMoveIn(e, child)) {
         childs.push(child);
@@ -55,30 +52,5 @@ export class DndManager<T extends Object = any> {
       }
     }
     return minChild;
-  }
-
-  // 事件对象最近的目标
-  findNearest = (e: EventType, parent: HTMLElement) => {
-    const children = parent?.children;
-    const eventXY = getClientXY(e);
-    if (!eventXY) return;
-    let near;
-    for (let i = 0; i < children?.length; i++) {
-      const node = children[i] as HTMLElement;
-      if (node && css(node, 'display') !== 'none') {
-        if (near) {
-          const minChildRect = getRect(near)
-          const nextChildRect = getRect(node)
-          const currentDis = dotToRect(minChildRect, eventXY)
-          const nextDis = dotToRect(nextChildRect, eventXY)
-          if (nextDis < currentDis) {
-            near = node;
-          }
-        } else {
-          near = node;
-        }
-      }
-    }
-    return near;
   }
 }

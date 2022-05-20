@@ -7,6 +7,5 @@ export declare class DndManager<T extends Object = any> {
     setDropItemsMap: (data: DndSortable) => void;
     getDropItem: (node: HTMLElement) => DndSortable | undefined;
     getDragItem: (node: HTMLElement) => SortableItem | undefined;
-    findOver: (e: EventType, self: HTMLElement) => HTMLElement | undefined;
-    findNearest: (e: EventType, parent: HTMLElement) => HTMLElement | undefined;
+    findOver: (e: EventType) => HTMLElement | undefined;
 }

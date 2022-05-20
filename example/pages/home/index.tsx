@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import "./index.less";
-import DndSortable, { arrayMove, DndProps } from "../../../src/index";
+import DndSortable, { arraySwap, DndProps } from "../../../src/index";
 import { klona } from 'klona';
 import { addDragItem, getItem, indexToArray, removeDragItem, setChildren } from './utils';
 
@@ -19,7 +19,7 @@ const Home: React.FC<any> = (props) => {
     const dropIndex = drop?.dropIndex;
     const parentPath = drag?.groupPath;
     let parent = parentPath ? getItem(data, parentPath) : data;
-    parent = arrayMove(parent, Number(dragIndex), Number(dropIndex));
+    parent = arraySwap(parent, Number(dragIndex), Number(dropIndex));
     const newData = parentPath ? setChildren(data, parent, parentPath) : parent;
     setData(newData);
   };

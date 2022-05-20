@@ -64,13 +64,6 @@ export const isMoveIn = (e: EventType, target: HTMLElement) => {
   }
 };
 
-// 获取点到矩形框的最短距离
-export function dotToRect(rect: { left: number, top: number, right: number, bottom: number }, p: { x: number, y: number }) {
-  const dx = Math.max(rect.left - p.x, 0, p.x - rect.right);
-  const dy = Math.max(rect.top - p.y, 0, p.y - rect.bottom);
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
 // 获取当前的window
 export const getWindow = (el?: any) => {
   const ownerDocument = el?.ownerDocument || document?.ownerDocument;
@@ -130,6 +123,26 @@ export function _animate(target: any, prevRect: any, transitionStyle?: CSSProper
       });
       target.animated = false;
     }, ms);
+  }
+}
+
+// 收集dom，返回可以执行动画的函数
+export function createAnimate(doms: any) {
+  const collect: any[] = [];
+  for (let i = 0; i < doms?.length; i++) {
+    const dom = doms[i];
+    collect.push({
+      dom,
+      rect: dom?.getBoundingClientRect()
+    })
+  }
+  return () => {
+    for (let i = 0; i < collect?.length; i++) {
+      const item = collect[i];
+      if (item) {
+        _animate(item.dom, item.rect);
+      }
+    }
   }
 }
 
