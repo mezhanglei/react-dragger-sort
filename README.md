@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-2.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -40,58 +40,38 @@ export const Example = () => {
 
   const indexToArray = (pathStr?: string) => pathStr ? `${pathStr}`.split('.').map(n => +n) : [];
 
-  const setChildren = (treeData: any, data: any, pathStr?: string) => {
-    const pathArr = indexToArray(pathStr);
-    treeData = klona(treeData);
-    let parent: any;
-    pathArr.forEach((item, index) => {
-      if (index == 0) {
-        parent = treeData[item];
-      } else {
-        parent = parent.children[item];
-      }
-    });
-    parent.children = data;
-    return treeData;
-  };
-
-  // 添加新元素(有副作用，会改变传入的data数据)
   const addDragItem = (data: any[], dragItem: any, dropIndex?: number, groupPath?: string) => {
-    const dropContainer = groupPath ? getItem(data, groupPath) : data;
+    const parent = getItem(data, groupPath);
+    const childs = groupPath ? parent?.children : data;
     const item = dragItem instanceof Array ? { children: dragItem } : dragItem;
-    // 插入
     if (typeof dropIndex === 'number') {
-      dropContainer?.splice(dropIndex, 0, item);
-    // 末尾添加
+      childs?.splice(dropIndex, 0, item);
     } else {
-      dropContainer?.push(item);
+      childs?.push(item);
     }
     return data;
   };
 
-  // 移除拖拽元素(有副作用, 会改变传入的data数据)
   const removeDragItem = (data: any[], dragIndex: number, groupPath?: string) => {
-    const dragContainer = groupPath ? getItem(data, groupPath) : data;
-    dragContainer?.splice(dragIndex, 1);
+    const parent = getItem(data, groupPath);
+    const childs = groupPath ? parent?.children : data;
+    childs?.splice(dragIndex, 1);
     return data;
   };
 
-  // 根据路径获取指定路径的元素
   const getItem = (data: any[], path?: string) => {
     const pathArr = indexToArray(path);
-    // 嵌套节点删除
-    let temp: any;
+    let temp: any = data;
     if (pathArr.length === 0) {
-      return data;
+      return temp;
     }
     pathArr.forEach((item, index) => {
       if (index === 0) {
-        temp = data[item];
+        temp = temp[item];
       } else {
         temp = temp?.children?.[item];
       }
     });
-    if (temp.children) return temp.children;
     return temp;
   };
 
@@ -101,9 +81,17 @@ export const Example = () => {
     const dragIndex = drag?.index;
     const dropIndex = drop?.dropIndex;
     const parentPath = drag?.groupPath;
-    let parent = parentPath ? getItem(data, parentPath) : data;
-    parent = arraySwap(parent, Number(dragIndex), Number(dropIndex));
-    const newData = parentPath ? setChildren(data, parent, parentPath) : parent;
+    const cloneData = klona(data);
+    const parent = getItem(cloneData, parentPath);
+    const childs = parentPath ? parent.children : cloneData;
+    const swapResult = arraySwap(childs, Number(dragIndex), Number(dropIndex));
+    let newData;
+    if (parentPath) {
+      parent.children = swapResult;
+      newData = cloneData;
+    } else {
+      newData = swapResult;
+    }
     setData(newData);
   };
 
@@ -120,20 +108,15 @@ export const Example = () => {
     // 拖放区域的信息
     const dropGroupPath = drop.groupPath;
     const dropIndex = drop?.dropIndex;
-    const dropPath = drop?.path;
-    const dragIndexPathArr = indexToArray(dragPath);
-    const dropIndexPathArr = indexToArray(dropPath || dropGroupPath);
+    const dragIndexPathArr = indexToArray(dragGroupPath);
+    const dropIndexPathArr = indexToArray(dropGroupPath);
     // 先计算内部的变动，再计算外部的变动
     if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
-      // 减去拖拽的元素
       const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
-      // 添加新元素
       const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
       setData(addAfterData);
     } else {
-      // 添加新元素
       const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
-      // 减去拖拽的元素
       const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
       setData(newData);
     }

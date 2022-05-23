@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react';
 import "./index.less";
 import DndSortable, { arraySwap, DndProps } from "../../../src/index";
 import { klona } from 'klona';
-import { addDragItem, getItem, indexToArray, removeDragItem, setChildren } from './utils';
+import { addDragItem, getItem, indexToArray, removeDragItem } from './utils';
 
 const Home: React.FC<any> = (props) => {
 
@@ -18,9 +18,17 @@ const Home: React.FC<any> = (props) => {
     const dragIndex = drag?.index;
     const dropIndex = drop?.dropIndex;
     const parentPath = drag?.groupPath;
-    let parent = parentPath ? getItem(data, parentPath) : data;
-    parent = arraySwap(parent, Number(dragIndex), Number(dropIndex));
-    const newData = parentPath ? setChildren(data, parent, parentPath) : parent;
+    const cloneData = klona(data);
+    const parent = getItem(cloneData, parentPath);
+    const childs = parentPath ? parent.children : cloneData;
+    const swapResult = arraySwap(childs, Number(dragIndex), Number(dropIndex));
+    let newData;
+    if (parentPath) {
+      parent.children = swapResult;
+      newData = cloneData;
+    } else {
+      newData = swapResult;
+    }
     setData(newData);
   };
 
@@ -37,20 +45,15 @@ const Home: React.FC<any> = (props) => {
     // 拖放区域的信息
     const dropGroupPath = drop.groupPath;
     const dropIndex = drop?.dropIndex;
-    const dropPath = drop?.path;
-    const dragIndexPathArr = indexToArray(dragPath);
-    const dropIndexPathArr = indexToArray(dropPath || dropGroupPath);
+    const dragIndexPathArr = indexToArray(dragGroupPath);
+    const dropIndexPathArr = indexToArray(dropGroupPath);
     // 先计算内部的变动，再计算外部的变动
     if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
-      // 减去拖拽的元素
       const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
-      // 添加新元素
       const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
       setData(addAfterData);
     } else {
-      // 添加新元素
       const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
-      // 减去拖拽的元素
       const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
       setData(newData);
     }
