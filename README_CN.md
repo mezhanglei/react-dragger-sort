@@ -2,15 +2,16 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-2.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
 提供拖拽容器和拖拽能力的组件，拖拽结果需要自己去更改`state`数据。
 
-# 更新
+# version
 
-为了更好的支持拖拽中的各种场景，架构设计进行了重新设计，新设计更简单的实现拖拽功能，请使用旧版本的及时更新到`2.x`版本。
+- version2.x
+  - 拖拽回调参数更改
 
 # features
 - 提供拖拽容器，容器的子元素(直接子元素，不包括孙元素)则据有拖拽能力。
@@ -85,11 +86,12 @@ export const Example = () => {
     const { drag, drop } = params;
     console.log(params, '同区域');
     const dragIndex = drag?.index;
-    const dropIndex = drop?.dropIndex;
+    let dropIndex = drop?.index;
     const parentPath = drag?.groupPath;
     const cloneData = klona(data);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
+    dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
     const swapResult = arraySwap(childs, Number(dragIndex), Number(dropIndex));
     let newData;
     if (parentPath) {
@@ -113,7 +115,7 @@ export const Example = () => {
     const dragItem = getItem(cloneData, dragPath);
     // 拖放区域的信息
     const dropGroupPath = drop.groupPath;
-    const dropIndex = drop?.dropIndex;
+    const dropIndex = drop?.index;
     const dragIndexPathArr = indexToArray(dragGroupPath);
     const dropIndexPathArr = indexToArray(dropGroupPath);
     // 先计算内部的变动，再计算外部的变动
@@ -179,17 +181,17 @@ export const Example = () => {
 | onUpdate                      | `({e, drag, drop}) => void`            | -                                                  | 当前区域内排序结束触发                                                                                  |
 | onAdd                      | `({e, drag, drop}) => void`            | -                                                  | 当前区域内添加新元素时结束触发                                                                                  |
 | onHover                      | `(item: HTMLElement) => void`            | -                                                  | 直属可排序子元素被hover时触发                                                                                  |
-| onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | 上子元素失去hover时触发                                                                                  |
+| onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | 子元素失去hover时触发                                                                                  |
 | options                      | -            | -                                                  |  拖放的配置                                                                                 |
 
 ### options
 
-- `groupPath`: string 拖拽容器的路径, 用来标记位置 `可选`。
-- `handle`: string | HTMLElement 拖拽句柄 `可选`。
-- `filter`: string | HTMLElement 过滤句柄的选择器 `可选`。
-- `allowDrop`: boolean 是否允许拖放新元素，`必选`。
-- `allowSort`: boolean 是否可以动态插入排序，`可选`。
-- `childDrag`: boolean | (HTMLElement | string)[]; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
+- `groupPath`: `string` 拖拽容器的路径, 用来标记位置 `可选`。
+- `handle`: `string | HTMLElement` 拖拽句柄 `可选`。
+- `filter`: `string | HTMLElement` 过滤句柄的选择器 `可选`。
+- `allowDrop`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` 是否允许拖放新元素，`必选`。
+- `allowSort`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` 是否可以动态插入排序，`可选`。
+- `childDrag`: `boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean)`; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
 - `direction`: [`vertical`, `horizontal`]允许拖拽的轴向，`可选`。
-- `sortPreClass`: string 元素往序号小的排序时添加的class，`可选`。
-- `sortNextClass`: string 元素往序号大的排序时添加的class，`可选`。
+- `sortPreClass`: `string` 元素往序号小的排序时添加的class，`可选`。
+- `sortNextClass`: `string` 元素往序号大的排序时添加的class，`可选`。

@@ -15,9 +15,9 @@ declare const DndSortable: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean;
-            allowSort?: boolean | undefined;
-            childDrag: boolean | (string | HTMLElement)[];
+            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
             sortNextClass?: string | undefined;
@@ -25,21 +25,43 @@ declare const DndSortable: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean;
-            allowSort?: boolean | undefined;
-            childDrag: boolean | (string | HTMLElement)[];
+            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
             sortNextClass?: string | undefined;
         };
         initManagerData: () => void;
-        isCanDrag: (el: HTMLElement, options: {
+        isCanDrag: (drag: HTMLElement, options: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean;
-            allowSort?: boolean | undefined;
-            childDrag: boolean | (string | HTMLElement)[];
+            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
+            direction?: string[] | undefined;
+            sortPreClass?: string | undefined;
+            sortNextClass?: string | undefined;
+        }) => boolean | undefined;
+        isCanSort: (params: import("./utils/types").DndMoveParams, options: {
+            groupPath?: string | undefined;
+            handle?: string | undefined;
+            filter?: string | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
+            direction?: string[] | undefined;
+            sortPreClass?: string | undefined;
+            sortNextClass?: string | undefined;
+        }) => boolean | undefined;
+        isCanDrop: (params: import("./utils/types").DndMoveParams, options: {
+            groupPath?: string | undefined;
+            handle?: string | undefined;
+            filter?: string | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
             sortNextClass?: string | undefined;
@@ -62,11 +84,9 @@ declare const DndSortable: {
         moveHandle: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
         onTouchMove: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").EventData>;
         onDragOver: (e: any) => void;
-        sortInSameArea: (newOver?: (HTMLElement & {
-            animated?: boolean | undefined;
-        }) | undefined) => void;
-        addNewOver: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
-        setDropEndChild: (e: import("react-free-draggable").EventType, dropItem: import("./utils/types").DndSortable, cloneDragged: HTMLElement & {
+        sortInSameArea: (e: any, dragItem: import("./utils/types").SortableItem, dropItem: import("./utils/types").SortableItem) => void;
+        addNewOver: (e: import("react-free-draggable").EventType, dropGroup: import("./utils/types").DndSortable, sortableItem?: import("./utils/types").SortableItem | undefined) => void;
+        setDropEndChild: (e: import("react-free-draggable").EventType, dropGroup: import("./utils/types").DndSortable, cloneDragged: HTMLElement & {
             animated?: boolean | undefined;
         }) => void;
         renderChild(child: any): JSX.Element;

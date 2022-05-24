@@ -29,7 +29,6 @@ export interface DropItem extends DndSortable {
     index?: number;
     draggableIndex?: number;
     path?: string;
-    dropIndex: number;
 }
 export interface DragParams {
     e: EventType;
@@ -39,7 +38,7 @@ export interface DndParams extends DragParams {
     drop: DropItem;
 }
 export interface DndMoveParams extends DragParams {
-    drop?: SortableItem | DndSortable;
+    over?: DropItem;
 }
 export declare type DndHandle = (params: DndParams) => void;
 export declare type DragHandle = (params: DndMoveParams) => void;
@@ -55,9 +54,9 @@ export interface DndBaseProps {
         groupPath?: string;
         handle?: string;
         filter?: string;
-        allowDrop: boolean;
-        allowSort?: boolean;
-        childDrag: boolean | (HTMLElement | string)[];
+        allowDrop: boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);
+        allowSort?: boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);
+        childDrag: boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean);
         direction?: string[];
         sortPreClass?: string;
         sortNextClass?: string;

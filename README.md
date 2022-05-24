@@ -2,15 +2,15 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-2.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-2.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
 Components that provide drag-and-drop containers and drag-and-drop capabilities, with the drag-and-drop results requiring you to change the `state` data yourself.
 
 # version update
-
-The architecture design has been redesigned to better support various scenarios in drag and drop. The new design is simpler to implement the drag and drop function, please update to `2.x` version in time with the old version.
+- version2.x
+  - change drag and drop callback params
 
 # features
 - Drag-and-drop containers are provided, and child elements (direct children, excluding grandchildren) of the containers have drag-and-drop capability.
@@ -79,11 +79,12 @@ export const Example = () => {
     const { drag, drop } = params;
     console.log(params, '同区域');
     const dragIndex = drag?.index;
-    const dropIndex = drop?.dropIndex;
+    let dropIndex = drop?.index;
     const parentPath = drag?.groupPath;
     const cloneData = klona(data);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
+    dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
     const swapResult = arraySwap(childs, Number(dragIndex), Number(dropIndex));
     let newData;
     if (parentPath) {
@@ -107,7 +108,7 @@ export const Example = () => {
     const dragItem = getItem(cloneData, dragPath);
     // 拖放区域的信息
     const dropGroupPath = drop.groupPath;
-    const dropIndex = drop?.dropIndex;
+    const dropIndex = drop?.index;
     const dragIndexPathArr = indexToArray(dragGroupPath);
     const dropIndexPathArr = indexToArray(dropGroupPath);
     // 先计算内部的变动，再计算外部的变动
@@ -178,12 +179,12 @@ export const Example = () => {
 
 ### options
 
-- `groupPath`: string The path of the drag container, used to mark the position `Optional`.
-- `handle`: string | HTMLElement Drag and drop handle `optional`.
-- `filter`: string | HTMLElement Selector for filtering handles `optional`.
-- `allowDrop`: boolean Whether to allow dragging and dropping of new elements, `must`.
-- `allowSort`: boolean Whether or not dynamic insertion sorting is allowed, `optional`.
-- `childDrag`: boolean | (HTMLElement | string)[]; Whether child elements are allowed to be dragged or allowed to be dragged `must`.
+- `groupPath`: `string` The path of the drag container, used to mark the position `Optional`.
+- `handle`: `string | HTMLElement` Drag and drop handle `optional`.
+- `filter`: `string | HTMLElement` Selector for filtering handles `optional`.
+- `allowDrop`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` Whether to allow dragging and dropping of new elements, `must`.
+- `allowSort`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` Whether or not dynamic insertion sorting is allowed, `optional`.
+- `childDrag`: `boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean)`; Whether child elements are allowed to be dragged or allowed to be dragged `must`.
 - `direction`: [`vertical`, `horizontal`] the axial direction to allow dragging, `optional`.
-- `sortPreClass`: string The class to add when the element is sorted towards a smaller ordinal number, `optional`.
-- `sortNextClass`: string The class to add when the element is sorted towards a larger ordinal number, `optional`.
+- `sortPreClass`: `string` The class to add when the element is sorted towards a smaller ordinal number, `optional`.
+- `sortNextClass`: `string` The class to add when the element is sorted towards a larger ordinal number, `optional`.

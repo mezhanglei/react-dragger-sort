@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { EventHandler, EventType } from "react-free-draggable";
-import { DndBaseProps, DndProps, DndSortable, SortableItem } from "./utils/types";
+import { DndBaseProps, DndMoveParams, DndProps, DndSortable, SortableItem } from "./utils/types";
 export default function BuildDndSortable(): {
     new (props: DndProps): {
         sortArea: any;
@@ -13,7 +13,9 @@ export default function BuildDndSortable(): {
         componentDidUpdate(prevProps: DndProps): void;
         getOptions: (options: DndProps['options']) => DndProps['options'];
         initManagerData: () => void;
-        isCanDrag: (el: HTMLElement, options: DndProps['options']) => boolean | undefined;
+        isCanDrag: (drag: HTMLElement, options: DndProps['options']) => boolean | undefined;
+        isCanSort: (params: DndMoveParams, options: DndProps['options']) => boolean | undefined;
+        isCanDrop: (params: DndMoveParams, options: DndProps['options']) => boolean | undefined;
         onStart: EventHandler;
         onEnd: EventHandler;
         onDragEnd: (e: any) => void;
@@ -32,11 +34,9 @@ export default function BuildDndSortable(): {
         moveHandle: EventHandler;
         onTouchMove: EventHandler;
         onDragOver: (e: any) => void;
-        sortInSameArea: (newOver?: (HTMLElement & {
-            animated?: boolean | undefined;
-        }) | undefined) => void;
-        addNewOver: (e: EventType, dropItem: DndSortable, sortableItem?: SortableItem | undefined) => void;
-        setDropEndChild: (e: EventType, dropItem: DndSortable, cloneDragged: HTMLElement & {
+        sortInSameArea: (e: any, dragItem: SortableItem, dropItem: SortableItem) => void;
+        addNewOver: (e: EventType, dropGroup: DndSortable, sortableItem?: SortableItem | undefined) => void;
+        setDropEndChild: (e: EventType, dropGroup: DndSortable, cloneDragged: HTMLElement & {
             animated?: boolean;
         }) => void;
         renderChild(child: any): JSX.Element;
