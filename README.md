@@ -2,14 +2,14 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-2.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-3.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
 Components that provide drag-and-drop containers and drag-and-drop capabilities, with the drag-and-drop results requiring you to change the `state` data yourself.
 
 # version update
-- version2.x
+- version3.x
   - change drag and drop callback params
 
 # features
@@ -76,11 +76,11 @@ export const Example = () => {
   };
 
   const onUpdate: DndProps['onUpdate'] = (params) => {
-    const { drag, drop } = params;
+    const { from, to } = params;
     console.log(params, '同区域');
-    const dragIndex = drag?.index;
-    let dropIndex = drop?.index;
-    const parentPath = drag?.groupPath;
+    const dragIndex = from?.index;
+    let dropIndex = to?.index;
+    const parentPath = from?.groupPath;
     const cloneData = klona(data);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
@@ -98,17 +98,17 @@ export const Example = () => {
 
   // 先计算内层的数据再计算外层的数据
   const onAdd: DndProps['onAdd'] = (params) => {
-    const { drag, drop } = params;
+    const { from, to } = params;
     console.log(params, '跨区域');
     const cloneData = klona(data);
     // 拖拽区域信息
-    const dragGroupPath = drag.groupPath;
-    const dragIndex = drag?.index;
-    const dragPath = drag?.path;
+    const dragGroupPath = from.groupPath;
+    const dragIndex = from?.index;
+    const dragPath = from?.path;
     const dragItem = getItem(cloneData, dragPath);
     // 拖放区域的信息
-    const dropGroupPath = drop.groupPath;
-    const dropIndex = drop?.index;
+    const dropGroupPath = to.groupPath;
+    const dropIndex = to?.index;
     const dragIndexPathArr = indexToArray(dragGroupPath);
     const dropIndexPathArr = indexToArray(dropGroupPath);
     // 先计算内部的变动，再计算外部的变动
@@ -168,11 +168,11 @@ export const Example = () => {
 
 | name                          | type                  | defaultValue                                                   | description                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| onStart                      | `({e, source }) => void`            | -                                                  | when drag start                                                                                  |
-| onMove                      | `({e, drag, drop}) => void`            | -                                                  | when drag ging                                                                                 |
-| onEnd                      | `({e, drag, drop}) => void`| -                                                  | when drag end                                                                                 |
-| onUpdate                      | `({e, drag, drop}) => void`            | -                                                  | End of drag and drop trigger in current area                                                                                  |
-| onAdd                      | `({e, drag, drop}) => void`            | -                                                  | End trigger when a new element is added to the current area                                                                                  |
+| onStart                      | `({e, from }) => void`            | -                                                  | when drag start                                                                                  |
+| onMove                      | `({e, from, to}) => void`            | -                                                  | when drag ging                                                                                 |
+| onEnd                      | `({e, from, to}) => void`| -                                                  | when drag end                                                                                 |
+| onUpdate                      | `({e, from, to}) => void`            | -                                                  | End of drag and drop trigger in current area                                                                                  |
+| onAdd                      | `({e, from, to}) => void`            | -                                                  | End trigger when a new element is added to the current area                                                                                  |
 | onHover                      | `(item: HTMLElement) => void`            | -                                                  | Triggered when an immediate sortable child element is hovered                                                                                  |
 | onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | Triggered when the previous hover child element is moved away                                                                                  |
 | options                           | -            | -                                                  |  Configuration of drag and drop                                                                                 |
@@ -182,8 +182,8 @@ export const Example = () => {
 - `groupPath`: `string` The path of the drag container, used to mark the position `Optional`.
 - `handle`: `string | HTMLElement` Drag and drop handle `optional`.
 - `filter`: `string | HTMLElement` Selector for filtering handles `optional`.
-- `allowDrop`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` Whether to allow dragging and dropping of new elements, `must`.
-- `allowSort`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` Whether or not dynamic insertion sorting is allowed, `optional`.
+- `allowDrop`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` Whether to allow dragging and dropping of new elements, `must`.
+- `allowSort`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` Whether or not dynamic insertion sorting is allowed, `optional`.
 - `childDrag`: `boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean)`; Whether child elements are allowed to be dragged or allowed to be dragged `must`.
 - `direction`: [`vertical`, `horizontal`] the axial direction to allow dragging, `optional`.
 - `sortPreClass`: `string` The class to add when the element is sorted towards a smaller ordinal number, `optional`.

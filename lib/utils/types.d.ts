@@ -32,20 +32,16 @@ export interface DropItem extends DndSortable {
 }
 export interface DragParams {
     e: EventType;
-    drag: DragItem;
+    from: DragItem;
 }
 export interface DndParams extends DragParams {
-    drop: DropItem;
-}
-export interface DndMoveParams extends DragParams {
-    over?: DropItem;
+    to?: DropItem;
 }
 export declare type DndHandle = (params: DndParams) => void;
-export declare type DragHandle = (params: DndMoveParams) => void;
 export interface DndBaseProps {
-    onStart?: DragHandle;
-    onMove?: DragHandle;
-    onEnd?: DragHandle;
+    onStart?: DndHandle;
+    onMove?: DndHandle;
+    onEnd?: DndHandle;
     onAdd?: DndHandle;
     onUpdate?: DndHandle;
     onHover?: (over: HTMLElement) => void;
@@ -54,8 +50,8 @@ export interface DndBaseProps {
         groupPath?: string;
         handle?: string;
         filter?: string;
-        allowDrop: boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);
-        allowSort?: boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);
+        allowDrop: boolean | ((params: DndParams, options: DndProps['options']) => boolean);
+        allowSort?: boolean | ((params: DndParams, options: DndProps['options']) => boolean);
         childDrag: boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean);
         direction?: string[];
         sortPreClass?: string;

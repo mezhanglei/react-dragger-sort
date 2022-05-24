@@ -15,8 +15,8 @@ declare const DndSortable: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
-            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean) | undefined;
             childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
@@ -25,8 +25,8 @@ declare const DndSortable: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
-            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean) | undefined;
             childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
@@ -37,30 +37,30 @@ declare const DndSortable: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
-            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean) | undefined;
             childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
             sortNextClass?: string | undefined;
         }) => boolean | undefined;
-        isCanSort: (params: import("./utils/types").DndMoveParams, options: {
+        isCanSort: (params: import("./utils/types").DndParams, options: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
-            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean) | undefined;
             childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;
             sortNextClass?: string | undefined;
         }) => boolean | undefined;
-        isCanDrop: (params: import("./utils/types").DndMoveParams, options: {
+        isCanDrop: (params: import("./utils/types").DndParams, options: {
             groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
-            allowDrop: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean);
-            allowSort?: boolean | ((params: import("./utils/types").DndMoveParams, options: any) => boolean) | undefined;
+            allowDrop: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean);
+            allowSort?: boolean | ((params: import("./utils/types").DndParams, options: any) => boolean) | undefined;
             childDrag: boolean | (string | HTMLElement)[] | ((el: HTMLElement, options: any) => boolean);
             direction?: string[] | undefined;
             sortPreClass?: string | undefined;

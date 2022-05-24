@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-2.2.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-3.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -10,7 +10,7 @@
 
 # version
 
-- version2.x
+- version3.x
   - 拖拽回调参数更改
 
 # features
@@ -83,11 +83,11 @@ export const Example = () => {
   };
 
   const onUpdate: DndProps['onUpdate'] = (params) => {
-    const { drag, drop } = params;
+    const { from, to } = params;
     console.log(params, '同区域');
-    const dragIndex = drag?.index;
-    let dropIndex = drop?.index;
-    const parentPath = drag?.groupPath;
+    const dragIndex = from?.index;
+    let dropIndex = to?.index;
+    const parentPath = from?.groupPath;
     const cloneData = klona(data);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
@@ -105,17 +105,17 @@ export const Example = () => {
 
   // 先计算内层的数据再计算外层的数据
   const onAdd: DndProps['onAdd'] = (params) => {
-    const { drag, drop } = params;
+    const { from, to } = params;
     console.log(params, '跨区域');
     const cloneData = klona(data);
     // 拖拽区域信息
-    const dragGroupPath = drag.groupPath;
-    const dragIndex = drag?.index;
-    const dragPath = drag?.path;
+    const dragGroupPath = from.groupPath;
+    const dragIndex = from?.index;
+    const dragPath = from?.path;
     const dragItem = getItem(cloneData, dragPath);
     // 拖放区域的信息
-    const dropGroupPath = drop.groupPath;
-    const dropIndex = drop?.index;
+    const dropGroupPath = to.groupPath;
+    const dropIndex = to?.index;
     const dragIndexPathArr = indexToArray(dragGroupPath);
     const dropIndexPathArr = indexToArray(dropGroupPath);
     // 先计算内部的变动，再计算外部的变动
@@ -175,11 +175,11 @@ export const Example = () => {
 
 | 名称                          | 类型                  | 默认值                                                         | 描述                                                                                                      |
 | ----------------------------- | --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| onStart                      | `({e, drag }) => void`            | -                                                  | 拖拽开始时触发的函数                                                                                  |
-| onMove                      | `({e, drag, drop}) => void`            | -                                                  | 拖拽时触发的函数                                                                                  |
-| onEnd                      | `({e, drag, drop}) => void`            | -                                                  | 拖拽结束时触发的函数                                                                                  |
-| onUpdate                      | `({e, drag, drop}) => void`            | -                                                  | 当前区域内排序结束触发                                                                                  |
-| onAdd                      | `({e, drag, drop}) => void`            | -                                                  | 当前区域内添加新元素时结束触发                                                                                  |
+| onStart                      | `({e, from }) => void`            | -                                                  | 拖拽开始时触发的函数                                                                                  |
+| onMove                      | `({e, from, to}) => void`            | -                                                  | 拖拽时触发的函数                                                                                  |
+| onEnd                      | `({e, from, to}) => void`            | -                                                  | 拖拽结束时触发的函数                                                                                  |
+| onUpdate                      | `({e, from, to}) => void`            | -                                                  | 当前区域内排序结束触发                                                                                  |
+| onAdd                      | `({e, from, to}) => void`            | -                                                  | 当前区域内添加新元素时结束触发                                                                                  |
 | onHover                      | `(item: HTMLElement) => void`            | -                                                  | 直属可排序子元素被hover时触发                                                                                  |
 | onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | 子元素失去hover时触发                                                                                  |
 | options                      | -            | -                                                  |  拖放的配置                                                                                 |
@@ -189,8 +189,8 @@ export const Example = () => {
 - `groupPath`: `string` 拖拽容器的路径, 用来标记位置 `可选`。
 - `handle`: `string | HTMLElement` 拖拽句柄 `可选`。
 - `filter`: `string | HTMLElement` 过滤句柄的选择器 `可选`。
-- `allowDrop`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` 是否允许拖放新元素，`必选`。
-- `allowSort`: `boolean | ((params: DndMoveParams, options: DndProps['options']) => boolean);` 是否可以动态插入排序，`可选`。
+- `allowDrop`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` 是否允许拖放新元素，`必选`。
+- `allowSort`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` 是否可以动态插入排序，`可选`。
 - `childDrag`: `boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean)`; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
 - `direction`: [`vertical`, `horizontal`]允许拖拽的轴向，`可选`。
 - `sortPreClass`: `string` 元素往序号小的排序时添加的class，`可选`。
