@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 import { EventType } from "./types";
-export declare function isDom(ele: any): boolean;
+export declare function isDom(ele: any): any;
 /**
  * 返回元素的视窗内的位置
  * @param el

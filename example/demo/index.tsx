@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import "./index.less";
-import DndSortable, { arraySwap, DndProps } from "../../../src/index";
+import DndSortable, { arraySwap, DndProps } from "../../src/index";
 import { klona } from 'klona';
 import { addDragItem, getItem, indexToArray, removeDragItem } from './utils';
 

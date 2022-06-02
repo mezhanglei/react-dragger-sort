@@ -7,7 +7,7 @@ declare const DndSortable: {
         dragged: any;
         cloneDragged: any;
         over: HTMLElement | undefined;
-        lastDisplay: "none" | "inherit" | "ruby" | "table" | (string & {}) | "-moz-initial" | "initial" | "revert" | "unset" | "contents" | "block" | "inline" | "run-in" | "-ms-flexbox" | "-ms-grid" | "-webkit-flex" | "flex" | "flow" | "flow-root" | "grid" | "ruby-base" | "ruby-base-container" | "ruby-text" | "ruby-text-container" | "table-caption" | "table-cell" | "table-column" | "table-column-group" | "table-footer-group" | "table-header-group" | "table-row" | "table-row-group" | "-ms-inline-flexbox" | "-ms-inline-grid" | "-webkit-inline-flex" | "inline-block" | "inline-flex" | "inline-grid" | "inline-list-item" | "inline-table" | "list-item" | undefined;
+        lastDisplay: import("csstype").Property.Display | undefined;
         componentDidMount(): void;
         componentWillUnmount(): void;
         componentDidUpdate(prevProps: import("./utils/types").DndProps): void;

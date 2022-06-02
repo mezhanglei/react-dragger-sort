@@ -35,7 +35,7 @@ export default function BuildDndSortable(): {
         onTouchMove: EventHandler;
         onDragOver: (e: any) => void;
         sortInSameArea: (e: any, dragItem: SortableItem, dropItem: SortableItem) => void;
-        addNewOver: (e: EventType, dropGroup: DndSortable, sortableItem?: SortableItem | undefined) => void;
+        addNewOver: (e: EventType, dropGroup: DndSortable, sortableItem?: SortableItem) => void;
         setDropEndChild: (e: EventType, dropGroup: DndSortable, cloneDragged: HTMLElement & {
             animated?: boolean;
         }) => void;
