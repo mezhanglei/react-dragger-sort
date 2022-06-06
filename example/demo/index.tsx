@@ -1,7 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import "./index.less";
-import DndSortable, { arraySwap, DndProps } from "../../src/index";
-import { klona } from 'klona';
+import DndSortable, { arraySwap, DndProps, deepClone } from "../../src/index";
 import { addDragItem, getItem, indexToArray, removeDragItem } from './utils';
 
 const Home: React.FC<any> = (props) => {
@@ -18,7 +17,7 @@ const Home: React.FC<any> = (props) => {
     const dragIndex = from?.index;
     let dropIndex = to?.index;
     const parentPath = from?.groupPath;
-    const cloneData = klona(data);
+    const cloneData = deepClone(data);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
     dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
@@ -37,7 +36,7 @@ const Home: React.FC<any> = (props) => {
   const onAdd: DndProps['onAdd'] = (params) => {
     const { from, to } = params;
     console.log(params, '跨区域');
-    const cloneData = klona(data);
+    const cloneData = deepClone(data);
     // 拖拽区域信息
     const dragGroupPath = from.groupPath;
     const dragIndex = from?.index;

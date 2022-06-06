@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { _animate, css, addEvent, getChildrenIndex, insertAfter, insertBefore, removeEvent, isContains, getOwnerDocument, matches, getClientXY, createAnimate, isMoveIn } from "./utils/dom";
 import { DndManager } from './dnd-manager';
 import { isEventTouch, isMobile } from './utils/verify';
-import { isObjectEqual } from './utils/object';
+import { isEqual } from './utils/object';
 
 const ismobile = isMobile();
 export default function BuildDndSortable() {
@@ -46,7 +46,7 @@ export default function BuildDndSortable() {
     }
 
     static getDerivedStateFromProps(nextProps: DndProps, prevState: any) {
-      const optionsChanged = !isObjectEqual(nextProps.options, prevState.prevOptions);
+      const optionsChanged = !isEqual(nextProps.options, prevState.prevOptions);
       if (optionsChanged) {
         return {
           ...prevState,
@@ -398,7 +398,7 @@ export default function BuildDndSortable() {
       const oldOver = this.over;
       const sortableOver = sortableItem?.item;
       const dragItem = dndManager.getDragItem(dragged);
-      const canSort = this.isCanSort({
+      const canSort = dragItem && this.isCanSort({
         e,
         from: {
           ...dragItem,
@@ -464,7 +464,7 @@ export default function BuildDndSortable() {
         const cloneRect = cloneDragged.getBoundingClientRect();
         const eventRect = getClientXY(e);
         const dragItem = dndManager.getDragItem(dragged);
-        const canSort = this.isCanSort({
+        const canSort = dragItem && this.isCanSort({
           e,
           from: {
             ...dragItem,
