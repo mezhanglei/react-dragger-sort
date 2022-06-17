@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { EventHandler, EventType } from "react-free-draggable";
-import { DndBaseProps, DndParams, DndProps, DndSortable, SortableItem } from "./utils/types";
+import { DndBaseProps, DndParams, DndProps, DndSortable, DragItem, SortableItem } from "./utils/types";
 export default function BuildDndSortable(): {
     new (props: DndProps): {
         sortArea: any;
@@ -13,7 +13,8 @@ export default function BuildDndSortable(): {
         componentDidUpdate(prevProps: DndProps): void;
         getOptions: (options: DndProps['options']) => DndProps['options'];
         initManagerData: () => void;
-        isCanDrag: (drag: HTMLElement, options: DndProps['options']) => boolean | undefined;
+        isChildDrag: (item: DragItem, options: DndProps['options']) => boolean | undefined;
+        isChildOut: (params: DndParams, options: DndProps['options']) => boolean | undefined;
         isCanSort: (params: DndParams, options: DndProps['options']) => boolean | undefined;
         isCanDrop: (params: DndParams, options: DndProps['options']) => boolean | undefined;
         onStart: EventHandler;

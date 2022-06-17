@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-3.0.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-3.0.2-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -10,6 +10,8 @@ Components that provide drag-and-drop containers and drag-and-drop capabilities,
 
 # version update
 - version3.x
+  - Add the `options` configuration attribute `childOut`, which sets the conditions for child elements to be dragged out
+  - Adjust the `options` configuration attribute `childDrag`.
   - change drag and drop callback params
 
 # features
@@ -181,9 +183,14 @@ export const Example = () => {
 - `groupPath`: `string` The path of the drag container, used to mark the position `Optional`.
 - `handle`: `string | HTMLElement` Drag and drop handle `optional`.
 - `filter`: `string | HTMLElement` Selector for filtering handles `optional`.
-- `allowDrop`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` Whether to allow dragging and dropping of new elements, `must`.
-- `allowSort`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` Whether or not dynamic insertion sorting is allowed, `optional`.
-- `childDrag`: `boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean)`; Whether child elements are allowed to be dragged or allowed to be dragged `must`.
+- `allowDrop`: `boolean | DndCondition` Whether to allow dragging and dropping of new elements, `must`.
+- `allowSort`: `boolean | DndCondition` Whether or not dynamic insertion sorting is allowed, `optional`.
+- `childOut`: `boolean | (HTMLElement | string)[] | DndCondition;` Whether the child element is allowed to be dragged out or the child element allowed to be dragged out `optional`.
+- `childDrag`: `boolean | (HTMLElement | string)[] | ((fromItem: DragItem, options: DndProps['options']) => boolean)`; Whether child elements are allowed to be dragged or the child element allowed to be dragged `must`.
 - `direction`: [`vertical`, `horizontal`] the axial direction to allow dragging, `optional`.
 - `sortPreClass`: `string` The class to add when the element is sorted towards a smaller ordinal number, `optional`.
 - `sortNextClass`: `string` The class to add when the element is sorted towards a larger ordinal number, `optional`.
+
+```javascript
+type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
+```

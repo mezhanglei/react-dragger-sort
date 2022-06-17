@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-3.0.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-3.0.2-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -11,6 +11,8 @@
 # version
 
 - version3.x
+  - 增加`options`配置属性`childOut`, 设置子元素拖出的条件
+  - 调整`options`配置属性`childDrag`.
   - 拖拽回调参数更改
 
 # features
@@ -188,9 +190,14 @@ export const Example = () => {
 - `groupPath`: `string` 拖拽容器的路径, 用来标记位置 `可选`。
 - `handle`: `string | HTMLElement` 拖拽句柄 `可选`。
 - `filter`: `string | HTMLElement` 过滤句柄的选择器 `可选`。
-- `allowDrop`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` 是否允许拖放新元素，`必选`。
-- `allowSort`: `boolean | ((params: DndParams, options: DndProps['options']) => boolean);` 是否可以动态插入排序，`可选`。
-- `childDrag`: `boolean | (HTMLElement | string)[] | ((el: HTMLElement, options: DndProps['options']) => boolean)`; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
+- `allowDrop`: `boolean | DndCondition;` 是否允许拖放新元素，`必选`。
+- `allowSort`: `boolean | DndCondition` 是否可以动态插入排序，`可选`。
+- `childOut`: `boolean | (HTMLElement | string)[] | DndCondition;` 子元素是否允许拖出或者允许拖出的子元素 `可选`。
+- `childDrag`: `boolean | (HTMLElement | string)[] | ((fromItem: DragItem, options: DndProps['options']) => boolean)`; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
 - `direction`: [`vertical`, `horizontal`]允许拖拽的轴向，`可选`。
 - `sortPreClass`: `string` 元素往序号小的排序时添加的class，`可选`。
 - `sortNextClass`: `string` 元素往序号大的排序时添加的class，`可选`。
+
+```javascript
+type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
+```
