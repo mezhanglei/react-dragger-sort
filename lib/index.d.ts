@@ -10,6 +10,7 @@ declare const DndSortable: {
         over: HTMLElement | undefined;
         lastDisplay: import("csstype").Property.Display | undefined;
         componentDidMount(): void;
+        componentDidUpdate(prevProps: import("./utils/types").DndProps): void;
         componentWillUnmount(): void;
         getOptions: (options: {
             groupPath?: string | undefined;
@@ -71,7 +72,6 @@ declare const DndSortable: {
         shouldComponentUpdate?(nextProps: Readonly<import("./utils/types").DndProps>, nextState: Readonly<{}>, nextContext: any): boolean;
         componentDidCatch?(error: Error, errorInfo: import("react").ErrorInfo): void;
         getSnapshotBeforeUpdate?(prevProps: Readonly<import("./utils/types").DndProps>, prevState: Readonly<{}>): any;
-        componentDidUpdate?(prevProps: Readonly<import("./utils/types").DndProps>, prevState: Readonly<{}>, snapshot?: any): void;
         componentWillMount?(): void;
         UNSAFE_componentWillMount?(): void;
         componentWillReceiveProps?(nextProps: Readonly<import("./utils/types").DndProps>, nextContext: any): void;

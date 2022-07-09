@@ -25,21 +25,22 @@ export default function BuildDndSortable() {
     }
 
     componentDidMount() {
-      // 订阅拖拽的变动
-      dndManager.subscribeGroup(this.sortArea, (target) => {
-        if (target === this.sortArea) {
-          setTimeout(() => {
-            this.initManagerData(this.sortArea);
-          }, 0);
-        }
-      });
-      dndManager.notify(this.sortArea);
+      setTimeout(() => {
+        this.initManagerData(this.sortArea);
+      }, 0);
+    }
+
+    componentDidUpdate(prevProps: DndProps) {
+      if (!this.over) {
+        setTimeout(() => {
+          this.initManagerData(this.sortArea);
+        }, 0);
+      }
     }
 
     componentWillUnmount() {
       const ownerDocument = getOwnerDocument(this.sortArea);
       removeEvent(ownerDocument, 'dragover', this.onDragOver);
-      dndManager.unsubscribeGroup(this.sortArea);
     }
 
     // 获取options
@@ -130,8 +131,6 @@ export default function BuildDndSortable() {
       const toGroup = over && dndManager.getDropItem(over);
       const to = (toItem || toGroup) as any;
       const dropGroup = dndManager.getDropItem(to?.groupNode);
-      dndManager.notify(to?.groupNode);
-      dndManager.notify(dragItem?.groupNode);
       if (dragItem) {
         const params = {
           e,

@@ -9,6 +9,7 @@ export default function BuildDndSortable(): {
         over: HTMLElement | undefined;
         lastDisplay: CSSProperties['display'];
         componentDidMount(): void;
+        componentDidUpdate(prevProps: DndProps): void;
         componentWillUnmount(): void;
         getOptions: (options: DndProps['options']) => DndProps['options'];
         initManagerData: (sortArea: any) => void;
@@ -48,7 +49,6 @@ export default function BuildDndSortable(): {
         shouldComponentUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): boolean;
         componentDidCatch?(error: Error, errorInfo: React.ErrorInfo): void;
         getSnapshotBeforeUpdate?(prevProps: Readonly<DndProps>, prevState: Readonly<{}>): any;
-        componentDidUpdate?(prevProps: Readonly<DndProps>, prevState: Readonly<{}>, snapshot?: any): void;
         componentWillMount?(): void;
         UNSAFE_componentWillMount?(): void;
         componentWillReceiveProps?(nextProps: Readonly<DndProps>, nextContext: any): void;

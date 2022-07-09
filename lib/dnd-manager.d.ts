@@ -15,7 +15,4 @@ export declare class DndManager<T extends Object = any> {
     getDropItem: (node: HTMLElement) => DndSortable | undefined;
     getDragItem: (node: HTMLElement) => SortableItem | undefined;
     findOver: (e: EventType, selfNode: HTMLElement, isSelf?: boolean) => HTMLElement | undefined;
-    subscribeGroup(group: HTMLElement, listener: GroupListener['onChange']): () => void;
-    unsubscribeGroup(group?: HTMLElement): void;
-    notify(group?: HTMLElement): void;
 }

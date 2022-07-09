@@ -76,37 +76,4 @@ export class DndManager<T extends Object = any> {
     }
     return minChild;
   }
-
-  // 订阅当前变动的group
-  public subscribeGroup(group: HTMLElement, listener: GroupListener['onChange']) {
-    this.groupListeners.push({
-      onChange: listener,
-      group: group
-    });
-    return () => {
-      this.groupListeners = this.groupListeners.filter((sub) => sub.group !== group)
-    }
-  }
-
-  // 卸载
-  public unsubscribeGroup(group?: HTMLElement) {
-    if (group) {
-      this.groupListeners = this.groupListeners.filter((sub) => sub.group !== group)
-    } else {
-      this.groupListeners = []
-    }
-  }
-
-  // 触发
-  public notify(group?: HTMLElement) {
-    if (group) {
-      this.groupListeners.forEach((listener) => {
-        if (listener?.group === group) {
-          listener?.onChange && listener?.onChange(group)
-        }
-      })
-    } else {
-      this.groupListeners.forEach((listener) => listener.onChange(listener.group))
-    }
-  }
 }
