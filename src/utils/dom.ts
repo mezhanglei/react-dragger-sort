@@ -64,30 +64,6 @@ export const isMoveIn = (e: EventType, target: HTMLElement) => {
   }
 };
 
-// 获取当前的window
-export const getWindow = (el?: any) => {
-  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
-  return ownerDocument ? (ownerDocument.defaultView || window) : window;
-};
-
-// 获取或设置目标元素的style值
-export function css(el: any, prop?: string | CSSProperties) {
-  let style = el && el.style;
-  const win = getWindow(el);
-  if (style) {
-    const ownerStyle = win.getComputedStyle(el, '') || el.currentStyle;
-    if (prop === void 0) {
-      return ownerStyle;
-    } else if (typeof prop === 'string') {
-      return ownerStyle[prop];
-    } else if (typeof prop === 'object') {
-      for (const key in prop) {
-        style[getPrefixStyle(key)] = prop[key]
-      }
-    }
-  }
-}
-
 // 触发动画
 export function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties) {
   const ms = 160;
@@ -98,7 +74,7 @@ export function _animate(target: any, prevRect: any, transitionStyle?: CSSProper
       prevRect = prevRect.getBoundingClientRect()
     }
 
-    // 目标初始化位置为之前位置
+    // 动画起始位置
     css(target, {
       transition: 'none',
       'transform': `translate3d(${prevRect.left - currentRect.left}px, ${prevRect.top - currentRect.top}px,0)`
@@ -107,7 +83,7 @@ export function _animate(target: any, prevRect: any, transitionStyle?: CSSProper
     // dom的宽高位置属性会回流重绘目前的布局样式
     target.offsetWidth;
 
-    // 目标重回现在的位置
+    // 动画终点位置
     css(target, {
       'transition': `all ${ms}ms`,
       'transform': 'translate3d(0,0,0)',
@@ -141,6 +117,30 @@ export function createAnimate(doms: any) {
       const item = collect[i];
       if (item) {
         _animate(item.dom, item.rect);
+      }
+    }
+  }
+}
+
+// 获取当前的window
+export const getWindow = (el?: any) => {
+  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
+  return ownerDocument ? (ownerDocument.defaultView || window) : window;
+};
+
+// 获取或设置目标元素的style值
+export function css(el: any, prop?: string | CSSProperties) {
+  let style = el && el.style;
+  const win = getWindow(el);
+  if (style) {
+    const ownerStyle = win.getComputedStyle(el, '') || el.currentStyle;
+    if (prop === void 0) {
+      return ownerStyle;
+    } else if (typeof prop === 'string') {
+      return ownerStyle[prop];
+    } else if (typeof prop === 'object') {
+      for (const key in prop) {
+        style[getPrefixStyle(key)] = prop[key]
       }
     }
   }
@@ -271,4 +271,3 @@ export const getOwnerDocument = (el?: any) => {
   const ownerDocument = el?.ownerDocument || document?.ownerDocument;
   return ownerDocument;
 };
-

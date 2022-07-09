@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
-import { EventHandler, EventType } from "react-free-draggable";
-import { DndBaseProps, DndParams, DndProps, DndSortable, DragItem, SortableItem } from "./utils/types";
+import { EventHandler } from "react-free-draggable";
+import { DndProps, DndBaseProps, DndParams } from "./utils/types";
 export default function BuildDndSortable(): {
     new (props: DndProps): {
         sortArea: any;
@@ -10,17 +10,12 @@ export default function BuildDndSortable(): {
         lastDisplay: CSSProperties['display'];
         componentDidMount(): void;
         componentWillUnmount(): void;
-        componentDidUpdate(prevProps: DndProps): void;
         getOptions: (options: DndProps['options']) => DndProps['options'];
-        initManagerData: () => void;
-        isChildDrag: (item: DragItem, options: DndProps['options']) => boolean | undefined;
-        isChildOut: (params: DndParams, options: DndProps['options']) => boolean | undefined;
-        isCanSort: (params: DndParams, options: DndProps['options']) => boolean | undefined;
-        isCanDrop: (params: DndParams, options: DndProps['options']) => boolean | undefined;
+        initManagerData: (sortArea: any) => void;
         onStart: EventHandler;
         onEnd: EventHandler;
         onDragEnd: (e: any) => void;
-        sortEnd: () => void;
+        reset: () => void;
         handleDragOverClass: (params: {
             draggedIndex: number;
             newOverIndex: number;
@@ -35,11 +30,9 @@ export default function BuildDndSortable(): {
         moveHandle: EventHandler;
         onTouchMove: EventHandler;
         onDragOver: (e: any) => void;
-        sortInSameArea: (e: any, dragItem: SortableItem, dropItem: SortableItem) => void;
-        addNewOver: (e: EventType, dropGroup: DndSortable, sortableItem?: SortableItem) => void;
-        setDropEndChild: (e: EventType, dropGroup: DndSortable, cloneDragged: HTMLElement & {
-            animated?: boolean;
-        }) => void;
+        sortInSameArea: (params: DndParams) => void;
+        addNewOver: (params: DndParams) => void;
+        setDropEndChild: (params: DndParams) => void;
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;
@@ -55,6 +48,7 @@ export default function BuildDndSortable(): {
         shouldComponentUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): boolean;
         componentDidCatch?(error: Error, errorInfo: React.ErrorInfo): void;
         getSnapshotBeforeUpdate?(prevProps: Readonly<DndProps>, prevState: Readonly<{}>): any;
+        componentDidUpdate?(prevProps: Readonly<DndProps>, prevState: Readonly<{}>, snapshot?: any): void;
         componentWillMount?(): void;
         UNSAFE_componentWillMount?(): void;
         componentWillReceiveProps?(nextProps: Readonly<DndProps>, nextContext: any): void;
@@ -62,6 +56,5 @@ export default function BuildDndSortable(): {
         componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
-    getDerivedStateFromProps(nextProps: DndProps, prevState: any): any;
     contextType?: React.Context<any> | undefined;
 };

@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, useRef } from 'react';
 import "./index.less";
 import DndSortable, { arraySwap, DndProps, deepClone } from "../../src/index";
 import { addDragItem, getItem, indexToArray, removeDragItem } from './utils';
@@ -11,13 +11,15 @@ const Home: React.FC<any> = (props) => {
     { backgroundColor: 'green', children: [{ label: 11 }, { label: 12 }, { label: 13 }, { label: 14 }, { label: 15 }] }
   ]);
 
+  const dataRef = useRef(data);
+
   const onUpdate: DndProps['onUpdate'] = (params) => {
     const { from, to } = params;
     console.log(params, '同区域');
     const dragIndex = from?.index;
     let dropIndex = to?.index;
     const parentPath = from?.groupPath;
-    const cloneData = deepClone(data);
+    const cloneData = deepClone(dataRef.current);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
     dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
@@ -29,6 +31,7 @@ const Home: React.FC<any> = (props) => {
     } else {
       newData = swapResult;
     }
+    dataRef.current = newData;
     setData(newData);
   };
 
@@ -36,7 +39,7 @@ const Home: React.FC<any> = (props) => {
   const onAdd: DndProps['onAdd'] = (params) => {
     const { from, to } = params;
     console.log(params, '跨区域');
-    const cloneData = deepClone(data);
+    const cloneData = deepClone(dataRef.current);
     // 拖拽区域信息
     const dragGroupPath = from.groupPath;
     const dragIndex = from?.index;
@@ -51,10 +54,12 @@ const Home: React.FC<any> = (props) => {
     if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
       const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
       const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
+      dataRef.current = addAfterData;
       setData(addAfterData);
     } else {
       const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
       const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
+      dataRef.current = newData;
       setData(newData);
     }
   };
@@ -70,7 +75,7 @@ const Home: React.FC<any> = (props) => {
                 groupPath: path,
                 childDrag: true,
                 allowDrop: true,
-                allowSort: true
+                allowSort: false
               }}
               style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
               onUpdate={onUpdate}

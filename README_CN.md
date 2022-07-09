@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-3.0.2-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-3.0.3-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -19,7 +19,8 @@
 - 提供拖拽容器，容器的子元素(直接子元素，不包括孙元素)则据有拖拽能力。
 - 不同的容器支持相互嵌套，并且不同容器可进行跨域拖放操作。
 - 通过给容器配置属性，可以控制容器的拖放行为。
-- 当不同容器嵌套时，注意设置容器的`groupPath`用来标记容器的位置
+- 存在多个容器时，注意设置容器的`groupPath`用来标记容器的路径。
+- 容器内的子元素通过设置`data-id`来标记子元素节点，默认节点为当前排序序号。
 
 ### 快速安装
 ```
@@ -30,6 +31,7 @@ yarn add react-dragger-sort
 
 ### demo
 ```javascript
+import React, { useRef } from 'react';
 import DndSortable, { arraySwap, Dndprops, deepClone } from "react-dragger-sort";
 
 export const Example = () => {
@@ -39,6 +41,7 @@ export const Example = () => {
     { backgroundColor: 'green', children: [{ label: 6 }, { label: 7 }, { label: 8 }, { label: 9 }, { label: 10 }] },
     { backgroundColor: 'green', children: [{ label: 11 }, { label: 12 }, { label: 13 }, { label: 14 }, { label: 15 }] }
   ]);
+  const dataRef = useRef(data);
 
   const indexToArray = (pathStr?: string) => pathStr ? `${pathStr}`.split('.').map(n => +n) : [];
 
@@ -101,6 +104,7 @@ export const Example = () => {
     } else {
       newData = swapResult;
     }
+    dataRef.current = newData;
     setData(newData);
   };
 
@@ -123,10 +127,12 @@ export const Example = () => {
     if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
       const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
       const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
+      dataRef.current = addAfterData;
       setData(addAfterData);
     } else {
       const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
       const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
+      dataRef.current = newData;
       setData(newData);
     }
   };
