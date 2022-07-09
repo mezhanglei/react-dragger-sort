@@ -75,7 +75,7 @@ const Home: React.FC<any> = (props) => {
                 groupPath: path,
                 childDrag: true,
                 allowDrop: true,
-                allowSort: false
+                allowSort: true
               }}
               style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
               onUpdate={onUpdate}

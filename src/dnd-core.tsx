@@ -363,12 +363,12 @@ export default function BuildDndSortable() {
       if (!dropGroupNode?.contains(cloneDragged)) {
         if (sortableOver) {
           const animateInstance = createAnimate([sortableOver, cloneDragged]);
-          insertBefore(cloneDragged, sortableOver)
+          canSort && insertBefore(cloneDragged, sortableOver)
           this.over = sortableOver
           animateInstance()
         } else {
           const animateInstance = createAnimate([cloneDragged]);
-          dropGroupNode?.appendChild(cloneDragged);
+          canSort && dropGroupNode?.appendChild(cloneDragged);
           this.over = dropGroupNode;
           animateInstance();
         }
