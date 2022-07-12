@@ -6,6 +6,7 @@ import { createAnimate, isMoveIn, css, addEvent, getChildrenIndex, insertAfter, 
 import { DndManager } from './dnd-manager';
 import { isEventTouch, isMobile } from './utils/verify';
 import { getCurrentPath, isCanDrop, isCanSort, isChildDrag, isChildOut } from './utils/utils';
+import { isEqual } from './utils/object';
 
 const ismobile = isMobile();
 export default function BuildDndSortable() {
@@ -36,6 +37,17 @@ export default function BuildDndSortable() {
           this.initManagerData(this.sortArea);
         }, 0);
       }
+    }
+
+    static getDerivedStateFromProps(nextProps: DndProps, prevState: any) {
+      const optionsChanged = !isEqual(nextProps.options, prevState.prevOptions);
+      if (optionsChanged) {
+        return {
+          ...prevState,
+          prevOptions: nextProps.options
+        };
+      }
+      return null;
     }
 
     componentWillUnmount() {
