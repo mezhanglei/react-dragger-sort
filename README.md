@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-3.0.5-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-3.0.6-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -85,7 +85,7 @@ export const Example = () => {
     const dragIndex = from?.index;
     let dropIndex = to?.index;
     const parentPath = from?.groupPath;
-    const cloneData = deepClone(data);
+    const cloneData = deepClone(dataRef.current);
     const parent = getItem(cloneData, parentPath);
     const childs = parentPath ? parent.children : cloneData;
     dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
@@ -105,7 +105,7 @@ export const Example = () => {
   const onAdd: DndProps['onAdd'] = (params) => {
     const { from, to } = params;
     console.log(params, '跨区域');
-    const cloneData = deepClone(data);
+    const cloneData = deepClone(dataRef.current);
     // 拖拽区域信息
     const dragGroupPath = from.groupPath;
     const dragIndex = from?.index;
