@@ -13,7 +13,6 @@ declare const DndSortable: {
         componentDidUpdate(prevProps: import("./utils/types").DndProps): void;
         componentWillUnmount(): void;
         getOptions: (options: {
-            groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
             allowDrop: boolean | import("./utils/types").DndCondition;
@@ -24,7 +23,6 @@ declare const DndSortable: {
             sortPreClass?: string | undefined;
             sortNextClass?: string | undefined;
         }) => {
-            groupPath?: string | undefined;
             handle?: string | undefined;
             filter?: string | undefined;
             allowDrop: boolean | import("./utils/types").DndCondition;

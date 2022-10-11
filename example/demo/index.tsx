@@ -1,106 +1,60 @@
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import "./index.less";
-import DndSortable, { arraySwap, DndProps, deepClone } from "../../src/index";
-import { addDragItem, getItem, indexToArray, removeDragItem } from './utils';
+import DndSortable, { DndProps } from "../../src/index";
 
 const Home: React.FC<any> = (props) => {
-
-  const [data, setData] = useState([
-    { backgroundColor: 'blue', children: [{ label: 1, backgroundColor: 'green', children: [{ label: 1 }, { label: 2 }, { label: 3 }, { label: 4 }, { label: 5 }] }, { label: 2 }, { label: 3 }, { label: 4 }, { label: 5 }] },
-    { backgroundColor: 'green', children: [{ label: 6 }, { label: 7 }, { label: 8 }, { label: 9 }, { label: 10 }] },
-    { backgroundColor: 'green', children: [{ label: 11 }, { label: 12 }, { label: 13 }, { label: 14 }, { label: 15 }] }
-  ]);
-
-  const dataRef = useRef(data);
+  const [part1, setPart1] = useState([1, 2, 3, 4, 5])
+  const [part2, setPart2] = useState([6, 7, 8, 9, 10])
 
   const onUpdate: DndProps['onUpdate'] = (params) => {
     const { from, to } = params;
-    console.log(params, '同区域');
-    const dragIndex = from?.index;
-    let dropIndex = to?.index;
-    const parentPath = from?.groupPath;
-    const cloneData = deepClone(dataRef.current);
-    const parent = getItem(cloneData, parentPath);
-    const childs = parentPath ? parent.children : cloneData;
-    dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
-    const swapResult = arraySwap(childs, Number(dragIndex), Number(dropIndex));
-    let newData;
-    if (parentPath) {
-      parent.children = swapResult;
-      newData = cloneData;
-    } else {
-      newData = swapResult;
-    }
-    dataRef.current = newData;
-    setData(newData);
-  };
+    const formIndex = from?.index
+    const toIndex = to?.index
+    console.log(params, 'the same group');
+    // do something ...
+  }
 
-  // 先计算内层的数据再计算外层的数据
   const onAdd: DndProps['onAdd'] = (params) => {
     const { from, to } = params;
-    console.log(params, '跨区域');
-    const cloneData = deepClone(dataRef.current);
-    // 拖拽区域信息
-    const dragGroupPath = from.groupPath;
-    const dragIndex = from?.index;
-    const dragPath = from?.path;
-    const dragItem = getItem(cloneData, dragPath);
-    // 拖放区域的信息
-    const dropGroupPath = to.groupPath;
-    const dropIndex = to?.index;
-    const dragIndexPathArr = indexToArray(dragGroupPath);
-    const dropIndexPathArr = indexToArray(dropGroupPath);
-    // 先计算内部的变动，再计算外部的变动
-    if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
-      const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
-      const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
-      dataRef.current = addAfterData;
-      setData(addAfterData);
-    } else {
-      const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
-      const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
-      dataRef.current = newData;
-      setData(newData);
-    }
-  };
-
-  const loopChildren = (arr: any[], parent?: string) => {
-    return arr.map((item, index) => {
-      const path = parent === undefined ? String(index) : `${parent}.${index}`;
-      if (item.children) {
-        return (
-          <div key={index}>
-            <DndSortable
-              options={{
-                groupPath: path,
-                childDrag: true,
-                allowDrop: true,
-                allowSort: true
-              }}
-              style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
-              onUpdate={onUpdate}
-              onAdd={onAdd}
-            >
-              {loopChildren(item.children, path)}
-            </DndSortable>
-          </div>
-        );
-      }
-      return (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={path}>{item.label}</div>);
-    });
-  };
+    const fromGroup = from?.group
+    const toGroup = to?.group
+    console.log(params, fromGroup, toGroup, 'different group');
+    // do something ...
+  }
 
   return (
-    <DndSortable
-      onUpdate={onUpdate}
-      onAdd={onAdd}
-      options={{
-        childDrag: true,
-        allowDrop: true,
-        allowSort: true
-      }}>
-      {loopChildren(data)}
-    </DndSortable>
+    <div>
+      <p>part1</p>
+      <DndSortable
+        onUpdate={onUpdate}
+        onAdd={onAdd}
+        collection={{ group: 'part1' }} // custome props
+        style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px', marginTop: '10px' }}
+        options={{
+          childDrag: true,
+          allowDrop: true,
+          allowSort: true
+        }}>
+        {
+          part1?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
+        }
+      </DndSortable>
+      <p>part2</p>
+      <DndSortable
+        onUpdate={onUpdate}
+        onAdd={onAdd}
+        collection={{ group: 'part2' }}  // custome props
+        style={{ display: 'flex', flexWrap: 'wrap', background: 'gray', width: '200px', marginTop: '10px' }}
+        options={{
+          childDrag: true,
+          allowDrop: true,
+          allowSort: true
+        }}>
+        {
+          part2?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
+        }
+      </DndSortable>
+    </div>
   );
 };
 

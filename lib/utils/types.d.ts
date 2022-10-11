@@ -6,36 +6,24 @@ export declare enum DropEffect {
     Copy = "copy",
     Link = "link"
 }
-export interface DndSortable {
-    groupPath?: string;
-    groupNode: HTMLElement;
-    props: DndBaseProps;
+export interface SortableGroup extends DndBaseProps {
+    node: HTMLElement;
 }
-export interface SortableItem extends DndSortable {
-    item: HTMLElement & {
+export interface SortableItem {
+    node?: HTMLElement & {
         animated?: boolean;
     };
-    index: number;
-    draggableIndex?: number;
-    path: string;
+    id?: string | number;
+    index?: number;
+    group?: SortableGroup;
 }
 export interface DragItem extends SortableItem {
     clone?: HTMLElement;
 }
-export interface DropItem extends DndSortable {
-    item?: HTMLElement & {
-        animated?: boolean;
-    };
-    index?: number;
-    draggableIndex?: number;
-    path?: string;
-}
-export interface DragParams {
+export interface DndParams {
     e: EventType;
     from: DragItem;
-}
-export interface DndParams extends DragParams {
-    to?: DropItem;
+    to?: SortableItem;
 }
 export declare type DndHandle = (params: DndParams) => void;
 export declare type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
@@ -47,8 +35,8 @@ export interface DndBaseProps {
     onUpdate?: DndHandle;
     onHover?: (over: HTMLElement) => void;
     onUnHover?: (over: HTMLElement) => void;
+    collection?: any;
     options: {
-        groupPath?: string;
         handle?: string;
         filter?: string;
         allowDrop: boolean | DndCondition;

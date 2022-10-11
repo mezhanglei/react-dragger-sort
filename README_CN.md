@@ -2,25 +2,24 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-3.0.7-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-4.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
-提供拖拽容器和拖拽能力的组件，拖拽结果需要自己去更改`state`数据。
+提供拖拽容器和拖放能力的组件，可监听目标拖放操作。
 
 # version
 
+- version4.x
+  - 主要更新，拖拽回调参数全部更改。使用需要删除旧版本重新下载。
+  - 移除`options`中的`groupPath`并增加`collection`参数, 用来向回调函数传递参数
 - version3.x
   - 增加`options`配置属性`childOut`, 设置子元素拖出的条件
   - 调整`options`配置属性`childDrag`.
-  - 拖拽回调参数更改
 
 # features
-- 提供拖拽容器，容器的子元素(直接子元素，不包括孙元素)则据有拖拽能力。
-- 不同的容器支持相互嵌套，并且不同容器可进行跨域拖放操作。
-- 通过给容器配置属性，可以控制容器的拖放行为。
-- 存在多个容器时，注意设置容器的`groupPath`用来标记容器的路径。
-- 容器内的子元素通过设置`data-id`来标记子元素节点，默认节点为当前排序序号。
+- 提供拖放容器：容器的子元素（直接子元素）则可被拖拽，子元素可以通过`data-id`属性设置标记。
+- 支持跨容器拖放：不同的容器支持相互嵌套，并且不同容器可进行跨域拖放操作，容器可通过`collection`属性给回调监听函数传递参数
 
 ### 快速安装
 ```
@@ -34,148 +33,63 @@ yarn add react-dragger-sort
 import React, { useRef } from 'react';
 import DndSortable, { arraySwap, Dndprops, deepClone } from "react-dragger-sort";
 
-export const Example = () => {
-
-  const [data, setData] = useState([
-    { backgroundColor: 'blue', children: [{ label: 1, backgroundColor: 'green', children: [{ label: 1 }, { label: 2 }, { label: 3 }, { label: 4 }, { label: 5 }] }, { label: 2 }, { label: 3 }, { label: 4 }, { label: 5 }] },
-    { backgroundColor: 'green', children: [{ label: 6 }, { label: 7 }, { label: 8 }, { label: 9 }, { label: 10 }] },
-    { backgroundColor: 'green', children: [{ label: 11 }, { label: 12 }, { label: 13 }, { label: 14 }, { label: 15 }] }
-  ]);
-  const dataRef = useRef(data);
-
-  const indexToArray = (pathStr?: string) => pathStr ? `${pathStr}`.split('.').map(n => +n) : [];
-
-  // 添加新元素(有副作用，会改变传入的data数据)
-  const addDragItem = (data: any[], dragItem: any, dropIndex?: number, groupPath?: string) => {
-    const parent = getItem(data, groupPath);
-    const childs = groupPath ? parent?.children : data;
-    const item = dragItem instanceof Array ? { children: dragItem } : dragItem;
-    // 插入
-    if (typeof dropIndex === 'number') {
-      childs?.splice(dropIndex, 0, item);
-      // 末尾添加
-    } else {
-      childs?.push(item);
-    }
-    return data;
-  };
-
-  // 移除拖拽元素(有副作用, 会改变传入的data数据)
-  const removeDragItem = (data: any[], dragIndex: number, groupPath?: string) => {
-    const parent = getItem(data, groupPath);
-    const childs = groupPath ? parent?.children : data;
-    childs?.splice(dragIndex, 1);
-    return data;
-  };
-
-  // 根据路径获取指定路径的元素
-  const getItem = (data: any[], path?: string) => {
-    const pathArr = indexToArray(path);
-    // 嵌套节点删除
-    let temp: any = data;
-    if (pathArr.length === 0) {
-      return temp;
-    }
-    pathArr.forEach((item, index) => {
-      if (index === 0) {
-        temp = temp[item];
-      } else {
-        temp = temp?.children?.[item];
-      }
-    });
-    return temp;
-  };
+const Home: React.FC<any> = (props) => {
+  const [part1, setPart1] = useState([1, 2, 3, 4, 5])
+  const [part2, setPart2] = useState([6, 7, 8, 9, 10])
 
   const onUpdate: DndProps['onUpdate'] = (params) => {
     const { from, to } = params;
-    console.log(params, '同区域');
-    const dragIndex = from?.index;
-    let dropIndex = to?.index;
-    const parentPath = from?.groupPath;
-    const cloneData = deepClone(dataRef.current);
-    const parent = getItem(cloneData, parentPath);
-    const childs = parentPath ? parent.children : cloneData;
-    dropIndex = typeof dropIndex === 'number' ? dropIndex : childs?.length;
-    const swapResult = arraySwap(childs, Number(dragIndex), Number(dropIndex));
-    let newData;
-    if (parentPath) {
-      parent.children = swapResult;
-      newData = cloneData;
-    } else {
-      newData = swapResult;
-    }
-    dataRef.current = newData;
-    setData(newData);
-  };
+    const formIndex = from?.index
+    const toIndex = to?.index
+    console.log(params, 'the same group');
+    // do something ...
+  }
 
-  // 先计算内层的数据再计算外层的数据
   const onAdd: DndProps['onAdd'] = (params) => {
     const { from, to } = params;
-    console.log(params, '跨区域');
-    const cloneData = deepClone(dataRef.current);
-    // 拖拽区域信息
-    const dragGroupPath = from.groupPath;
-    const dragIndex = from?.index;
-    const dragPath = from?.path;
-    const dragItem = getItem(cloneData, dragPath);
-    // 拖放区域的信息
-    const dropGroupPath = to.groupPath;
-    const dropIndex = to?.index;
-    const dragIndexPathArr = indexToArray(dragGroupPath);
-    const dropIndexPathArr = indexToArray(dropGroupPath);
-    // 先计算内部的变动，再计算外部的变动
-    if (dragIndexPathArr?.length > dropIndexPathArr?.length || !dropIndexPathArr?.length) {
-      const removeData = removeDragItem(cloneData, dragIndex, dragGroupPath);
-      const addAfterData = addDragItem(removeData, dragItem, dropIndex, dropGroupPath);
-      dataRef.current = addAfterData;
-      setData(addAfterData);
-    } else {
-      const addAfterData = addDragItem(cloneData, dragItem, dropIndex, dropGroupPath);
-      const newData = removeDragItem(addAfterData, dragIndex, dragGroupPath);
-      dataRef.current = newData;
-      setData(newData);
-    }
-  };
-
-  const loopChildren = (arr: any[], parent?: string) => {
-    return arr.map((item, index) => {
-      const path = parent === undefined ? String(index) : `${parent}.${index}`;
-      if (item.children) {
-        return (
-          <div key={index}>
-            <DndSortable
-              options={{
-                groupPath: path,
-                childDrag: true,
-                allowDrop: true,
-                allowSort: true
-              }}
-              style={{ display: 'flex', flexWrap: 'wrap', background: item.backgroundColor, width: '200px', marginTop: '10px' }}
-              onUpdate={onUpdate}
-              onAdd={onAdd}
-            >
-              {loopChildren(item.children, path)}
-            </DndSortable>
-          </div>
-        );
-      }
-      return (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={path}>{item.label}</div>);
-    });
-  };
+    const fromGroup = from?.group
+    const toGroup = to?.group
+    console.log(params, fromGroup, toGroup, 'different group');
+    // do something ...
+  }
 
   return (
-    <DndSortable
-      onUpdate={onUpdate}
-      onAdd={onAdd}
-      options={{
-        childDrag: true,
-        allowDrop: true,
-        allowSort: true
-      }}>
-      {loopChildren(data)}
-    </DndSortable>
+    <div>
+      <p>part1</p>
+      <DndSortable
+        onUpdate={onUpdate}
+        onAdd={onAdd}
+        collection={{ group: 'part1' }} // custome props
+        style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px', marginTop: '10px' }}
+        options={{
+          childDrag: true,
+          allowDrop: true,
+          allowSort: true
+        }}>
+        {
+          part1?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
+        }
+      </DndSortable>
+      <p>part2</p>
+      <DndSortable
+        onUpdate={onUpdate}
+        onAdd={onAdd}
+        collection={{ group: 'part2' }}  // custome props
+        style={{ display: 'flex', flexWrap: 'wrap', background: 'gray', width: '200px', marginTop: '10px' }}
+        options={{
+          childDrag: true,
+          allowDrop: true,
+          allowSort: true
+        }}>
+        {
+          part2?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
+        }
+      </DndSortable>
+    </div>
   );
-}
+};
+
+export default Home;
 ```
 
 ## 属性
@@ -189,11 +103,10 @@ export const Example = () => {
 | onAdd                      | `({e, from, to}) => void`            | -                                                  | 当前区域内添加新元素时结束触发                                                                                  |
 | onHover                      | `(item: HTMLElement) => void`            | -                                                  | 直属可排序子元素被hover时触发                                                                                  |
 | onUnHover                      | `(item: HTMLElement) => void`            | -                                                  | 子元素失去hover时触发                                                                                  |
+| collection                      | -            | -                                                  |  收集额外参数传递给拖拽回调函数                                                                                 |
 | options                      | -            | -                                                  |  拖放的配置                                                                                 |
 
 ### options
-
-- `groupPath`: `string` 拖拽容器的路径, 用来标记位置 `可选`。
 - `handle`: `string | HTMLElement` 拖拽句柄 `可选`。
 - `filter`: `string | HTMLElement` 过滤句柄的选择器 `可选`。
 - `allowDrop`: `boolean | DndCondition;` 是否允许拖放新元素，`必选`。

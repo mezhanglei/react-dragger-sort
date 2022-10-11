@@ -15,7 +15,7 @@ export function isDom(ele: any) {
  * @param el 
  * @returns 
  */
- export function getRect(el: HTMLElement) {
+export function getRect(el: HTMLElement) {
   return el.getBoundingClientRect()
 }
 
@@ -153,7 +153,7 @@ export function css(el: any, prop?: string | CSSProperties) {
  * @param handler 事件函数
  * @param inputOptions 配置
  */
- export function addEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
+export function addEvent(el: any, event: string, handler: (...rest: any[]) => any, inputOptions?: {
   captrue?: boolean,
   once?: boolean,
   passive?: boolean
@@ -219,16 +219,13 @@ export function matches(el: any, selector: string) {
 }
 
 // 根据选择器返回在父元素内的序号
-export function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>, include?: Array<string | HTMLElement>) {
+export function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>) {
   const children = el?.parentNode?.children;
   if (!children) return -1;
   let index = 0;
   for (let i = 0; i < children?.length; i++) {
     const node = children[i];
-    if (
-      (!include || include?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)) &&
-      !excluded?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)
-    ) {
+    if (!excluded?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)) {
       // 如果等于就结束循环
       if (el !== node) {
         index++
@@ -261,7 +258,7 @@ export const insertAfter = (newElement: HTMLElement, targetElement: HTMLElement)
  * @param {*} root 根元素
  * @param {*} child 目标元素
  */
- export function isContains(root: HTMLElement, child: HTMLElement): boolean {
+export function isContains(root: HTMLElement, child: HTMLElement): boolean {
   if (!root || root === child) return false;
   return root.contains(child);
 };

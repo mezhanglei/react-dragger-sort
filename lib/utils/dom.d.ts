@@ -41,7 +41,7 @@ export declare function removeEvent(el: any, event: string, handler: (...rest: a
     passive?: boolean;
 }): void;
 export declare function matches(el: any, selector: string): any;
-export declare function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>, include?: Array<string | HTMLElement>): number;
+export declare function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>): number;
 export declare const insertBefore: (newElement: HTMLElement, targetElement: HTMLElement) => void;
 export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => void;
 /**
