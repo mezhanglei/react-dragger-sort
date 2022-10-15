@@ -107,7 +107,6 @@ export default Home;
 
 ### options
 
-- `groupPath`: `string` The path of the drag container, used to mark the position `Optional`.
 - `handle`: `string | HTMLElement` Drag and drop handle `optional`.
 - `filter`: `string | HTMLElement` Selector for filtering handles `optional`.
 - `allowDrop`: `boolean | DndCondition` Whether to allow dragging and dropping of new elements, `must`.
