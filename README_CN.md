@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-4.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-4.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -13,6 +13,7 @@
 - version4.x
   - 主要更新，拖拽回调参数全部更改。使用需要删除旧版本重新下载。
   - 移除`options`中的`groupPath`并增加`collection`参数, 用来向回调函数传递参数
+  - 4.1.0 `arraySwap` => `arrayMove`
 - version3.x
   - 增加`options`配置属性`childOut`, 设置子元素拖出的条件
   - 调整`options`配置属性`childDrag`.
@@ -31,7 +32,7 @@ yarn add react-dragger-sort
 ### demo
 ```javascript
 import React, { useRef } from 'react';
-import DndSortable, { arraySwap, Dndprops, deepClone } from "react-dragger-sort";
+import DndSortable, { arrayMove, Dndprops, deepClone } from "react-dragger-sort";
 
 const Home: React.FC<any> = (props) => {
   const [part1, setPart1] = useState([1, 2, 3, 4, 5])

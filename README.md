@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-4.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-4.1.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -11,7 +11,8 @@ Component that provides drag-and-drop container and drag-and-drop capability to 
 # version update
 - version4.x
   - main version update, Drag and drop callback parameter change
-  - remove the `groupPath` from `options` and add the `collection` parameter which is used to pass parameters to callback function.
+  - remove the `groupPath` from `options` and add the `collection`
+  - 4.1.0 `arraySwap` => `arrayMove`parameter which is used to pass parameters to callback function.
 - version3.x
   - Add the `options` configuration attribute `childOut`, which sets the conditions for child elements to be dragged out
   - Adjust the `options` configuration attribute `childDrag`.
@@ -30,7 +31,7 @@ yarn add react-dragger-sort
 ### demo
 ```javascript
 import React, { useRef } from 'react';
-import DndSortable, { arraySwap, Dndprops, deepClone } from "react-dragger-sort";
+import DndSortable, { arrayMove, Dndprops, deepClone } from "react-dragger-sort";
 
 const Home: React.FC<any> = (props) => {
   const [part1, setPart1] = useState([1, 2, 3, 4, 5])

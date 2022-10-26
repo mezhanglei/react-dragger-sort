@@ -1,7 +1,7 @@
 import { deepClone } from "./object";
 
 
-export const arraySwap = (arr: any[], preIndex: number, nextIndex: number) => {
+export const arrayMove = (arr: any[], preIndex: number, nextIndex: number) => {
   const clone = deepClone(arr);
   if (preIndex > nextIndex) {
     clone.splice(nextIndex, 0, arr[preIndex]);

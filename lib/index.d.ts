@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import BuildDndSortable from './dnd-core';
-import { arraySwap } from './utils/array';
+import { arrayMove } from './utils/array';
 import { deepClone } from './utils/object';
 declare const DndSortable: {
     new (props: import("./utils/types").DndProps): {
@@ -81,5 +81,5 @@ declare const DndSortable: {
     contextType?: import("react").Context<any> | undefined;
 };
 export default DndSortable;
-export { BuildDndSortable, arraySwap, deepClone };
+export { BuildDndSortable, arrayMove, deepClone };
 export * from './utils/types';
