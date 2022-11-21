@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-export declare type EventType = MouseEvent | TouchEvent;
+export type EventType = MouseEvent | TouchEvent;
 export declare enum DropEffect {
     None = "none",
     Move = "move",
@@ -25,8 +25,8 @@ export interface DndParams {
     from: DragItem;
     to?: SortableItem;
 }
-export declare type DndHandle = (params: DndParams) => void;
-export declare type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
+export type DndHandle = (params: DndParams) => void;
+export type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
 export interface DndBaseProps {
     onStart?: DndHandle;
     onMove?: DndHandle;

@@ -1,6 +1,8 @@
 import React from "react";
 import "./app.less";
 import RouteComponent from "./routes/index";
+// import "core-js/stable";
+// import "regenerator-runtime/runtime"
 
 // 路由组件
 function MyRoutes() {
