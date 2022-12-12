@@ -6,16 +6,29 @@ export declare function isDom(ele: any): any;
  * @param el
  * @returns
  */
-export declare function getRect(el: HTMLElement): DOMRect;
+export declare function getRect(el: Element): DOMRect;
+export declare const getWindow: (el?: Node) => Window & typeof globalThis;
+export declare const getOwnerDocument: (el?: Node) => Document | null;
+export declare function matches(el: any, selector: string): any;
+/**
+ * 判断根元素是不是包含目标元素
+ * @param {*} root 根元素
+ * @param {*} child 目标元素
+ */
+export declare function isContains(root: Node, child: Node): boolean;
+export declare function getChildrenIndex(el: any, excluded?: Array<string | Node | undefined>): number;
 export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): null | {
     x: number;
     y: number;
 };
 export declare const isMoveIn: (e: EventType, target: HTMLElement) => boolean | undefined;
-export declare function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties): void;
-export declare function createAnimate(doms: any): () => void;
-export declare const getWindow: (el?: any) => any;
+export declare function _animate(target: HTMLElement & {
+    animated?: any;
+}, prevRect: any, transitionStyle?: CSSProperties): void;
+export declare function createAnimate(doms?: HTMLCollection | HTMLElement[]): () => void;
 export declare function css(el: any, prop?: string | CSSProperties): any;
+export declare const insertBefore: (newElement: HTMLElement, targetElement: HTMLElement) => HTMLElement | undefined;
+export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => HTMLElement | undefined;
 /**
  * 添加事件监听
  * @param el 目标元素
@@ -40,14 +53,3 @@ export declare function removeEvent(el: any, event: string, handler: (...rest: a
     once?: boolean;
     passive?: boolean;
 }): void;
-export declare function matches(el: any, selector: string): any;
-export declare function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>): number;
-export declare const insertBefore: (newElement: HTMLElement, targetElement: HTMLElement) => void;
-export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => void;
-/**
- * 判断根元素是不是包含目标元素
- * @param {*} root 根元素
- * @param {*} child 目标元素
- */
-export declare function isContains(root: HTMLElement, child: HTMLElement): boolean;
-export declare const getOwnerDocument: (el?: any) => any;

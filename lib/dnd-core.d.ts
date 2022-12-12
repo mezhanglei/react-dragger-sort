@@ -1,36 +1,34 @@
 import React, { CSSProperties } from 'react';
 import { EventHandler } from "react-free-draggable";
-import { DndProps, DndBaseProps, DndParams } from "./utils/types";
+import { DndProps, DndParams, DndHandle, EventType } from "./utils/types";
 export default function BuildDndSortable(): {
     new (props: DndProps): {
-        sortArea: any;
-        dragged: any;
-        cloneDragged: any;
-        over: HTMLElement | undefined;
+        parentEl?: HTMLDivElement | undefined;
+        dragged?: HTMLElement | undefined;
+        cloneDragged?: HTMLElement | undefined;
+        over?: HTMLElement | undefined;
         lastDisplay: CSSProperties['display'];
         componentDidMount(): void;
         componentDidUpdate(prevProps: DndProps): void;
         componentWillUnmount(): void;
-        getOptions: (options: DndProps['options']) => DndProps['options'];
-        initManagerData: (sortArea: any) => void;
+        initManagerData: (parentEl?: HTMLElement) => void;
+        moveStartHandle: (e: EventType, currentTarget?: HTMLElement) => void;
         onStart: EventHandler;
+        onMove: EventHandler;
         onEnd: EventHandler;
-        onDragEnd: (e: any) => void;
-        reset: () => void;
-        handleDragOverClass: (params: {
+        onDragStart: (e: EventType) => void;
+        onDragOver: (e: EventType) => void;
+        onDragEnd: (e: EventType) => void;
+        onEndHandle: (e: EventType) => void;
+        reset: DndHandle;
+        handleDragOverClass: (overInfo: {
             draggedIndex: number;
             newOverIndex: number;
             oldOverIndex: number;
             newOver: HTMLElement;
             oldOver?: HTMLElement;
-            props: DndBaseProps;
-        }) => void;
-        onDragStart: (e: any) => void;
-        onTouchMoveStart: EventHandler;
-        moveStartHandle: (e: any, currentTarget?: any) => void;
+        }, params: DndParams) => void;
         moveHandle: EventHandler;
-        onTouchMove: EventHandler;
-        onDragOver: (e: any) => void;
         sortInSameArea: (params: DndParams) => void;
         addNewOver: (params: DndParams) => void;
         setDropEndChild: (params: DndParams) => void;

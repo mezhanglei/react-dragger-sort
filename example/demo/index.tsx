@@ -25,7 +25,31 @@ const Home: React.FC<any> = (props) => {
   return (
     <div>
       <p>part1</p>
-      
+      <DndSortable
+        onUpdate={onUpdate}
+        onAdd={onAdd}
+        collection={{ group: 'part1' }} // custome props
+        style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px', marginTop: '10px' }}
+        options={{
+          hiddenFrom: true
+        }}>
+        {
+          part1?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
+        }
+      </DndSortable>
+      <p>part2</p>
+      <DndSortable
+        onUpdate={onUpdate}
+        onAdd={onAdd}
+        collection={{ group: 'part2' }}  // custome props
+        style={{ display: 'flex', flexWrap: 'wrap', background: 'gray', width: '200px', marginTop: '10px' }}
+        options={{
+          hiddenFrom: true
+        }}>
+        {
+          part2?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
+        }
+      </DndSortable>
     </div>
   );
 };

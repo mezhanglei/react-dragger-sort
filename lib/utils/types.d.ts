@@ -26,7 +26,8 @@ export interface DndParams {
     to?: SortableItem;
 }
 export type DndHandle = (params: DndParams) => void;
-export type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
+export type DndCondition = (params: DndParams) => boolean;
+export type UnionCondition = boolean | (HTMLElement | string)[] | DndCondition;
 export interface DndBaseProps {
     onStart?: DndHandle;
     onMove?: DndHandle;
@@ -36,13 +37,13 @@ export interface DndBaseProps {
     onHover?: (over: HTMLElement) => void;
     onUnHover?: (over: HTMLElement) => void;
     collection?: any;
-    options: {
+    options?: {
         handle?: string;
         filter?: string;
-        allowDrop: boolean | DndCondition;
-        allowSort?: boolean | DndCondition;
-        childOut?: boolean | (HTMLElement | string)[] | DndCondition;
-        childDrag: boolean | (HTMLElement | string)[] | ((from: DragItem, options: DndProps['options']) => boolean);
+        hiddenFrom?: UnionCondition;
+        disabledDrop?: UnionCondition;
+        disabledSort?: UnionCondition;
+        disabledDrag?: UnionCondition;
         direction?: string[];
         sortPreClass?: string;
         sortNextClass?: string;

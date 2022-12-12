@@ -1,5 +1,6 @@
-import { DndParams, DndProps, DragItem } from "./types";
-export declare const isChildDrag: (item: DragItem, options: DndProps['options']) => boolean | undefined;
-export declare const isChildOut: (params: DndParams, options: DndProps['options']) => boolean | undefined;
-export declare const isCanSort: (params: DndParams, options: DndProps['options']) => boolean | undefined;
-export declare const isCanDrop: (params: DndParams, options: DndProps['options']) => boolean | undefined;
+import { DndParams, DropEffect } from "./types";
+export declare const isDisabledDrag: (params: DndParams) => boolean | undefined;
+export declare const isHiddenFrom: (params: DndParams) => boolean | undefined;
+export declare const isDisabledSort: (params: DndParams) => boolean | undefined;
+export declare const isDisabledDrop: (params: DndParams) => boolean | undefined;
+export declare const setMouseEvent: (e: any, type: 'dragstart' | 'dragover', val?: DropEffect) => void;

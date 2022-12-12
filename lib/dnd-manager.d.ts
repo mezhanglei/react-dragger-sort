@@ -1,5 +1,5 @@
 import { EventType, SortableItem } from "./utils/types";
-export declare class DndManager<T extends Object = any> {
+export declare class DndManager {
     dragItemMap: Map<HTMLElement, SortableItem>;
     dropItemMap: Map<HTMLElement, SortableItem>;
     constructor();

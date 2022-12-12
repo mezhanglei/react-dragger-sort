@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-4.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-5.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 
@@ -10,6 +10,8 @@
 
 # version
 
+- version5.x
+  - `options`参数调整: `hiddenFrom`隐藏拖拽源, `disabledDrop`禁止拖放, `disabledSort`禁止拖拽时动态插入, `disabledDrag`禁止拖拽, 移除 ~~`childDrag`~~ , ~~`allowDrop`~~ , ~~`allowSort`~~, ~~`childOut`~~.
 - version4.x
   - 主要更新，拖拽回调参数全部更改。使用需要删除旧版本重新下载。
   - 移除`options`中的`groupPath`并增加`collection`参数, 用来向回调函数传递参数
@@ -21,6 +23,9 @@
 # features
 - 提供拖放容器：容器的子元素（直接子元素）则可被拖拽，子元素可以通过`data-id`属性设置标记。
 - 支持跨容器拖放：不同的容器支持相互嵌套，并且不同容器可进行跨域拖放操作，容器可通过`collection`属性给回调监听函数传递参数
+
+# matters
+  - 最好不要在`onEnd`,`onAdd`和`onUpdate`事件中改动`from`拖拽源，因为dom变更属于异步过程。
 
 ### 快速安装
 ```
@@ -63,10 +68,8 @@ const Home: React.FC<any> = (props) => {
         collection={{ group: 'part1' }} // custome props
         style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px', marginTop: '10px' }}
         options={{
-          childDrag: true,
-          allowDrop: true,
-          allowSort: true
-        }}>
+          hiddenFrom: true
+      }}>
         {
           part1?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
         }
@@ -78,10 +81,8 @@ const Home: React.FC<any> = (props) => {
         collection={{ group: 'part2' }}  // custome props
         style={{ display: 'flex', flexWrap: 'wrap', background: 'gray', width: '200px', marginTop: '10px' }}
         options={{
-          childDrag: true,
-          allowDrop: true,
-          allowSort: true
-        }}>
+          hiddenFrom: true
+      }}>
         {
           part2?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
         }
@@ -108,16 +109,17 @@ export default Home;
 | options                      | -            | -                                                  |  拖放的配置                                                                                 |
 
 ### options
+```javascript
+// 拖拽条件函数
+export type DndCondition = (params: DndParams) => boolean;
+export type UnionCondition = boolean | (HTMLElement | string)[] | DndCondition;
+```
 - `handle`: `string | HTMLElement` 拖拽句柄 `可选`。
 - `filter`: `string | HTMLElement` 过滤句柄的选择器 `可选`。
-- `allowDrop`: `boolean | DndCondition;` 是否允许拖放新元素，`必选`。
-- `allowSort`: `boolean | DndCondition` 是否可以动态插入排序，`可选`。
-- `childOut`: `boolean | (HTMLElement | string)[] | DndCondition;` 子元素是否允许拖出或者允许拖出的子元素 `可选`。
-- `childDrag`: `boolean | (HTMLElement | string)[] | ((fromItem: DragItem, options: DndProps['options']) => boolean)`; 子元素是否允许拖拽或者允许拖拽的子元素 `必选`。
+- `hiddenFrom`: `UnionCondition` 是否隐藏拖拽源，`可选`。
+- `disabledDrop`: `UnionCondition` 是否禁止拖放，`可选`。
+- `disabledSort`: `UnionCondition` 是否禁止动态插入 `可选`。
+- `disabledDrag`: `UnionCondition`; 是否禁止拖拽 `可选`。
 - `direction`: [`vertical`, `horizontal`]允许拖拽的轴向，`可选`。
 - `sortPreClass`: `string` 元素往序号小的排序时添加的class，`可选`。
 - `sortNextClass`: `string` 元素往序号大的排序时添加的class，`可选`。
-
-```javascript
-type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
-```

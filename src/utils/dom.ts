@@ -15,8 +15,72 @@ export function isDom(ele: any) {
  * @param el 
  * @returns 
  */
-export function getRect(el: HTMLElement) {
+export function getRect(el: Element) {
   return el.getBoundingClientRect()
+}
+
+// 获取当前的window
+export const getWindow = (el?: Node) => {
+  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
+  return ownerDocument ? (ownerDocument.defaultView || window) : window;
+};
+
+// 获取当前的document
+export const getOwnerDocument = (el?: Node) => {
+  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
+  return ownerDocument;
+};
+
+// 目标元素是否匹配选择器
+export function matches(el: any, selector: string) {
+  if (!selector) return;
+
+  selector[0] === '>' && (selector = selector.substring(1));
+
+  if (el) {
+    try {
+      if (el.matches) {
+        return el.matches(selector);
+      } else if (el.msMatchesSelector) {
+        return el.msMatchesSelector(selector);
+      } else if (el.webkitMatchesSelector) {
+        return el.webkitMatchesSelector(selector);
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * 判断根元素是不是包含目标元素
+ * @param {*} root 根元素
+ * @param {*} child 目标元素
+ */
+export function isContains(root: Node, child: Node): boolean {
+  if (!root || root === child) return false;
+  return root.contains(child);
+};
+
+// 根据选择器返回在父元素内的序号
+export function getChildrenIndex(el: any, excluded?: Array<string | Node | undefined>) {
+  const children = el?.parentNode?.children;
+  if (!children) return -1;
+  let index = 0;
+  for (let i = 0; i < children?.length; i++) {
+    const node = children[i] as Node;
+    if (!excluded?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)) {
+      // 如果等于就结束循环
+      if (el !== node) {
+        index++
+      } else {
+        break;
+      }
+    }
+  }
+  return index;
 }
 
 // 返回元素或事件对象的视口位置
@@ -65,7 +129,7 @@ export const isMoveIn = (e: EventType, target: HTMLElement) => {
 };
 
 // 触发动画
-export function _animate(target: any, prevRect: any, transitionStyle?: CSSProperties) {
+export function _animate(target: HTMLElement & { animated?: any }, prevRect: any, transitionStyle?: CSSProperties) {
   const ms = 160;
   if (ms) {
     // 目标后面的位置
@@ -74,16 +138,16 @@ export function _animate(target: any, prevRect: any, transitionStyle?: CSSProper
       prevRect = prevRect.getBoundingClientRect()
     }
 
-    // 动画起始位置
+    // 先回到动画起始位置
     css(target, {
       transition: 'none',
       'transform': `translate3d(${prevRect.left - currentRect.left}px, ${prevRect.top - currentRect.top}px,0)`
     });
 
-    // dom的宽高位置属性会回流重绘目前的布局样式
+    // 然后通过重绘展示已经在起始位置
     target.offsetWidth;
 
-    // 动画终点位置
+    // 确认执行动画
     css(target, {
       'transition': `all ${ms}ms`,
       'transform': 'translate3d(0,0,0)',
@@ -103,14 +167,16 @@ export function _animate(target: any, prevRect: any, transitionStyle?: CSSProper
 }
 
 // 收集dom，返回可以执行动画的函数
-export function createAnimate(doms: any) {
-  const collect: any[] = [];
-  for (let i = 0; i < doms?.length; i++) {
-    const dom = doms[i];
-    collect.push({
-      dom,
-      rect: dom?.getBoundingClientRect()
-    })
+export function createAnimate(doms?: HTMLCollection | HTMLElement[]) {
+  const collect: { dom: HTMLElement, rect: DOMRect }[] = [];
+  if (doms) {
+    for (let i = 0; i < doms?.length; i++) {
+      const dom = doms[i] as HTMLElement;
+      collect.push({
+        dom,
+        rect: dom?.getBoundingClientRect()
+      })
+    }
   }
   return () => {
     for (let i = 0; i < collect?.length; i++) {
@@ -121,12 +187,6 @@ export function createAnimate(doms: any) {
     }
   }
 }
-
-// 获取当前的window
-export const getWindow = (el?: any) => {
-  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
-  return ownerDocument ? (ownerDocument.defaultView || window) : window;
-};
 
 // 获取或设置目标元素的style值
 export function css(el: any, prop?: string | CSSProperties) {
@@ -145,6 +205,23 @@ export function css(el: any, prop?: string | CSSProperties) {
     }
   }
 }
+
+export const insertBefore = (newElement: HTMLElement, targetElement: HTMLElement) => {
+  const parentElement = targetElement.parentNode;
+  if (!parentElement) return;
+  return parentElement.insertBefore(newElement, targetElement);
+}
+
+export const insertAfter = (newElement: HTMLElement, targetElement: HTMLElement) => {
+  const parentElement = targetElement.parentNode;
+  if (!parentElement) return;
+  if (parentElement.lastChild == targetElement) {
+    return parentElement.appendChild(newElement);
+  } else {
+    return parentElement.insertBefore(newElement, targetElement.nextElementSibling);
+  }
+}
+
 
 /**
  * 添加事件监听
@@ -194,77 +271,3 @@ export function removeEvent(el: any, event: string, handler: (...rest: any[]) =>
     el['on' + event] = null;
   }
 }
-
-// 目标元素是否匹配选择器
-export function matches(el: any, selector: string) {
-  if (!selector) return;
-
-  selector[0] === '>' && (selector = selector.substring(1));
-
-  if (el) {
-    try {
-      if (el.matches) {
-        return el.matches(selector);
-      } else if (el.msMatchesSelector) {
-        return el.msMatchesSelector(selector);
-      } else if (el.webkitMatchesSelector) {
-        return el.webkitMatchesSelector(selector);
-      }
-    } catch (_) {
-      return false;
-    }
-  }
-
-  return false;
-}
-
-// 根据选择器返回在父元素内的序号
-export function getChildrenIndex(el: any, excluded?: Array<string | HTMLElement>) {
-  const children = el?.parentNode?.children;
-  if (!children) return -1;
-  let index = 0;
-  for (let i = 0; i < children?.length; i++) {
-    const node = children[i];
-    if (!excluded?.some((item) => typeof item === 'string' ? matches(node, item) : node == item)) {
-      // 如果等于就结束循环
-      if (el !== node) {
-        index++
-      } else {
-        break;
-      }
-    }
-  }
-  return index;
-}
-
-export const insertBefore = (newElement: HTMLElement, targetElement: HTMLElement) => {
-  const parentElement = targetElement.parentNode;
-  if (!parentElement) return;
-  (parentElement as HTMLElement).insertBefore(newElement, targetElement);
-}
-
-export const insertAfter = (newElement: HTMLElement, targetElement: HTMLElement) => {
-  const parentElement = targetElement.parentNode;
-  if (!parentElement) return;
-  if ((parentElement as HTMLElement).lastChild == targetElement) {
-    (parentElement as HTMLElement).appendChild(newElement);
-  } else {
-    (parentElement as HTMLElement).insertBefore(newElement, targetElement.nextElementSibling);
-  }
-}
-
-/**
- * 判断根元素是不是包含目标元素
- * @param {*} root 根元素
- * @param {*} child 目标元素
- */
-export function isContains(root: HTMLElement, child: HTMLElement): boolean {
-  if (!root || root === child) return false;
-  return root.contains(child);
-};
-
-// 获取当前的document
-export const getOwnerDocument = (el?: any) => {
-  const ownerDocument = el?.ownerDocument || document?.ownerDocument;
-  return ownerDocument;
-};

@@ -2,13 +2,15 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-4.1.1-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-5.0.0-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
 Component that provides drag-and-drop container and drag-and-drop capability to listen to target drag-and-drop operations.
 
 # version update
+- version5.x
+  - `options` parameter adjustment: `hiddenFrom` hide drag source, `disabledDrop` disable drag and drop, `disabledSort` disable dynamic insertion while dragging, `disabledDrag` disable dragging, remove ~~`childDrag`~~ , ~~`allowDrop`~~ , ~~`allowSort`~~, ~~`childOut`~~.
 - version4.x
   - main version update, Drag and drop callback parameter change
   - remove the `groupPath` from `options` and add the `collection`
@@ -20,6 +22,9 @@ Component that provides drag-and-drop container and drag-and-drop capability to 
 # features
 - Provide drag-and-drop containers: the child elements of containers can be dragged and dropped, and the child elements can be marked by the `data-id` property.
 - Support cross-container drag and drop: different containers support nesting each other, and different containers can be dragged and dropped across domains, and containers can pass parameters to callback listeners through the `collection` property.
+
+# matters
+  - It is better not to change the `from` drag source in the `onEnd`, `onAdd` and `onUpdate` events, because the dom change is an asynchronous process.
 
 ### install
 ```
@@ -62,9 +67,7 @@ const Home: React.FC<any> = (props) => {
         collection={{ group: 'part1' }} // custome props
         style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px', marginTop: '10px' }}
         options={{
-          childDrag: true,
-          allowDrop: true,
-          allowSort: true
+          hiddenFrom: true
         }}>
         {
           part1?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
@@ -77,9 +80,7 @@ const Home: React.FC<any> = (props) => {
         collection={{ group: 'part2' }}  // custome props
         style={{ display: 'flex', flexWrap: 'wrap', background: 'gray', width: '200px', marginTop: '10px' }}
         options={{
-          childDrag: true,
-          allowDrop: true,
-          allowSort: true
+          hiddenFrom: true
         }}>
         {
           part2?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
@@ -107,17 +108,17 @@ export default Home;
 | options                           | -            | -                                                  |  Configuration of drag and drop                                                                                 |
 
 ### options
-
+```javascript
+// 拖拽条件函数
+export type DndCondition = (params: DndParams) => boolean;
+export type UnionCondition = boolean | (HTMLElement | string)[] | DndCondition;
+```
 - `handle`: `string | HTMLElement` Drag and drop handle `optional`.
 - `filter`: `string | HTMLElement` Selector for filtering handles `optional`.
-- `allowDrop`: `boolean | DndCondition` Whether to allow dragging and dropping of new elements, `must`.
-- `allowSort`: `boolean | DndCondition` Whether or not dynamic insertion sorting is allowed, `optional`.
-- `childOut`: `boolean | (HTMLElement | string)[] | DndCondition;` Whether the child element is allowed to be dragged out or the child element allowed to be dragged out `optional`.
-- `childDrag`: `boolean | (HTMLElement | string)[] | ((fromItem: DragItem, options: DndProps['options']) => boolean)`; Whether child elements are allowed to be dragged or the child element allowed to be dragged `must`.
+- `hiddenFrom`: `UnionCondition` Whether or not to hide the drag and drop source, `optional`.
+- `disabledDrop`: `UnionCondition` Whether to disable drag and drop, `optional`.
+- `disabledSort`: `UnionCondition` whether to disable dynamic insertion `optional`.
+- `disabledDrag`: `UnionCondition`; Whether to disable drag and drop `Optional`.
 - `direction`: [`vertical`, `horizontal`] the axial direction to allow dragging, `optional`.
 - `sortPreClass`: `string` The class to add when the element is sorted towards a smaller ordinal number, `optional`.
 - `sortNextClass`: `string` The class to add when the element is sorted towards a larger ordinal number, `optional`.
-
-```javascript
-type DndCondition = (params: DndParams, options: DndProps['options']) => boolean;
-```
