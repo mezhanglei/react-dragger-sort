@@ -16,9 +16,9 @@ export default function BuildDndSortable(): {
         onStart: EventHandler;
         onMove: EventHandler;
         onEnd: EventHandler;
-        onDragStart: (e: EventType) => void;
-        onDragOver: (e: EventType) => void;
-        onDragEnd: (e: EventType) => void;
+        onDragStart: (e: any) => void;
+        onDragOver: (e: any) => void;
+        onDragEnd: (e: any) => void;
         onEndHandle: (e: EventType) => void;
         reset: DndHandle;
         handleDragOverClass: (overInfo: {

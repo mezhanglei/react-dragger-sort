@@ -131,7 +131,7 @@ export default function BuildDndSortable() {
     }
 
     // 鼠标拖拽开始事件(鼠标端，并且触发时其他事件将不会再触发)
-    onDragStart = (e: EventType) => {
+    onDragStart = (e: any) => {
       e.stopPropagation();
       const currentTarget = e.currentTarget as HTMLElement;
       if (currentTarget) {
@@ -142,13 +142,13 @@ export default function BuildDndSortable() {
     }
 
     // 鼠标dragOver事件(鼠标端)
-    onDragOver = (e: EventType) => {
+    onDragOver = (e: any) => {
       setMouseEvent(e, 'dragover', DropEffect.Move)
       this.moveHandle(e);
     }
 
     // 拖拽结束事件(鼠标)
-    onDragEnd = (e: EventType) => {
+    onDragEnd = (e: any) => {
       this.onEndHandle(e)
     }
 
@@ -177,8 +177,8 @@ export default function BuildDndSortable() {
         },
         to: { ...to, index: toIndex }
       }
+      this.reset(params);
       if (dropGroup) {
-        this.reset(params);
         // 是否为同域排序
         if (dropGroup?.node === parentEl) {
           dropGroup.onUpdate && dropGroup.onUpdate(params);
@@ -203,7 +203,7 @@ export default function BuildDndSortable() {
       const overNextClass = toOptions?.sortNextClass || 'over-next';
       // 拖拽结束后dom变换
       if (cloneDragged && dragged) {
-        if(dragged?.draggable) {
+        if (dragged?.draggable) {
           dragged.draggable = false;
           if (this.lastDisplay) {
             dragged.style.display = this.lastDisplay;
@@ -421,7 +421,6 @@ export default function BuildDndSortable() {
           showLayer={ismobile ? true : false}
           onDragStart={this.onDragStart}
           onDragEnd={this.onDragEnd}
-          {...child.props}
         >
           {child}
         </DraggableEvent>

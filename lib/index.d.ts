@@ -17,9 +17,9 @@ declare const DndSortable: {
         onStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;
         onMove: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;
         onEnd: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;
-        onDragStart: (e: import("./utils/types").EventType) => void;
-        onDragOver: (e: import("./utils/types").EventType) => void;
-        onDragEnd: (e: import("./utils/types").EventType) => void;
+        onDragStart: (e: any) => void;
+        onDragOver: (e: any) => void;
+        onDragEnd: (e: any) => void;
         onEndHandle: (e: import("./utils/types").EventType) => void;
         reset: import("./utils/types").DndHandle;
         handleDragOverClass: (overInfo: {
