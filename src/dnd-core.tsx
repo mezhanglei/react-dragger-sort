@@ -102,10 +102,12 @@ export default function BuildDndSortable() {
 
     // 鼠标点击/触摸事件开始
     onStart: EventHandler = (e) => {
-      e.stopPropagation();
       const currentTarget = e.currentTarget as HTMLElement;
+      const target = e.target as HTMLElement;
       const dragItem = dndManager.getDragItem(currentTarget);
-      if (currentTarget && dragItem) {
+      const targetItem = dndManager.getDragItem(target);
+      const isCanStart = dragItem && (targetItem ? target === currentTarget : true);
+      if (currentTarget && isCanStart) {
         const disabledDrag = isDisabledDrag({ e, from: dragItem });
         if (!disabledDrag) {
           currentTarget.draggable = true;
@@ -124,7 +126,6 @@ export default function BuildDndSortable() {
     // 鼠标点击/触摸事件结束
     onEnd: EventHandler = (e) => {
       if (!ismobile) return
-      e.stopPropagation();
       if (this.dragged) {
         this.onEndHandle(e)
       }
@@ -132,9 +133,10 @@ export default function BuildDndSortable() {
 
     // 鼠标拖拽开始事件(鼠标端，并且触发时其他事件将不会再触发)
     onDragStart = (e: any) => {
-      e.stopPropagation();
       const currentTarget = e.currentTarget as HTMLElement;
-      if (currentTarget) {
+      const target = e.target;
+      const isCanDragStart = target === currentTarget;
+      if (currentTarget && isCanDragStart) {
         const ownerDocument = getOwnerDocument(this.parentEl);
         addEvent(ownerDocument, 'dragover', this.onDragOver);
         this.moveStartHandle(e, currentTarget);
@@ -154,7 +156,6 @@ export default function BuildDndSortable() {
 
     // 鼠标拖拽结束事件
     onEndHandle = (e: EventType) => {
-      e.stopPropagation();
       // 拖拽元素
       const dragged = this.dragged;
       // 克隆拖拽元素
@@ -418,7 +419,6 @@ export default function BuildDndSortable() {
           onMove={this.onMove}
           onEnd={this.onEnd}
           direction={options?.direction || DragDirectionCode}
-          showLayer={ismobile ? true : false}
           onDragStart={this.onDragStart}
           onDragEnd={this.onDragEnd}
         >

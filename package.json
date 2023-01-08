@@ -1,6 +1,6 @@
 {
   "name": "react-dragger-sort",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "drag sort component",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
@@ -89,7 +89,7 @@
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-fast-compare": "^3.2.0",
-    "react-free-draggable": "^8.0.6",
+    "react-free-draggable": "^8.1.0",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^5.2.0"
   },
