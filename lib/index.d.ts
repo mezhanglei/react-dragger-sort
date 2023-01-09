@@ -13,7 +13,7 @@ declare const DndSortable: {
         componentDidUpdate(prevProps: import("./utils/types").DndProps): void;
         componentWillUnmount(): void;
         initManagerData: (parentEl?: HTMLElement | undefined) => void;
-        moveStartHandle: (e: import("./utils/types").EventType, currentTarget?: HTMLElement | undefined) => void;
+        handleMoveStart: (e: any, currentTarget: HTMLElement) => void;
         onStart: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;
         onMove: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;
         onEnd: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;

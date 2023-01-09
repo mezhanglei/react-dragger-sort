@@ -12,7 +12,7 @@ export default function BuildDndSortable(): {
         componentDidUpdate(prevProps: DndProps): void;
         componentWillUnmount(): void;
         initManagerData: (parentEl?: HTMLElement) => void;
-        moveStartHandle: (e: EventType, currentTarget?: HTMLElement) => void;
+        handleMoveStart: (e: any, currentTarget: HTMLElement) => void;
         onStart: EventHandler;
         onMove: EventHandler;
         onEnd: EventHandler;
