@@ -8,7 +8,7 @@ export declare function isDom(ele: any): any;
  */
 export declare function getRect(el: Element): DOMRect;
 export declare const getWindow: (el?: Node) => Window & typeof globalThis;
-export declare const getOwnerDocument: (el?: Node) => Document | null;
+export declare const getOwnerDocument: (el?: Node | null) => Document | null;
 export declare function matches(el: any, selector: string): any;
 /**
  * 判断根元素是不是包含目标元素

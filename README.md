@@ -2,7 +2,7 @@
 
 English | [中文说明](./README_CN.md)
 
-[![Version](https://img.shields.io/badge/version-5.0.4-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-5.0.5-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # Introduction?
 
@@ -109,7 +109,7 @@ export default Home;
 
 ### options
 ```javascript
-// 拖拽条件函数
+
 export type DndCondition = (params: DndParams) => boolean;
 export type UnionCondition = boolean | (HTMLElement | string)[] | DndCondition;
 ```

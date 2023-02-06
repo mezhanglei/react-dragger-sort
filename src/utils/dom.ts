@@ -26,7 +26,7 @@ export const getWindow = (el?: Node) => {
 };
 
 // 获取当前的document
-export const getOwnerDocument = (el?: Node) => {
+export const getOwnerDocument = (el?: Node | null) => {
   const ownerDocument = el?.ownerDocument || document?.ownerDocument;
   return ownerDocument;
 };

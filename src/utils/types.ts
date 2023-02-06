@@ -55,8 +55,8 @@ export interface DndBaseProps {
     handle?: string; // 拖拽句柄
     filter?: string; // 过滤句柄的选择器
     hiddenFrom?: UnionCondition; // 拖拽时隐藏拖拽源
-    disabledDrop?: UnionCondition; // 是否禁止拖放新元素
-    disabledSort?: UnionCondition; // 是否禁止动态插入
+    disabledDrop?: UnionCondition; // 是否允许拖放新元素
+    disabledSort?: UnionCondition; // 是否允许动态插入
     disabledDrag?: UnionCondition; // 是否禁止拖拽
     direction?: string[]; // 允许拖拽的轴向
     sortPreClass?: string; // 元素往序号小的排序时添加的class
@@ -65,7 +65,7 @@ export interface DndBaseProps {
 }
 
 // 拖拽容器组件的props
-export interface DndProps extends DndBaseProps {
+export interface DndSortableProps extends DndBaseProps {
   children: any;
   className?: string;
   style?: CSSProperties;

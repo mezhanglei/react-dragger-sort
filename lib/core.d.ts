@@ -1,17 +1,17 @@
 import React, { CSSProperties } from 'react';
 import { EventHandler } from "react-free-draggable";
-import { DndProps, DndParams, DndHandle, EventType } from "./utils/types";
+import { DndParams, DndHandle, EventType, DndSortableProps } from "./utils/types";
 export default function BuildDndSortable(): {
-    new (props: DndProps): {
-        parentEl?: HTMLDivElement | undefined;
+    new (props: DndSortableProps): {
+        parentElRef?: React.RefObject<HTMLDivElement> | undefined;
         dragged?: HTMLElement | undefined;
         cloneDragged?: HTMLElement | undefined;
         over?: HTMLElement | undefined;
         lastDisplay: CSSProperties['display'];
         componentDidMount(): void;
-        componentDidUpdate(prevProps: DndProps): void;
+        componentDidUpdate(prevProps: DndSortableProps): void;
         componentWillUnmount(): void;
-        initManagerData: (parentEl?: HTMLElement) => void;
+        initManagerData: (parentEl?: HTMLElement | null) => void;
         handleMoveStart: (e: any, currentTarget: HTMLElement) => void;
         onStart: EventHandler;
         onMove: EventHandler;
@@ -35,25 +35,24 @@ export default function BuildDndSortable(): {
         renderChild(child: any): JSX.Element;
         render(): JSX.Element;
         context: any;
-        setState<K extends never>(state: {} | ((prevState: Readonly<{}>, props: Readonly<DndProps>) => {} | Pick<{}, K> | null) | Pick<{}, K> | null, callback?: (() => void) | undefined): void;
+        setState<K extends never>(state: {} | ((prevState: Readonly<{}>, props: Readonly<DndSortableProps>) => {} | Pick<{}, K> | null) | Pick<{}, K> | null, callback?: (() => void) | undefined): void;
         forceUpdate(callback?: (() => void) | undefined): void;
-        readonly props: Readonly<DndProps> & Readonly<{
+        readonly props: Readonly<DndSortableProps> & Readonly<{
             children?: React.ReactNode;
         }>;
         state: Readonly<{}>;
         refs: {
             [key: string]: React.ReactInstance;
         };
-        shouldComponentUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): boolean;
+        shouldComponentUpdate?(nextProps: Readonly<DndSortableProps>, nextState: Readonly<{}>, nextContext: any): boolean;
         componentDidCatch?(error: Error, errorInfo: React.ErrorInfo): void;
-        getSnapshotBeforeUpdate?(prevProps: Readonly<DndProps>, prevState: Readonly<{}>): any;
+        getSnapshotBeforeUpdate?(prevProps: Readonly<DndSortableProps>, prevState: Readonly<{}>): any;
         componentWillMount?(): void;
         UNSAFE_componentWillMount?(): void;
-        componentWillReceiveProps?(nextProps: Readonly<DndProps>, nextContext: any): void;
-        UNSAFE_componentWillReceiveProps?(nextProps: Readonly<DndProps>, nextContext: any): void;
-        componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
-        UNSAFE_componentWillUpdate?(nextProps: Readonly<DndProps>, nextState: Readonly<{}>, nextContext: any): void;
+        componentWillReceiveProps?(nextProps: Readonly<DndSortableProps>, nextContext: any): void;
+        UNSAFE_componentWillReceiveProps?(nextProps: Readonly<DndSortableProps>, nextContext: any): void;
+        componentWillUpdate?(nextProps: Readonly<DndSortableProps>, nextState: Readonly<{}>, nextContext: any): void;
+        UNSAFE_componentWillUpdate?(nextProps: Readonly<DndSortableProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
-    getDerivedStateFromProps(nextProps: DndProps, prevState: any): any;
     contextType?: React.Context<any> | undefined;
 };

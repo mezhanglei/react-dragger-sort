@@ -49,7 +49,7 @@ export interface DndBaseProps {
         sortNextClass?: string;
     };
 }
-export interface DndProps extends DndBaseProps {
+export interface DndSortableProps extends DndBaseProps {
     children: any;
     className?: string;
     style?: CSSProperties;
