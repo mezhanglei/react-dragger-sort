@@ -249,10 +249,14 @@ export default function BuildDndSortable() {
 
     handleDisabledSort(params: DndParams) {
       const cloneDragged = this.cloneDragged;
-      if(!cloneDragged) return; 
+      if (!cloneDragged) return;
       const disabledSort = isDisabledSort(params);
-      if (disabledSort && cloneDragged.style.display !== 'none') {
-        cloneDragged.style.display = "none";
+      if (disabledSort) {
+        if (cloneDragged.style.display !== 'none') {
+          cloneDragged.style.display = "none";
+        }
+      } else {
+        cloneDragged.style.display = this.lastDisplay || ''
       }
     }
 
@@ -287,8 +291,8 @@ export default function BuildDndSortable() {
         }
         // 拖放行为是否在同域内
         if (dropGroup?.node === parentEl) {
-          this.handleDisabledSort(params);
           if (!isOverSelf) {
+            this.handleDisabledSort(params);
             if (toItem) {
               this.sortInSameArea(params);
             } else {
@@ -296,9 +300,9 @@ export default function BuildDndSortable() {
             }
           }
         } else if (dropGroup) {
-          this.handleDisabledSort(params);
           const disabledDrop = isDisabledDrop(params);
           if (!disabledDrop && !isOverSelf) {
+            this.handleDisabledSort(params);
             this.addNewOver(params);
           }
         }
