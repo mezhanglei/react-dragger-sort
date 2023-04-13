@@ -2,7 +2,7 @@
 
 [English](./README.md) | 中文说明
 
-[![Version](https://img.shields.io/badge/version-5.0.5-green)](https://www.npmjs.com/package/react-dragger-sort)
+[![Version](https://img.shields.io/badge/version-5.0.6-green)](https://www.npmjs.com/package/react-dragger-sort)
 
 # 适用场景
 

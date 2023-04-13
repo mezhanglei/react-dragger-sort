@@ -28,6 +28,7 @@ export default function BuildDndSortable(): {
             newOver: HTMLElement;
             oldOver?: HTMLElement;
         }, params: DndParams) => void;
+        handleDisabledSort(params: DndParams): void;
         moveHandle: EventHandler;
         sortInSameArea: (params: DndParams) => void;
         addNewOver: (params: DndParams) => void;
@@ -54,5 +55,6 @@ export default function BuildDndSortable(): {
         componentWillUpdate?(nextProps: Readonly<DndSortableProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<DndSortableProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
+    getDerivedStateFromProps(nextProps: DndSortableProps, prevState: any): any;
     contextType?: React.Context<any> | undefined;
 };

@@ -29,6 +29,7 @@ declare const DndSortable: {
             newOver: HTMLElement;
             oldOver?: HTMLElement | undefined;
         }, params: import("./utils/types").DndParams) => void;
+        handleDisabledSort(params: import("./utils/types").DndParams): void;
         moveHandle: import("react-free-draggable").EventHandler<import("react-free-draggable").EventType, import("react-free-draggable").DragEventData>;
         sortInSameArea: (params: import("./utils/types").DndParams) => void;
         addNewOver: (params: import("./utils/types").DndParams) => void;
@@ -55,6 +56,7 @@ declare const DndSortable: {
         componentWillUpdate?(nextProps: Readonly<import("./utils/types").DndSortableProps>, nextState: Readonly<{}>, nextContext: any): void;
         UNSAFE_componentWillUpdate?(nextProps: Readonly<import("./utils/types").DndSortableProps>, nextState: Readonly<{}>, nextContext: any): void;
     };
+    getDerivedStateFromProps(nextProps: import("./utils/types").DndSortableProps, prevState: any): any;
     contextType?: import("react").Context<any> | undefined;
 };
 export default DndSortable;

@@ -18,7 +18,7 @@ const Home: React.FC<any> = (props) => {
     const { from, to } = params;
     const fromGroup = from?.group
     const toGroup = to?.group
-    console.log(params, fromGroup, toGroup, 'different group');
+    console.log(params, 'different group');
     // do something ...
   }
 
@@ -31,7 +31,8 @@ const Home: React.FC<any> = (props) => {
         collection={{ group: 'part1' }} // custome props
         style={{ display: 'flex', flexWrap: 'wrap', background: 'blue', width: '200px', marginTop: '10px' }}
         options={{
-          hiddenFrom: true
+          hiddenFrom: true,
+          disabledSort: true,
         }}>
         {
           part1?.map((item, index) => (<div style={{ width: '50px', height: '50px', backgroundColor: 'red', border: '1px solid green' }} key={index}>{item}</div>))
