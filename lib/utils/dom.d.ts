@@ -1,5 +1,4 @@
 import { CSSProperties } from "react";
-import { EventType } from "./types";
 export declare function isDom(ele: any): any;
 /**
  * 返回元素的视窗内的位置
@@ -21,11 +20,6 @@ export declare function getClientXY(el: MouseEvent | TouchEvent | HTMLElement): 
     x: number;
     y: number;
 };
-export declare const isMoveIn: (e: EventType, target: HTMLElement) => boolean | undefined;
-export declare function _animate(target: HTMLElement & {
-    animated?: any;
-}, prevRect: any, transitionStyle?: CSSProperties): void;
-export declare function createAnimate(doms?: HTMLCollection | HTMLElement[]): () => void;
 export declare function css(el: any, prop?: string | CSSProperties): any;
 export declare const insertBefore: (newElement: HTMLElement, targetElement: HTMLElement) => HTMLElement | undefined;
 export declare const insertAfter: (newElement: HTMLElement, targetElement: HTMLElement) => HTMLElement | undefined;

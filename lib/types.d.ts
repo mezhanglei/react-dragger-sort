@@ -1,4 +1,5 @@
-import { CSSProperties } from "react";
+/// <reference types="react" />
+import { DndManager } from "./manager";
 export type EventType = MouseEvent | TouchEvent;
 export declare enum DropEffect {
     None = "none",
@@ -6,7 +7,7 @@ export declare enum DropEffect {
     Copy = "copy",
     Link = "link"
 }
-export interface SortableGroup extends DndBaseProps {
+export interface SortableGroup extends DndSortableProps {
     node: HTMLElement;
 }
 export interface SortableItem {
@@ -20,15 +21,17 @@ export interface SortableItem {
 export interface DragItem extends SortableItem {
     clone?: HTMLElement;
 }
-export interface DndParams {
+export interface DndParams<T = {}> {
     e: EventType;
-    from: DragItem;
-    to?: SortableItem;
+    from: DragItem & T;
+    to?: SortableItem & T;
 }
-export type DndHandle = (params: DndParams) => void;
-export type DndCondition = (params: DndParams) => boolean;
+export type DndHandle<T = {}> = (params: DndParams<T>) => void;
+export type DndCondition<T = {}> = (params: DndParams<T>) => boolean | undefined;
 export type UnionCondition = boolean | (HTMLElement | string)[] | DndCondition;
-export interface DndBaseProps {
+export interface DndSortableProps extends React.HtmlHTMLAttributes<HTMLDivElement> {
+    dndManager?: DndManager;
+    forwardedRef?: any;
     onStart?: DndHandle;
     onMove?: DndHandle;
     onEnd?: DndHandle;
@@ -48,9 +51,4 @@ export interface DndBaseProps {
         sortPreClass?: string;
         sortNextClass?: string;
     };
-}
-export interface DndSortableProps extends DndBaseProps {
-    children: any;
-    className?: string;
-    style?: CSSProperties;
 }
