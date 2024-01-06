@@ -1,6 +1,6 @@
 {
   "name": "react-dragger-sort",
-  "version": "5.0.11",
+  "version": "5.0.12",
   "description": "drag sort component",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
@@ -45,6 +45,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
+    "antd": "^4.20.2",
     "autoprefixer": "^10.4.5",
     "babel-loader": "^8.2.5",
     "babel-plugin-import": "^1.13.5",
@@ -58,6 +59,7 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-webpack-plugin": "^3.1.1",
     "express": "^4.18.1",
+    "history": "^5.0.0",
     "html-webpack-plugin": "^5.5.0",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
@@ -66,6 +68,8 @@
     "postcss-loader": "^6.2.1",
     "postcss-normalize": "^10.0.1",
     "postcss-preset-env": "^7.5.0",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "regenerator-runtime": "^0.13.9",
     "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^3.3.1",
@@ -82,20 +86,16 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
-    "antd": "^4.20.2",
     "classnames": "^2.2.6",
     "copy-anything": "^3.0.2",
-    "history": "^5.0.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
     "react-fast-compare": "^3.2.0",
     "react-free-draggable": "^8.1.2",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^5.2.0"
   },
   "peerDependencies": {
-    "react": ">=16.9.0",
-    "react-dom": ">=16.9.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "browserslist": [
     "defaults",
